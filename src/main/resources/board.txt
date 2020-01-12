@@ -1,0 +1,25 @@
+ K-----|x-|----|-*|-----C
+ ------|xx|----|xx|------
+ ------|xx|----|xx|------
+||||||s}xx|----|xx|------
+ -xxxxxxxxh----|xx|------
+ *xxxxxxxx|----|xxl{||||||
+ ||||||xxx||hh||xxxxxxxx-
+ ------|xxxxxxxxxxxxxxxx*
+ ------ixx|eee|xxxxxxxxx-
+ ------|xx|---|xx|d||||||
+ -||i||xxx|---|xx|-------
+ -xxxxxxxx|---|xx|-------
+ |b||||xxx|---|xxd-------
+ -----|xxx|---|xx|-------
+ -----|xxx|---|xx||||----
+ -----bxxxxxxxxxxxxx|||||
+ ||||||xxxxxxxxxxxxxxxxx-
+ -xxxxxxx|a||||a|xxxxxxxx
+ *xxxxxxx|------|xx|k||||
+||||c^xxxa------axx|-----
+ -----|xx|------|xx|-----
+ -----|xx|------|xx|-----
+ -----|xx|||----|xx|-----
+ L----|-xxx|--|xxx-|----S
+ ---------*|--|*---------
