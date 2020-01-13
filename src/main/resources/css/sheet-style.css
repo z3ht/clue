@@ -1,0 +1,23 @@
+@font-face {
+    font-family: 'Bebas Neue';
+    src: url('fonts/BebasNeue.ttf');
+}
+
+#sheet {
+    -fx-background-image: url("imgs/game-sheet.jpeg");
+    -fx-background-size: stretch;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0)
+}
+
+.label {
+    -fx-font-family: 'Bebas Neue';
+    -fx-text-fill: #444444;
+    -fx-font-weight: bold;
+}
+
+.title {}
+
+.value {}
+
+
+

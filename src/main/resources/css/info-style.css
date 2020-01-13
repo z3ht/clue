@@ -1,0 +1,47 @@
+@font-face {
+    font-family: 'Marlboro';
+    src: url('fonts/Marlboro.ttf');
+}
+
+#info {
+    -fx-background-color: #ffdc91;
+    -fx-border-color: #deb153;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
+}
+
+#info-text-pane {
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #fff0cf;
+    -fx-effect: innershadow(three-pass-box, #deb153, 6, 0, 0, 0);
+}
+
+#info-text {
+    -fx-font-size: 16;
+    -fx-font-family: "Marlboro";
+}
+
+.info-button {
+    -fx-border-radius: 30 30 30 30;
+    -fx-background-radius: 30 30 30 30;
+    -fx-background-size: stretch;
+    -fx-background-color: #d6c092;
+}
+
+#help {
+    -fx-background-image: url('imgs/help.png');
+}
+
+#settings {
+    -fx-background-image: url('imgs/settings.png');
+}
+
+.action-button {
+    -fx-background-color: #d6c092;
+    -fx-border-radius: 5 5 5 5;
+    -fx-background-radius: 5 5 5 5;
+    -fx-effect: dropshadow(three-pass-box, #4b4029, 2, 0, 0, 0);
+    -fx-border-width: 1;
+    -fx-font-size: 20;
+}
