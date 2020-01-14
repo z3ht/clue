@@ -1,14 +1,9 @@
 package mines.zinno.clue;
 
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import mines.zinno.clue.layouts.Board;
-import mines.zinno.clue.layouts.ClueBoard;
-import mines.zinno.clue.layouts.Sheet;
-import mines.zinno.clue.logic.character.ComputerCharacter;
-import mines.zinno.clue.logic.character.PlayerCharacter;
+import javafx.stage.WindowEvent;
+import mines.zinno.clue.controllers.ClueController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 
@@ -22,24 +17,8 @@ public class Game extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private PlayerCharacter player;
-    private List<ComputerCharacter> computers;
-
-    @FXML
-    private ClueBoard board;
-
-    @FXML
-    private Sheet suspects;
-
-    @FXML
-    private Sheet weapons;
-
-    @FXML
-    private Sheet rooms;
-
-    @FXML
-    private javafx.scene.control.Label infoLabel;
-
+    private ClueController controller;
+    private List<Character> characters;
 
     public void start(Stage primaryStage) throws IOException {
         LOGGER.log(Level.INFO, "Clue Game Started");
@@ -48,51 +27,41 @@ public class Game extends Application {
 
         LOGGER.log(Level.INFO, "Stage populated");
 
+        primaryStage.setOnShown(this::startGame);
+
         primaryStage.show();
 
         LOGGER.log(Level.INFO, "Stage shown");
+    }
+
+    private void startGame(WindowEvent event) {
+        this.controller.getSuspectsSheet().crossOut(2);
     }
 
     public static Logger getLOGGER() {
         return LOGGER;
     }
 
-    public Sheet getSuspectsSheet() {
-        return suspects;
+    public ClueController getController() {
+        return controller;
     }
 
-    public Sheet getWeaponsSheet() {
-        return weapons;
-    }
-
-    public Sheet getRoomsSheet() {
-        return rooms;
-    }
-
-    public Label getInfoLabel() {
-        return infoLabel;
-    }
-
-    public ClueBoard getBoard() {
-        return board;
-    }
-
-    public PlayerCharacter getPlayer() {
-        return player;
-    }
-
-    public List<ComputerCharacter> getComputers() {
-        return computers;
+    public List<Character> getCharacters() {
+        return characters;
     }
 
     private void populateStage(Stage stage) throws IOException {
-        Parent fxmlLoader = FXMLLoader.load(Object.class.getResource("/fxml/Clue.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Object.class.getResource("/fxml/Clue.fxml"));
 
-        Scene scene = new Scene(fxmlLoader, 1400, 900);
+        Parent root = fxmlLoader.load();
+
+        this.controller = fxmlLoader.getController();
+
+        Scene scene = new Scene(root, 1400, 900);
 
         stage.setTitle("Clue");
+        stage.setResizable(false);
         stage.setScene(scene);
-        stage.show();
     }
 
     public static void main(String[] args) {
