@@ -10,7 +10,6 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.stage.Stage;
-import mines.zinno.clue.sheet.Sheet;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -62,11 +61,11 @@ public class BasicApp extends Application {
         infoGrid.getRowConstraints().add(new RowConstraints(25*SCALE-PADDING));
         infoGrid.getRowConstraints().add(new RowConstraints(15*SCALE-PADDING));
 
-        GridPane weaponsSheet = new Sheet("Weapons", readCSV(this.getClass().getResource("weapons.csv").getPath()), 25);
-        weaponsSheet.setPadding(new Insets(PADDING));
-        weaponsSheet.setPrefSize(50*SCALE, 25*SCALE);
-        weaponsSheet.setStyle("-fx-background-color: #2200ff;");
-        infoGrid.add(weaponsSheet, 0, 0);
+//        GridPane weaponsSheet = new Sheet("Weapons", readCSV(this.getClass().getResource("weapons.csv").getPath()), 25);
+//        weaponsSheet.setPadding(new Insets(PADDING));
+//        weaponsSheet.setPrefSize(50*SCALE, 25*SCALE);
+//        weaponsSheet.setStyle("-fx-background-color: #2200ff;");
+//        infoGrid.add(weaponsSheet, 0, 0);
 
         GridPane roomsSheet = new GridPane();
         roomsSheet.setPadding(new Insets(PADDING));

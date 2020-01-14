@@ -1,29 +1,20 @@
 package mines.zinno.clue;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.Label;
 import mines.zinno.clue.layouts.Board;
+import mines.zinno.clue.layouts.ClueBoard;
+import mines.zinno.clue.layouts.Sheet;
 import mines.zinno.clue.logic.character.ComputerCharacter;
 import mines.zinno.clue.logic.character.PlayerCharacter;
 import javafx.application.Application;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.stage.Stage;
-import javafx.util.Pair;
-import mines.zinno.clue.sheet.Sheet;
 
-import java.awt.*;
-import java.io.File;
-import java.io.FileNotFoundException;
+import javafx.stage.Stage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,22 +22,24 @@ public class Game extends Application {
 
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private static final Dimension SIZE = new Dimension(140, 90);
-    private static final Pair<Double, Double> SCALE = new Pair<Double, Double>(10.0, 10.0);
-    private static final double PADDING = 10;
-
-    private static final double PRIMARY_DIVIDER = 0.7;
-    private static final double SHEET_HEIGHT = 0.26;
-    private static final int ROW_SIZE = 22;
-
-    private Board board;
-
-    private Sheet weaponsSheet;
-    private Sheet roomsSheet;
-    private Sheet suspectsSheet;
-
     private PlayerCharacter player;
     private List<ComputerCharacter> computers;
+
+    @FXML
+    private ClueBoard board;
+
+    @FXML
+    private Sheet suspects;
+
+    @FXML
+    private Sheet weapons;
+
+    @FXML
+    private Sheet rooms;
+
+    @FXML
+    private javafx.scene.control.Label infoLabel;
+
 
     public void start(Stage primaryStage) throws IOException {
         LOGGER.log(Level.INFO, "Clue Game Started");
@@ -64,20 +57,24 @@ public class Game extends Application {
         return LOGGER;
     }
 
-    public Board getBoard() {
-        return board;
+    public Sheet getSuspectsSheet() {
+        return suspects;
     }
 
     public Sheet getWeaponsSheet() {
-        return weaponsSheet;
+        return weapons;
     }
 
     public Sheet getRoomsSheet() {
-        return roomsSheet;
+        return rooms;
     }
 
-    public Sheet getSuspectsSheet() {
-        return suspectsSheet;
+    public Label getInfoLabel() {
+        return infoLabel;
+    }
+
+    public ClueBoard getBoard() {
+        return board;
     }
 
     public PlayerCharacter getPlayer() {
@@ -89,11 +86,9 @@ public class Game extends Application {
     }
 
     private void populateStage(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Object.class.getResource("/fxml/Clue.fxml"));
+        Parent fxmlLoader = FXMLLoader.load(Object.class.getResource("/fxml/Clue.fxml"));
 
-        Scene scene = new Scene(root, 1400, 900);
-
-        root.getChildrenUnmodifiable();
+        Scene scene = new Scene(fxmlLoader, 1400, 900);
 
         stage.setTitle("Clue");
         stage.setScene(scene);

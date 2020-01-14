@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -8,7 +7,9 @@
 <?import javafx.scene.text.*?>
 
 <?import mines.zinno.clue.layouts.PredictCheck?>
-<AnchorPane id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<?import mines.zinno.clue.layouts.Sheet?>
+<?import mines.zinno.clue.layouts.ClueBoard?>
+<AnchorPane fx:controller="mines.zinno.clue.Game" id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
     <GridPane hgap="5.0" layoutX="0.0" layoutY="0.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1400.0">
       <children>
@@ -18,7 +19,7 @@
               <children>
                 <GridPane maxHeight="-1.0" minHeight="-1.0" prefHeight="-1.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                   <children>
-                    <Pane id="suspects" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Sheet fx:id="suspects" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <GridPane hgap="3.0" vgap="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                       <children>
                         <PredictCheck prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -99,7 +100,7 @@
                 </GridPane>
                 <GridPane maxHeight="-1.0" minHeight="-1.0" prefHeight="-1.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
                   <children>
-                    <Pane id="weapons" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Sheet fx:id="weapons" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <GridPane hgap="3.0" padding="$x1" vgap="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                       <children>
                         <PredictCheck prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -172,7 +173,7 @@
                 </GridPane>
                 <GridPane maxHeight="-1.0" minHeight="-1.0" prefHeight="-1.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
                   <children>
-                    <Pane id="rooms" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Sheet fx:id="rooms" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                     <GridPane hgap="3.0" padding="$x1" vgap="3.0" GridPane.columnIndex="3" GridPane.rowIndex="1">
                       <children>
                         <PredictCheck prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -283,7 +284,7 @@
                   <children>
                     <GridPane id="info-text-pane" GridPane.columnIndex="0" GridPane.rowIndex="0">
                       <children>
-                        <Label id="info-text" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" prefHeight="100000.0" prefWidth="100000.0" text="I am testing this feature it is a test here I am testing it" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="infoLabel" id="info-text" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" prefHeight="100000.0" prefWidth="100000.0" text="I am testing this feature it is a test here I am testing it" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
                           <font>
                             <Font name="System Bold" size="13.0" />
                           </font>
@@ -343,7 +344,7 @@
         </GridPane>
         <GridPane id="board-background" GridPane.columnIndex="0" GridPane.rowIndex="0">
           <children>
-            <Pane id="board" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ClueBoard fx:id="board" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="508.0" minWidth="0.0" prefWidth="32.0" />
