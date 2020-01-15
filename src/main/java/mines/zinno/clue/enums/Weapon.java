@@ -1,6 +1,6 @@
 package mines.zinno.clue.enums;
 
-public enum Weapons {
+public enum Weapon {
 
     KNIFE("Knife", 1),
     CANDLESTICK("Candlestick", 2),
@@ -13,7 +13,7 @@ public enum Weapons {
     private int id;
     private String name;
 
-    Weapons(String name, int id) {
+    Weapon(String name, int id) {
         this.id = id;
         this.name = name;
     }

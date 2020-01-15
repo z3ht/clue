@@ -1,6 +1,6 @@
 package mines.zinno.clue.enums;
 
-public enum  Rooms {
+public enum Room {
 
     HALL("Hall", 1),
     LOUNGE("Lounge", 2),
@@ -10,13 +10,14 @@ public enum  Rooms {
     CONSERVATORY("Conservatory", 6),
     BILLIARD_ROOM("Billiard Room", 7),
     LIBRARY("Library", 8),
-    STUDY("Study", 9)
+    STUDY("Study", 9),
+    EXIT("Exit", 10)
     ;
 
     private int id;
     private String name;
 
-    Rooms(String name, int id) {
+    Room(String name, int id) {
         this.id = id;
         this.name = name;
     }

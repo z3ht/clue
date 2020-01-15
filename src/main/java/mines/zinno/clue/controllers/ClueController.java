@@ -2,7 +2,7 @@ package mines.zinno.clue.controllers;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import mines.zinno.clue.layouts.ClueBoard;
+import mines.zinno.clue.layouts.board.ClueBoard;
 import mines.zinno.clue.layouts.Sheet;
 
 public class ClueController {

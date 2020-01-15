@@ -1,6 +1,6 @@
 package mines.zinno.clue.enums;
 
-public enum Suspects {
+public enum Suspect {
 
     COL_MUSTARD("Col. Mustard", 1),
     PROF_PLUM("Prof. Plum", 2),
@@ -13,7 +13,7 @@ public enum Suspects {
     private int id;
     private String name;
 
-    Suspects(String name, int id) {
+    Suspect(String name, int id) {
         this.id = id;
         this.name = name;
     }

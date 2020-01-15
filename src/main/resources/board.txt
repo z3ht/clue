@@ -1,25 +1,25 @@
- K-----|x-|----|-*|-----C
- ------|xx|----|xx|------
- ------|xx|----|xx|------
-||||||s}xx|----|xx|------
- -xxxxxxxxh----|xx|------
- *xxxxxxxx|----|xxl{||||||
- ||||||xxx||hh||xxxxxxxx-
- ------|xxxxxxxxxxxxxxxx*
- ------ixx|eee|xxxxxxxxx-
- ------|xx|---|xx|d||||||
- -||i||xxx|---|xx|-------
- -xxxxxxxx|---|xx|-------
- |b||||xxx|---|xxd-------
- -----|xxx|---|xx|-------
- -----|xxx|---|xx||||----
- -----bxxxxxxxxxxxxx|||||
- ||||||xxxxxxxxxxxxxxxxx-
- -xxxxxxx|a||||a|xxxxxxxx
- *xxxxxxx|------|xx|k||||
-||||c^xxxa------axx|-----
- -----|xx|------|xx|-----
- -----|xx|------|xx|-----
- -----|xx|||----|xx|-----
- L----|-xxx|--|xxx-|----S
- ---------*|--|*---------
+s s s s s s . x . . h h h h . . * . l l l l l l
+s s s s s s . x x . h h h h . x x . l l l l l l
+s s s s s s . x x . h h h h . x x . l l l l l l
+K . . . . . s|x x . h h h h . x x . l l l l l l
+. x x x x x x x x h-h h h h . x x . l l l l l l
+* x x x x x x x x . h h h h . x x l|. . . . . C
+. . . . . . x x x . . h|h|. . x x x x x x x x .
+i i i i i i . x x x x x x x x x x x x x x x x *
+i i i i i i i-x x . e|e|e|. x x x x x x x x x .
+i i i i i i . x x . e e e . x x . d|. . . . . .
+. . . i|. . x x x . e e e . x x . d d d d d d d
+. x x x x x x x x . e e e . x x . d d d d d d d
+. b|. . . . x x x . . . . . x x d-d d d d d d d
+b b b b b . x x x . . . . . x x . d d d d d d d
+b b b b b . x x x . . . . . x x . . . . d d d d
+b b b b b b-x x x x x x x x x x x x x . . . . .
+. . . . . . x x x x x x x x x x x x x x x x x -
+. x x x x x x x . a|. . . . a|. x x x x x x x x
+* x x x x x x x . a a a a a a . x x . k|. . . .
+. L . . c-x x x a-a a a a a a a-x x . k k k k k
+c c c c c . x x . a a a a a a . x x . k k k k k
+c c c c c . x x . a a a a a a . x x . k k k k k
+c c c c c . x x . . . a a a a . x x . k k k k k
+c c c c c . . x x x . a a . x x x . S k k k k k
+. . . . . . . . . * . . . . * . . . . . . . . .
