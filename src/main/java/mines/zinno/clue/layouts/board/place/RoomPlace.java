@@ -8,29 +8,22 @@ public class RoomPlace extends Place {
     private final Room room;
 
     public RoomPlace(Room room) {
-        this(room ,true, 1);
+        this(DirectionKey.ALL, room ,true, 0);
     }
 
-    public RoomPlace(Room room, int moveCost) {
-        this(room,true, moveCost);
-    }
-
-    public RoomPlace(Room room, boolean isReachable) {
-        this(room, isReachable, 1);
-    }
-
-    public RoomPlace(Room room, boolean isReachable, int moveCost) {
-        super(DirectionKey.ALL, isReachable, moveCost);
+    public RoomPlace(DirectionKey direction, Room room, boolean isReachable, int moveCost) {
+        super(direction, isReachable, moveCost);
 
         this.room = room;
     }
 
-    public Room getRoom() {
-        return room;
+    @Override
+    public boolean isOccupied() {
+        return false;
     }
 
-    public DirectionKey getDirection() {
-        return
+    public Room getRoom() {
+        return room;
     }
 
 }

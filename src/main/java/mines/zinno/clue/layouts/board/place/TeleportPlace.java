@@ -1,5 +1,6 @@
 package mines.zinno.clue.layouts.board.place;
 
+import mines.zinno.clue.layouts.board.resources.DirectionKey;
 import mines.zinno.clue.layouts.board.resources.Location;
 
 public class TeleportPlace extends Place {
@@ -10,16 +11,8 @@ public class TeleportPlace extends Place {
         this(teleportPlaceCoordinate,true, 1);
     }
 
-    public TeleportPlace(Location teleportPlaceCoordinate, int moveCost) {
-        this(teleportPlaceCoordinate,true, moveCost);
-    }
-
-    public TeleportPlace(Location teleportPlaceCoordinate, boolean isReachable) {
-        this(teleportPlaceCoordinate ,isReachable, 1);
-    }
-
     public TeleportPlace(Location teleportPlaceCoordinate, boolean isReachable, int moveCost) {
-        super(isReachable, moveCost);
+        super(DirectionKey.ALL, isReachable, moveCost);
 
         this.teleportPlaceCoordinate = teleportPlaceCoordinate;
     }

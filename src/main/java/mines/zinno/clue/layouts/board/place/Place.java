@@ -15,14 +15,6 @@ public class Place extends Rectangle {
         this(DirectionKey.ALL,true, 1);
     }
 
-    public Place(int moveCost) {
-        this(DirectionKey.ALL,true, moveCost);
-    }
-
-    public Place(boolean isReachable) {
-        this(DirectionKey.ALL, isReachable, 1);
-    }
-
     public Place(DirectionKey direction, boolean isReachable, int moveCost) {
         this.direction = direction;
         this.isReachable = isReachable;
