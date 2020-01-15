@@ -1,23 +1,20 @@
 package mines.zinno.clue.layouts.board.place;
 
-import mines.zinno.clue.layouts.board.resources.DirectionKey;
+import mines.zinno.clue.enums.Room;
 import mines.zinno.clue.layouts.board.resources.Location;
 
-public class TeleportPlace extends Place {
+public class TeleportPlace extends RoomPlace implements Teleportable {
 
-    private final Location teleportPlaceCoordinate;
-
-    public TeleportPlace(Location teleportPlaceCoordinate) {
-        this(teleportPlaceCoordinate,true, 1);
+    public TeleportPlace(Room room) {
+        this(room, true, 1);
     }
 
-    public TeleportPlace(Location teleportPlaceCoordinate, boolean isReachable, int moveCost) {
-        super(DirectionKey.ALL, isReachable, moveCost);
-
-        this.teleportPlaceCoordinate = teleportPlaceCoordinate;
+    public TeleportPlace(Room room, boolean isReachable, int moveCost) {
+        super(room, isReachable, moveCost);
     }
 
-    public Location getTeleportPlaceCoordinate() {
-        return teleportPlaceCoordinate;
+    @Override
+    public Location teleportTo() {
+        return super.getRoom().getCenter();
     }
 }

@@ -40,4 +40,7 @@ public enum Room {
         return name;
     }
 
+    public Location getCenter() {
+        return center;
+    }
 }

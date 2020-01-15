@@ -1,24 +1,30 @@
 package mines.zinno.clue.layouts.board.place;
 
 import javafx.scene.shape.Rectangle;
-import mines.zinno.clue.layouts.board.resources.DirectionKey;
 
 public class Place extends Rectangle {
 
-    private final DirectionKey direction;
+    private Place[] adjacent;
     private final boolean isReachable;
     private final int moveCost;
 
     private boolean isOccupied;
 
     public Place() {
-        this(DirectionKey.ALL,true, 1);
+        this(true, 1);
     }
 
-    public Place(DirectionKey direction, boolean isReachable, int moveCost) {
-        this.direction = direction;
+    public Place(boolean isReachable, int moveCost) {
         this.isReachable = isReachable;
         this.moveCost = moveCost;
+    }
+
+    public void addHighlight(String syleClassName) {
+        this.getStyleClass().add(syleClassName);
+    }
+
+    public void delHighlight(String styleClassName) {
+        this.getStyleClass().remove(styleClassName);
     }
 
     public void setOccupied(boolean occupied) {
@@ -37,7 +43,11 @@ public class Place extends Rectangle {
         return moveCost;
     }
 
-    public DirectionKey getDirection() {
-        return direction;
+    public void setAdjacent(Place[] adjacent) {
+        this.adjacent = adjacent;
+    }
+
+    public Place[] getAdjacent() {
+        return adjacent;
     }
 }

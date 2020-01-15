@@ -8,10 +8,6 @@ public class ClueBoard extends Board<Place> {
         super();
     }
 
-    public Place[] getAdjacent(Place place) {
-        return null;
-    }
-
     @Override
     protected void setup() {
 
