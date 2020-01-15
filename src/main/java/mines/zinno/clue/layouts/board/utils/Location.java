@@ -1,4 +1,4 @@
-package mines.zinno.clue.layouts.board.resources;
+package mines.zinno.clue.layouts.board.utils;
 
 public class Location {
 

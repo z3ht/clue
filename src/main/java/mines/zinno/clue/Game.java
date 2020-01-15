@@ -35,6 +35,7 @@ public class Game extends Application {
     }
 
     private void startGame(WindowEvent event) {
+        this.controller.getBoard().format();
         this.controller.getSuspectsSheet().crossOut(2);
     }
 
@@ -58,7 +59,7 @@ public class Game extends Application {
         this.controller = fxmlLoader.getController();
 
         Scene scene = new Scene(root, 1400, 900);
-
+        
         stage.setTitle("Clue");
         stage.setResizable(false);
         stage.setScene(scene);

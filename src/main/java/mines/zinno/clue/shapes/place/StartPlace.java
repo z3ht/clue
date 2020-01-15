@@ -1,4 +1,6 @@
-package mines.zinno.clue.layouts.board.place;
+package mines.zinno.clue.shapes.place;
+
+import mines.zinno.clue.layouts.board.enums.DirectionKey;
 
 public class StartPlace extends Place {
 
@@ -7,7 +9,7 @@ public class StartPlace extends Place {
     }
 
     public StartPlace(boolean isReachable, int moveCost) {
-        super(isReachable, moveCost);
+        super(DirectionKey.ALL, isReachable, moveCost);
     }
 
 }

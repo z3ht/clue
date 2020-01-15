@@ -5,6 +5,8 @@
 }
 
 .marked-check {
+    -fx-padding: -10;
+    -fx-alignment: center;
     -fx-background-image: url("imgs/x.png");
     -fx-background-size: stretch;
 }
