@@ -1,7 +1,6 @@
 package mines.zinno.clue.layouts.board;
 
 import mines.zinno.clue.enums.Room;
-import mines.zinno.clue.layouts.board.place.*;
 import mines.zinno.clue.layouts.board.enums.DirectionKey;
 import mines.zinno.clue.layouts.board.utils.Location;
 import mines.zinno.clue.layouts.board.enums.PlaceKey;
