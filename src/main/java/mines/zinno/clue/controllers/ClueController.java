@@ -42,9 +42,9 @@ public class ClueController implements Initializable {
     private Label infoLabel;
     
     public ClueController() {
-        this.settingsDialogue = new Dialogue("Settings", ClueController.class.getResource("/fxml/Settings.fxml"), new Dimension(415, 500));
+        this.settingsDialogue = new Dialogue<SettingsController>("Settings", ClueController.class.getResource("/fxml/Settings.fxml"), new Dimension(415, 500));
         this.helpDialogue = new Dialogue("Help", ClueController.class.getResource("/fxml/Help.fxml"), new Dimension(450, 150));
-        this.guessDialogue = new Dialogue("Guess", ClueController.class.getResource("/fxml/Guess.fxml"), new Dimension(600, 250));
+        this.guessDialogue = new Dialogue<GuessController>("Guess", ClueController.class.getResource("/fxml/Guess.fxml"), new Dimension(600, 250));
     }
 
     public Sheet getSuspectsSheet() {
