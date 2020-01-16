@@ -3,7 +3,7 @@ package mines.zinno.clue.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuButton;
 
-public class OptionsController {
+public class SettingsController {
 
     @FXML
     private MenuButton character;

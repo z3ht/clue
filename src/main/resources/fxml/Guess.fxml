@@ -11,7 +11,7 @@
 
 <AnchorPane fx:controller="mines.zinno.clue.controllers.GuessController" id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <GridPane layoutX="-15.0" layoutY="-1.0" prefHeight="250.0" prefWidth="600.0000999999975" vgap="10.0">
+    <GridPane layoutX="-15.0" layoutY="-1.0" prefHeight="250.0" prefWidth="600" vgap="10.0">
       <children>
         <GridPane hgap="20.0" vgap="0.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
           <children>
