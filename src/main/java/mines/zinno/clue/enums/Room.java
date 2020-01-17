@@ -1,5 +1,7 @@
 package mines.zinno.clue.enums;
 
+import mines.zinno.clue.control.menu.SelectableMenu;
+import mines.zinno.clue.control.menu.ValueMenuItem;
 import mines.zinno.clue.layouts.board.utils.Location;
 
 public enum Room {
@@ -44,6 +46,10 @@ public enum Room {
         return center;
     }
 
+    public ValueMenuItem<Room> getMenuItem() {
+        return new ValueMenuItem<>(name, this);
+    }
+    
     public static Room getRoom(char key) {
         for(Room room : Room.values()) {
             if(room.getKey() == key || (char) (key + 32) == room.getKey())

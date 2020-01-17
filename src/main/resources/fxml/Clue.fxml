@@ -313,7 +313,7 @@
                   </rowConstraints>
                 </GridPane>
                 <Button id="roll" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" styleClass="action-button" text="Roll" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
-                <Button id="guess" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" styleClass="action-button" text="Guess" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
+                <Button fx:id="guess" id="guess" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" styleClass="action-button" text="Guess" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" GridPane.valignment="BOTTOM" />
                 <Button id="continue" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" styleClass="action-button" text="Continue" GridPane.columnIndex="0" GridPane.halignment="RIGHT" GridPane.rowIndex="2" GridPane.valignment="TOP" />
                 <Button id="skip" mnemonicParsing="false" prefHeight="50.0" prefWidth="150.0" styleClass="action-button" text="Skip" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" GridPane.valignment="TOP" />
               </children>

@@ -1,5 +1,8 @@
 package mines.zinno.clue.enums;
 
+import mines.zinno.clue.control.menu.SelectableMenu;
+import mines.zinno.clue.control.menu.ValueMenuItem;
+
 public enum Weapon {
 
     KNIFE("Knife", 1),
@@ -24,5 +27,9 @@ public enum Weapon {
 
     public String getName() {
         return name;
+    }
+    
+    public ValueMenuItem<Weapon> getMenuItem() {
+        return new ValueMenuItem<>(name, this);
     }
 }

@@ -4,7 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import mines.zinno.clue.dialogues.Dialogue;
+import javafx.scene.input.MouseEvent;
+import mines.zinno.clue.Dialogue;
 import mines.zinno.clue.layouts.board.ClueBoard;
 import mines.zinno.clue.layouts.Sheet;
 
@@ -81,6 +82,8 @@ public class ClueController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
+        this.settings.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.settingsDialogue.getStage().show());
+        this.help.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.helpDialogue.getStage().show());
+        this.guess.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.guessDialogue.getStage().show());
     }
 }

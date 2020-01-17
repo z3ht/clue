@@ -1,5 +1,8 @@
 package mines.zinno.clue.enums;
 
+import mines.zinno.clue.control.menu.SelectableMenu;
+import mines.zinno.clue.control.menu.ValueMenuItem;
+
 public enum Suspect {
 
     COL_MUSTARD("Col. Mustard", 1),
@@ -25,4 +28,9 @@ public enum Suspect {
     public String getName() {
         return name;
     }
+
+    public ValueMenuItem<Suspect> getMenuItem() {
+        return new ValueMenuItem<>(name, this);
+    }
+    
 }

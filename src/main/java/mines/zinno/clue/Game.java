@@ -26,6 +26,10 @@ public class Game extends Application {
         populateStage(primaryStage);
 
         LOGGER.log(Level.INFO, "Stage populated");
+        
+        addListeners(primaryStage);
+        
+        LOGGER.log(Level.INFO, "Listeners added");
 
         primaryStage.setOnShown(this::startGame);
 
@@ -63,6 +67,16 @@ public class Game extends Application {
         stage.setTitle("Clue");
         stage.setResizable(false);
         stage.setScene(scene);
+    }
+    
+    private void addListeners(Stage stage) {
+        
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            this.getController().getSettingsDialogue().getStage().close();
+            this.getController().getHelpDialogue().getStage().close();
+            this.getController().getGuessDialogue().getStage().close();
+        });
+        
     }
 
     public static void main(String[] args) {

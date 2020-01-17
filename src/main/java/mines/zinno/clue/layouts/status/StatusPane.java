@@ -1,4 +1,4 @@
-package mines.zinno.clue.layouts;
+package mines.zinno.clue.layouts.status;
 
 import javafx.scene.layout.Pane;
 
