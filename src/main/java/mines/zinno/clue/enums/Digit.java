@@ -1,6 +1,5 @@
 package mines.zinno.clue.enums;
 
-import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
 public enum Digit {
@@ -19,6 +18,11 @@ public enum Digit {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     public ValueMenuItem<Digit> getMenuItem() {

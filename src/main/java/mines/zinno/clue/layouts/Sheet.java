@@ -16,7 +16,7 @@ public class Sheet extends Pane {
         image.setFitWidth(WIDTH);
 
         image.setX(0);
-        image.setY(SEPARATION * (value - (0.5 + (HEIGHT_COVER/2))));
+        image.setY(SEPARATION * (value - (-0.5 + (HEIGHT_COVER/2))));
 
         this.getChildren().add(image);
     }

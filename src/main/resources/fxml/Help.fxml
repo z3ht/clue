@@ -46,6 +46,6 @@
     </GridPane>
   </children>
   <stylesheets>
-    <URL value="@../css/help-style.css" />
+    <URL value="@../css/dialogue-style.css" />
   </stylesheets>
 </AnchorPane>

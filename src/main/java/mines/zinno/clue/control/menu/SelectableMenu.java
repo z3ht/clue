@@ -46,7 +46,7 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
     public void setSelectedItem(ValueMenuItem<T> selectedItem) {
         for(MenuItem menuItem : this.getItems())
             menuItem.setGraphic(null);
-        this.selectedItem = null;
+        this.selectedItem = selectedItem;
         if(selectedItem == null)
             return;
         try {
@@ -54,12 +54,10 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
             imageView.setFitWidth(15);
             imageView.setFitHeight(15);
             selectedItem.setGraphic(imageView);
-            System.out.println(selectedItem.getGraphic());
         } catch (MalformedURLException | URISyntaxException e) {
             Game.getLOGGER().log(Level.WARNING, "The check.png file could not be found");
             e.printStackTrace();
         }
-        this.selectedItem = selectedItem;
     }
 
     public boolean isLocked() {

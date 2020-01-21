@@ -8,7 +8,6 @@ import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.enums.Difficulty;
 import mines.zinno.clue.enums.Digit;
 import mines.zinno.clue.enums.Suspect;
-import mines.zinno.clue.shapes.character.Character;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -27,20 +26,26 @@ public class SettingsController implements Initializable {
     @FXML
     private Button begin;
     
-    public MenuButton getCharacter() {
+    public SelectableMenu<Suspect> getCharacter() {
         return character;
     }
 
-    public MenuButton getDifficulty() {
+    public SelectableMenu<Difficulty> getDifficulty() {
         return difficulty;
     }
 
-    public MenuButton getComputers() {
+    public SelectableMenu<Digit> getComputers() {
         return computers;
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        
+        for(Digit digit : Digit.values())
+            this.computers.getItems().add(digit.getMenuItem());
+        this.computers.setSelectedItem(Digit.FIVE);
+        this.computers.setLocked(true);
+        
         for(Difficulty difficulty : Difficulty.values())
             this.difficulty.getItems().add(difficulty.getMenuItem());
         this.difficulty.setSelectedItem(Difficulty.REGULAR);
@@ -48,8 +53,5 @@ public class SettingsController implements Initializable {
 
         for(Suspect character : Suspect.values())
             this.character.getItems().add(character.getMenuItem());
-        
-        for(Digit digit : Digit.values())
-            this.computers.getItems().add(digit.getMenuItem());
     }
 }

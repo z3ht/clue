@@ -11,8 +11,5 @@ public class StatusController {
     public StatusPane getStatusPane() {
         return statusPane;
     }
-
-    public void setStatusPane(StatusPane statusPane) {
-        this.statusPane = statusPane;
-    }
+    
 }

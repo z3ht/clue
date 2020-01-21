@@ -22,3 +22,13 @@
 .guess-option {
     -fx-alignment: center;
 }
+
+.alert {
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+    -fx-font-size: 15;
+}
+
+.action {
+    -fx-font-size: 15;
+}

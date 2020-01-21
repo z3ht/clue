@@ -5,7 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import mines.zinno.clue.Dialogue;
+import mines.zinno.clue.stages.dialogue.Dialogue;
 import mines.zinno.clue.layouts.board.ClueBoard;
 import mines.zinno.clue.layouts.Sheet;
 
@@ -17,7 +17,7 @@ public class ClueController implements Initializable {
     
     @FXML
     private Button settings;
-    private Dialogue settingsDialogue;
+    private Dialogue<SettingsController> settingsDialogue;
     
     @FXML
     private Button help;
@@ -25,7 +25,7 @@ public class ClueController implements Initializable {
     
     @FXML
     private Button guess;
-    private Dialogue guessDialogue;
+    private Dialogue<GuessController> guessDialogue;
     
     @FXML
     private ClueBoard board;
@@ -43,9 +43,9 @@ public class ClueController implements Initializable {
     private Label infoLabel;
     
     public ClueController() {
-        this.settingsDialogue = new Dialogue<SettingsController>("Settings", ClueController.class.getResource("/fxml/Settings.fxml"), new Dimension(415, 500));
+        this.settingsDialogue = new Dialogue<>("Settings", ClueController.class.getResource("/fxml/Settings.fxml"), new Dimension(415, 500));
         this.helpDialogue = new Dialogue("Help", ClueController.class.getResource("/fxml/Help.fxml"), new Dimension(450, 150));
-        this.guessDialogue = new Dialogue<GuessController>("Guess", ClueController.class.getResource("/fxml/Guess.fxml"), new Dimension(600, 250));
+        this.guessDialogue = new Dialogue<>("Guess", ClueController.class.getResource("/fxml/Guess.fxml"), new Dimension(600, 250));
     }
 
     public Sheet getSuspectsSheet() {
@@ -64,7 +64,7 @@ public class ClueController implements Initializable {
         return infoLabel;
     }
 
-    public Dialogue getSettingsDialogue() {
+    public Dialogue<SettingsController> getSettingsDialogue() {
         return settingsDialogue;
     }
 
@@ -72,7 +72,7 @@ public class ClueController implements Initializable {
         return helpDialogue;
     }
 
-    public Dialogue getGuessDialogue() {
+    public Dialogue<GuessController> getGuessDialogue() {
         return guessDialogue;
     }
 
@@ -82,8 +82,8 @@ public class ClueController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        this.settings.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.settingsDialogue.getStage().show());
-        this.help.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.helpDialogue.getStage().show());
-        this.guess.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.guessDialogue.getStage().show());
+        this.settings.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.settingsDialogue.show());
+        this.help.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.helpDialogue.show());
+        this.guess.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.guessDialogue.show());
     }
 }

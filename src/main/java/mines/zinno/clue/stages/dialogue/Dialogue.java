@@ -1,4 +1,4 @@
-package mines.zinno.clue;
+package mines.zinno.clue.stages.dialogue;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,46 +21,33 @@ import java.net.URL;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-public class Dialogue<T> {
+public class Dialogue<T> extends Stage {
     
-    private String name; 
-    private URL dialogueURL;
-    private Parent root;
     private T controller;
-    private Dimension size;
-    private Stage stage;
+    private Parent root;
+    
+    public Dialogue(String name, URL dialogueURL) {
+        this(name, dialogueURL, new Dimension(200, 200));
+    }
     
     public Dialogue(String name, URL dialogueURL, Dimension size) {
-        this(name, dialogueURL, size, new Stage());
-    }
-    
-    public Dialogue(String name, URL dialogueURL, Dimension size, Stage stage) {
-        this.name = name;
-        this.dialogueURL = dialogueURL;
-        this.size = size;
-        this.stage = stage;
-        
-        initialize();
-        this.stage.setOnShown(event -> addListeners());
-    }
-    
-    private void initialize() {
+        FXMLLoader fxmlLoader = new FXMLLoader(dialogueURL);
         try {
-            FXMLLoader fxmlLoader = new FXMLLoader(dialogueURL);
-
             this.root = fxmlLoader.load();
 
             this.controller = fxmlLoader.getController();
 
-            Scene scene = new Scene(root, size.getWidth(), size.getHeight());
-
-            stage.setTitle(name);
-            stage.setResizable(false);
-            stage.setScene(scene);
+            this.setScene(new Scene(root, size.width, size.getHeight()));
         } catch (IOException e) {
-            Game.getLOGGER().warning("Failed to load FXML file at: " + dialogueURL.toExternalForm());
+            Game.getLOGGER().log(Level.WARNING, "The dialogue could not be found at URL: " + fxmlLoader.getLocation().toExternalForm());
             e.printStackTrace();
         }
+        
+        this.setAlwaysOnTop(true);
+        this.setResizable(false);
+        this.setTitle(name);
+        
+        this.setOnShown(event -> addListeners());
     }
     
     private void applyAllChildren(Parent parent, Consumer<Node> consumer) {
@@ -77,13 +64,13 @@ public class Dialogue<T> {
     }
     
     protected void addListeners() {
-        applyAllChildren(root, node -> {
+        applyAllChildren(this.getScene().getRoot(), node -> {
             if(!(node instanceof Button))
                 return;
             if (!((Button) node).isCancelButton())
                 return;
 
-            node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> stage.close());
+            node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.close());
         });
         
         applyAllChildren(root, node -> {
@@ -117,12 +104,11 @@ public class Dialogue<T> {
         });
     }
 
-    public Stage getStage() {
-        return stage;
-    }
-
     public T getController() {
         return controller;
     }
-    
+
+    public Parent getRoot() {
+        return root;
+    }
 }

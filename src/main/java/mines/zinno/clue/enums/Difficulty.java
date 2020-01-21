@@ -19,6 +19,11 @@ public enum Difficulty {
         return name;
     }
 
+    @Override
+    public String toString() {
+        return getName();
+    }
+
     public ValueMenuItem<Difficulty> getMenuItem() {
         return new ValueMenuItem<>(name, this);
     }

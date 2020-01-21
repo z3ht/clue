@@ -1,6 +1,5 @@
 package mines.zinno.clue.enums;
 
-import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
 public enum Suspect {
@@ -23,6 +22,11 @@ public enum Suspect {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 
     public String getName() {

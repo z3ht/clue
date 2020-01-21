@@ -1,16 +1,15 @@
 package mines.zinno.clue.enums;
 
-import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
 public enum Weapon {
 
-    KNIFE("Knife", 1),
-    CANDLESTICK("Candlestick", 2),
-    REVOLVER("Revolver", 3),
-    ROPE("Rope", 4),
-    LEAD_PIPE("Lead Pipe", 5),
-    WRENCH("Wrench", 6)
+    KNIFE("knife", 1),
+    CANDLESTICK("candlestick", 2),
+    REVOLVER("revolver", 3),
+    ROPE("rope", 4),
+    LEAD_PIPE("lead pipe", 5),
+    WRENCH("wrench", 6)
     ;
 
     private int id;
@@ -27,6 +26,11 @@ public enum Weapon {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
     
     public ValueMenuItem<Weapon> getMenuItem() {
