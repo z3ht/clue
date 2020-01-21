@@ -1,16 +1,17 @@
 package mines.zinno.clue.stages.dialogue;
 
 import mines.zinno.clue.controllers.StatusController;
+import mines.zinno.clue.enums.FXMLURL;
 
 public class StatusDialogue extends Dialogue<StatusController> {
     
     public StatusDialogue(String name) {
-        super(name, Object.class.getResource("/fxml/Status.fxml"));
+        super(name, FXMLURL.STATUS.getUrl());
     }
     
     public void setSize() {
         this.setWidth((int) this.getController().getStatusPane().getPrefWidth());
-        this.setHeight(125 + this.getController().getStatusPane().getPrefHeight());
+        this.setHeight(MIN_SIZE + this.getController().getStatusPane().getPrefHeight());
     }
     
 }

@@ -1,13 +1,11 @@
 package mines.zinno.clue.layouts.board;
 
 import mines.zinno.clue.enums.Room;
+import mines.zinno.clue.enums.TxtStream;
 import mines.zinno.clue.layouts.board.enums.DirectionKey;
 import mines.zinno.clue.layouts.board.utils.Location;
 import mines.zinno.clue.layouts.board.enums.PlaceKey;
 import mines.zinno.clue.shapes.place.*;
-
-import java.io.*;
-import java.util.Scanner;
 
 public class ClueBoard extends Board<Place> {
 
@@ -17,10 +15,7 @@ public class ClueBoard extends Board<Place> {
     }
 
     private void initializeGrid() {
-        InputStream mapStream = ClueBoard.class.getResourceAsStream("/board.txt");
-        Scanner s = new Scanner(mapStream).useDelimiter("\\A");
-        String rawMap = s.hasNext() ? s.next() : "";
-        String[] map = rawMap.split("\\r?\\n");
+        String[] map = TxtStream.PARSE.apply(TxtStream.BOARD.getInputStream());
 
         super.grid = new Place[map.length][map[0].length()/2];
 

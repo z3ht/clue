@@ -5,8 +5,10 @@ import javafx.scene.layout.Pane;
 
 public class Status extends Pane {
     
+    private static String DEFAULT_STYLE_CLASS = "alert";
+    
     public Status(String text) {
-        Label label = generateLabel(text, "alert");
+        Label label = generateLabel(text, DEFAULT_STYLE_CLASS);
         this.getChildren().add(label);
     }
     

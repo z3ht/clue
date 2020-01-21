@@ -2,6 +2,7 @@ package mines.zinno.clue.layouts;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import mines.zinno.clue.enums.ImgURL;
 
 public class Sheet extends Pane {
 
@@ -10,7 +11,7 @@ public class Sheet extends Pane {
     private final static double HEIGHT_COVER = 0.2;
 
     public void crossOut(int value) {
-        ImageView image = new ImageView(Object.class.getResource("/imgs/cross.png").toExternalForm());
+        ImageView image = new ImageView(ImgURL.CROSS.getUrl().toExternalForm());
 
         image.setFitHeight(SEPARATION * HEIGHT_COVER);
         image.setFitWidth(WIDTH);

@@ -5,6 +5,8 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
 import mines.zinno.clue.Game;
+import mines.zinno.clue.enums.ImgURL;
+import mines.zinno.clue.enums.LogMessage;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -49,15 +51,11 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
         this.selectedItem = selectedItem;
         if(selectedItem == null)
             return;
-        try {
-            ImageView imageView = new ImageView(Object.class.getResource("/imgs/check.png").toURI().toURL().toString());
-            imageView.setFitWidth(15);
-            imageView.setFitHeight(15);
-            selectedItem.setGraphic(imageView);
-        } catch (MalformedURLException | URISyntaxException e) {
-            Game.getLOGGER().log(Level.WARNING, "The check.png file could not be found");
-            e.printStackTrace();
-        }
+
+        ImageView imageView = new ImageView(ImgURL.CHECK.getUrl().toExternalForm());
+        imageView.setFitWidth(15);
+        imageView.setFitHeight(15);
+        selectedItem.setGraphic(imageView);
     }
 
     public boolean isLocked() {

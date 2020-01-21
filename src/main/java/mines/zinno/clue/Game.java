@@ -8,23 +8,23 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 
 import javafx.stage.Stage;
+import mines.zinno.clue.enums.FXMLURL;
+import mines.zinno.clue.enums.LogMessage;
 import mines.zinno.clue.layouts.status.Status;
 import mines.zinno.clue.layouts.status.enums.Alert;
-import mines.zinno.clue.runners.ClueRunner;
 import mines.zinno.clue.shapes.character.Character;
-import mines.zinno.clue.shapes.character.Computer;
-import mines.zinno.clue.shapes.character.Player;
 import mines.zinno.clue.stages.dialogue.StatusDialogue;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Game extends Application {
-
-    private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    
+    private static final Dimension SIZE = new Dimension(1400, 900);
+    private static final String TITLE = "Clue";
+    private static final boolean IS_RESIZABLE = false;
     
     private ClueController controller;
     private List<Character> characters;
@@ -33,40 +33,40 @@ public class Game extends Application {
     private int numMoves;
 
     public void start(Stage primaryStage) throws IOException {
-        LOGGER.log(Level.INFO, "Clue Game Started");
+        LogMessage.START.log();
 
         populateStage(primaryStage);
 
-        LOGGER.log(Level.INFO, "Stage populated");
+        LogMessage.STAGE_POPULATED.log();
         
         addListeners(primaryStage);
         primaryStage.setOnShown(this::startGame);
         
-        LOGGER.log(Level.INFO, "Listeners added");
+        LogMessage.LISTENERS_ADDED.log();
 
         primaryStage.show();
 
-        LOGGER.log(Level.INFO, "Stage shown");
+        LogMessage.STAGE_SHOWN.log();
     }
 
     private void startGame(WindowEvent event) {
         this.controller.getBoard().format();
         this.characters = new ArrayList<>();
 
-        StatusDialogue statusDialogue = new StatusDialogue("Welcome");
+        StatusDialogue statusDialogue = new StatusDialogue(Alert.WELCOME.getName());
         statusDialogue.getController().getStatusPane().getStatuses().add(new Status(Alert.WELCOME));
         statusDialogue.setSize();
         statusDialogue.show();
         
         int numComputers = Integer.parseInt(getController().getSettingsDialogue().getController().getComputers().getSelectedItem().getValue().toString());
         
-        characters.add(new Player());
-        for(int i = 0; i < numComputers; i++) {
-            characters.add(new Computer());
-        }
-        
-        this.isPlaying = true;
-        new Thread(new ClueRunner(this)).start();
+//        characters.add(new Player());
+//        for(int i = 0; i < numComputers; i++) {
+//            characters.add(new Computer());
+//        }
+//        
+//        this.isPlaying = true;
+//        new Thread(new ClueRunner(this)).start();
     }
 
     public boolean isPlaying() {
@@ -89,10 +89,6 @@ public class Game extends Application {
         this.numMoves += addAmount;
     }
 
-    public static Logger getLOGGER() {
-        return LOGGER;
-    }
-
     public ClueController getController() {
         return controller;
     }
@@ -102,16 +98,17 @@ public class Game extends Application {
     }
 
     private void populateStage(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Object.class.getResource("/fxml/Clue.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLURL.CLUE.getUrl());
 
         Parent root = fxmlLoader.load();
 
         this.controller = fxmlLoader.getController();
 
-        Scene scene = new Scene(root, 1400, 900);
+        Scene scene = new Scene(root, SIZE.getWidth(), SIZE.getHeight());
+
+        stage.setTitle(TITLE);
+        stage.setResizable(IS_RESIZABLE);
         
-        stage.setTitle("Clue");
-        stage.setResizable(false);
         stage.setScene(scene);
     }
     

@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import mines.zinno.clue.Game;
 import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
+import mines.zinno.clue.enums.LogMessage;
 
 import java.awt.*;
 import java.io.IOException;
@@ -19,15 +20,17 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Consumer;
-import java.util.logging.Level;
 
 public class Dialogue<T> extends Stage {
+    
+    final static int MIN_SIZE = 125;
+    private final static Dimension DEFAULT_SIZE = new Dimension(200, 200);
     
     private T controller;
     private Parent root;
     
     public Dialogue(String name, URL dialogueURL) {
-        this(name, dialogueURL, new Dimension(200, 200));
+        this(name, dialogueURL, DEFAULT_SIZE);
     }
     
     public Dialogue(String name, URL dialogueURL, Dimension size) {
@@ -39,7 +42,7 @@ public class Dialogue<T> extends Stage {
 
             this.setScene(new Scene(root, size.width, size.getHeight()));
         } catch (IOException e) {
-            Game.getLOGGER().log(Level.WARNING, "The dialogue could not be found at URL: " + fxmlLoader.getLocation().toExternalForm());
+            LogMessage.URL_NOT_FOUND.log(dialogueURL.toExternalForm());
             e.printStackTrace();
         }
         
@@ -81,7 +84,7 @@ public class Dialogue<T> extends Stage {
                 try {
                     Desktop.getDesktop().browse(new URI(link.getText()));
                 } catch (IOException | URISyntaxException e) {
-                    Game.getLOGGER().log(Level.WARNING, "Hyperlink could not be opened");
+                    LogMessage.HYPERLINK_NOT_FOUND.log(link);
                 }
             });
         });

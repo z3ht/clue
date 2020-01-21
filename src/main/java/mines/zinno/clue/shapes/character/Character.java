@@ -21,15 +21,17 @@ public abstract class Character extends Circle {
     
     private final Suspect suspect;
     
+    // Items the character is provided with at the start
     private final List<Room> providedRooms;
     private final List<Weapon> providedWeapons;
     private final List<Suspect> providedSuspects;
 
     protected Turn turn;
-    protected int roll;
+    protected int rollNum;
     protected Place curPlace;
     protected List<Place> posMoves = new ArrayList<>();
     
+    // Items the character knows from guessing/being provided with
     protected ObservableList<Room> knownRooms = FXCollections.observableArrayList();
     protected ObservableList<Weapon> knownWeapons = FXCollections.observableArrayList();
     protected ObservableList<Suspect> knownSuspects = FXCollections.observableArrayList();
@@ -51,7 +53,7 @@ public abstract class Character extends Circle {
     
     public void beginTurn() {
         this.turn = Turn.PRE_ROLL;
-        this.roll = -1;
+        this.rollNum = -1;
     }
 
     public int roll() {
@@ -60,13 +62,13 @@ public abstract class Character extends Circle {
         int rollNum = 0;
         for(int i = 0; i < NUM_DICE; i++)
             rollNum += Math.random() * 6 + 1;
-        this.roll = rollNum;
+        this.rollNum = rollNum;
         this.turn = Turn.POST_ROLL;
         return rollNum;
     }
     
     public List<Place> calcPosMoves() {
-        return this.calcPosMoves(this.roll);
+        return this.calcPosMoves(this.rollNum);
     }
     
     public List<Place> calcPosMoves(int distance) {
@@ -81,7 +83,7 @@ public abstract class Character extends Circle {
    } 
     
     public void moveTo(Place place, boolean forceMove) {
-        if(!forceMove && curPlace != null && curPlace.getDistance(place) > this.roll)
+        if(!forceMove && curPlace != null && curPlace.getDistance(place) > this.rollNum)
                 throw new ImpossibleMove();
         
         if(curPlace != null)
@@ -105,8 +107,8 @@ public abstract class Character extends Circle {
         return turn;
     }
 
-    public int getRoll() {
-        return roll;
+    public int getRollNum() {
+        return rollNum;
     }
 
     public Place getCurPlace() {

@@ -29,7 +29,9 @@ public class Place extends Rectangle {
         
         this.delHighlight();
         
+        // TODO Remove
         this.setOnMouseClicked(event -> addHighlight(Color.RED));
+        // END
     }
 
     public void addHighlight(Paint fill) {

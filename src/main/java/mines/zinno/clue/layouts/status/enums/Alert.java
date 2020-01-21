@@ -4,12 +4,14 @@ package mines.zinno.clue.layouts.status.enums;
 
 public enum Alert {
     
-    WELCOME("Welcome to the game of Clue!\nPress the '?' button for a tutorial");
+    WELCOME("Welcome", "Welcome to the game of Clue!\nPress the '?' button for a tutorial");
     
     
+    private String name;
     private String text;
     
-    Alert(String text) {
+    Alert(String name, String text) {
+        this.name = name;
         this.text = text;
     }
 
@@ -20,5 +22,9 @@ public enum Alert {
     @Override
     public String toString() {
         return getText();
+    }
+
+    public String getName() {
+        return name;
     }
 }
