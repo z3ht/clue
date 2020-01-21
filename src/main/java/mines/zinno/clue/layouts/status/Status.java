@@ -3,13 +3,14 @@ package mines.zinno.clue.layouts.status;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 
-public class Status<T extends Enum<T>> extends Pane {
+public class Status extends Pane {
     
-    private T type;
+    public Status(String text) {
+        Label label = generateLabel(text, "alert");
+        this.getChildren().add(label);
+    }
     
-    public Status(T type, Object... args) {
-        this.type = type;
-        
+    public Status(Enum<?> type, Object... args) {
         Label label = generateLabel(String.format(type.toString(), args), type.getClass().getSimpleName().toLowerCase());
         this.getChildren().add(label);
     }
@@ -20,9 +21,5 @@ public class Status<T extends Enum<T>> extends Pane {
         label.wrapTextProperty().set(true);
         label.getStyleClass().add(styleClass);
         return label;
-    }
-
-    public T getType() {
-        return type;
     }
 }

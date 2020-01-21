@@ -8,6 +8,8 @@ import mines.zinno.clue.layouts.board.utils.Location;
 
 public class Place extends Rectangle {
 
+    private static final int MAX_SPREAD = 15;
+    
     private Place[] adjacent;
 
     private final DirectionKey direction;
@@ -37,6 +39,15 @@ public class Place extends Rectangle {
     public void addHighlight(Paint fill, double opacity) {
         this.opacityProperty().set(opacity);
         this.setFill(fill);
+    }
+
+    public int getDistance(Place place) {
+        return this.getDistance(place, MAX_SPREAD);
+    }
+    
+    public int getDistance(Place place, int maxSpread) {
+        //TODO code distance from pieces
+        return -1;
     }
 
     public void delHighlight() {

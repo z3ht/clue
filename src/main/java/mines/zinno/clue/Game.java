@@ -12,8 +12,8 @@ import mines.zinno.clue.layouts.status.Status;
 import mines.zinno.clue.layouts.status.enums.Alert;
 import mines.zinno.clue.runners.ClueRunner;
 import mines.zinno.clue.shapes.character.Character;
-import mines.zinno.clue.shapes.character.ComputerCharacter;
-import mines.zinno.clue.shapes.character.PlayerCharacter;
+import mines.zinno.clue.shapes.character.Computer;
+import mines.zinno.clue.shapes.character.Player;
 import mines.zinno.clue.stages.dialogue.StatusDialogue;
 
 import java.io.IOException;
@@ -40,10 +40,9 @@ public class Game extends Application {
         LOGGER.log(Level.INFO, "Stage populated");
         
         addListeners(primaryStage);
+        primaryStage.setOnShown(this::startGame);
         
         LOGGER.log(Level.INFO, "Listeners added");
-
-        primaryStage.setOnShown(this::startGame);
 
         primaryStage.show();
 
@@ -55,15 +54,15 @@ public class Game extends Application {
         this.characters = new ArrayList<>();
 
         StatusDialogue statusDialogue = new StatusDialogue("Welcome");
-        statusDialogue.getController().getStatusPane().getStatuses().add(new Status<>(Alert.WELCOME));
+        statusDialogue.getController().getStatusPane().getStatuses().add(new Status(Alert.WELCOME));
         statusDialogue.setSize();
         statusDialogue.show();
         
         int numComputers = Integer.parseInt(getController().getSettingsDialogue().getController().getComputers().getSelectedItem().getValue().toString());
         
-        characters.add(new PlayerCharacter());
+        characters.add(new Player());
         for(int i = 0; i < numComputers; i++) {
-            characters.add(new ComputerCharacter());
+            characters.add(new Computer());
         }
         
         this.isPlaying = true;
