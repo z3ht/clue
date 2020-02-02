@@ -1,4 +1,4 @@
-package mines.zinno.clue.enums;
+package mines.zinno.clue.enums.io;
 
 import mines.zinno.clue.layouts.board.ClueBoard;
 

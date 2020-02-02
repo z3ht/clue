@@ -1,4 +1,4 @@
-package mines.zinno.clue.enums;
+package mines.zinno.clue.enums.io;
 
 import java.net.URL;
 

@@ -9,10 +9,9 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import mines.zinno.clue.Game;
 import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
-import mines.zinno.clue.enums.LogMessage;
+import mines.zinno.clue.enums.io.LogMessage;
 
 import java.awt.*;
 import java.io.IOException;

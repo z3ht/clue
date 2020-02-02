@@ -4,13 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
-import mines.zinno.clue.Game;
-import mines.zinno.clue.enums.ImgURL;
-import mines.zinno.clue.enums.LogMessage;
+import mines.zinno.clue.enums.io.ImgURL;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.util.logging.Level;
+import java.util.Optional;
 
 public class SelectableMenu<T extends Enum<T>> extends MenuButton {
     
@@ -31,8 +27,8 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
         this.isLocked = isLocked;
     }
 
-    public ValueMenuItem<T> getSelectedItem() {
-        return selectedItem;
+    public Optional<T> getSelected() {
+        return (selectedItem == null) ? Optional.empty() : Optional.of(selectedItem.getValue());
     }
 
     public void setSelectedItem(T selectedValue) {

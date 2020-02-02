@@ -1,7 +1,7 @@
 package mines.zinno.clue.stages.dialogue;
 
 import mines.zinno.clue.controllers.StatusController;
-import mines.zinno.clue.enums.FXMLURL;
+import mines.zinno.clue.enums.io.FXMLURL;
 
 public class StatusDialogue extends Dialogue<StatusController> {
     

@@ -2,7 +2,7 @@ package mines.zinno.clue.layouts;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
-import mines.zinno.clue.enums.ImgURL;
+import mines.zinno.clue.enums.io.ImgURL;
 
 public class Sheet extends Pane {
 
