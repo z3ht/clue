@@ -1,5 +1,8 @@
 package mines.zinno.clue.layouts.board.utils;
 
+/**
+ * The {@link Location} utility class makes storing x and y coordinates simple and uniform
+ */
 public class Location {
 
     private final int x;
@@ -10,14 +13,29 @@ public class Location {
         this.y = y;
     }
 
+    /**
+     * Get the x and y values in that order
+     * 
+     * @return [x, y]
+     */
     public int[] getLocation() {
         return new int[] {x, y};
     }
 
+    /**
+     * Get the x value
+     * 
+     * @return x value
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Get the y value
+     * 
+     * @return y value
+     */
     public int getY() {
         return y;
     }

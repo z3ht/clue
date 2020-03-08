@@ -1,8 +1,8 @@
 s s s s s s . x . . h h h h . . * . l l l l l l 
-s s s s s s s}x x . h h h h . x x l{l l l l l l 
-s s s s s s s}x x . h h h h . x x l{l l l l l l 
-K.s.s.s.s.s.s|x x . h h h h . x x l{l l l l l l 
-. x x x x x x x x h-h h h h . x x l{l l l l l l 
+s s s s s s s x x . h h h h . x x l l l l l l l 
+s s s s s s s x x . h h h h . x x l l l l l l l 
+K s s s s s s|x x . h h h h . x x l l l l l l l 
+. x x x x x x x x h-h h h h . x x l l l l l l l 
 * x x x x x x x x . h h h h . x x l|. . . . . C 
 . . . . . . x x x . . h|h|. . x x x x x x x x . 
 i i i i i i . x x x x x x x x x x x x x x x x * 
@@ -17,7 +17,7 @@ b b b b b b-x x x x x x x x x x x x x . . . . .
 . . . . . . x x x x x x x x x x x x x x x x x . 
 . x x x x x x x . a|. . . . a|. x x x x x x x x 
 * x x x x x x x . a a a a a a . x x . k|. . . . 
-. L^c^c^c-x x x a-a a a a a a a-x x . k k k k k 
+. L c c c-x x x a-a a a a a a a-x x . k k k k k 
 c c c c c . x x . a a a a a a . x x . k k k k k 
 c c c c c . x x . a a a a a a . x x . k k k k k 
 c c c c c . x x . . . a a a a . x x . k k k k k 

@@ -1,15 +1,7 @@
 package mines.zinno.clue.shapes.place;
 
-import mines.zinno.clue.layouts.board.enums.DirectionKey;
-
-public class StartPlace extends Place {
-
-    public StartPlace() {
-        this(true, 1);
-    }
-
-    public StartPlace(boolean isReachable, int moveCost) {
-        super(DirectionKey.ALL, isReachable, moveCost);
-    }
-
-}
+/**
+ * The {@link StartPlace} is a subclass of the {@link BasicPlace} class. This class corresponds to the start places on the
+ * {@link mines.zinno.clue.layouts.board.ClueBoard}.
+ */
+public class StartPlace extends BasicPlace {}

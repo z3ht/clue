@@ -2,6 +2,7 @@ package mines.zinno.clue;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.WindowEvent;
 import mines.zinno.clue.controllers.ClueController;
 import javafx.application.Application;
@@ -16,6 +17,7 @@ import mines.zinno.clue.enums.io.FXMLURL;
 import mines.zinno.clue.enums.io.LogMessage;
 import mines.zinno.clue.layouts.status.Status;
 import mines.zinno.clue.layouts.status.enums.Alert;
+import mines.zinno.clue.listeners.OnGuessConfirm;
 import mines.zinno.clue.runners.ClueRunner;
 import mines.zinno.clue.shapes.character.Character;
 import mines.zinno.clue.shapes.character.Computer;
@@ -38,6 +40,8 @@ public class Game extends Application {
     private static final boolean IS_RESIZABLE = false;
     
     private ClueController controller;
+
+    private Player player;
     private List<Character> characters;
     
     private boolean isPlaying;
@@ -61,14 +65,43 @@ public class Game extends Application {
     }
 
     private void startGame(WindowEvent event) {
-        this.controller.getBoard().format();
-        this.characters = new ArrayList<>();
+        formatBoard();
+        createCharacters();
+        activateButtons();
+        createWelcomeStatus();
+        beginGameThread();
+    }
 
+    private void beginGameThread() {
+        this.isPlaying = true;
+        new Thread(new ClueRunner(this)).start();
+    }
+
+    private void createWelcomeStatus() {
         StatusDialogue statusDialogue = new StatusDialogue(Alert.WELCOME.getName());
         statusDialogue.getController().getStatusPane().getStatuses().add(new Status(Alert.WELCOME));
         statusDialogue.setSize();
         statusDialogue.show();
-        
+    }
+
+    private void activateButtons() {
+        this.getController().getRoll().addEventHandler(MouseEvent.MOUSE_CLICKED,
+                (mouseEvent) -> player.roll()
+        );
+        this.getController().getSkip().addEventHandler(MouseEvent.MOUSE_CLICKED,
+                (mouseEvent) -> this.setNumMoves(this.getCharacters().indexOf(player))
+        );
+        this.getController().getNext().addEventHandler(MouseEvent.MOUSE_CLICKED,
+                (mouseEvent) -> this.addMoves(1)
+        );
+        this.getController().getGuessDialogue().getController().getGuess().addEventHandler(MouseEvent.MOUSE_CLICKED,
+                new OnGuessConfirm(this)
+        );
+    }
+
+    private void createCharacters() {
+        this.characters = new ArrayList<>();
+
         int numComputers = Integer.parseInt(getController().getSettingsDialogue().getController().getComputers().getSelected().orElse(Digit.FIVE).toString());
         List<StartPlace> startPlaces = new ArrayList<>();
         Place[][] grid = this.controller.getBoard().getGrid();
@@ -87,23 +120,25 @@ public class Game extends Application {
         Collections.shuffle(rooms);
         Collections.shuffle(weapons);
         Collections.shuffle(suspects);
-        
+
         Suspect chosenSuspect = (this.getController().getSettingsDialogue().getController().getCharacter() == null) ?
                 suspects.get(0) :
                 this.controller.getSettingsDialogue().getController().getCharacter().getSelected()
                         .orElse(suspects.get(0));
-        
+
         players.remove(chosenSuspect);
-        
+
+        this.player = new Player(
+                this,
+                chosenSuspect,
+                startPlaces.get(0),
+                rooms.subList(0, rooms.size()/(numComputers+1)),
+                weapons.subList(0, weapons.size()/(numComputers+1)),
+                suspects.subList(0, suspects.size()/(numComputers + 1))
+        );
+
         characters.add(
-                new Player(
-                        this,
-                        chosenSuspect, 
-                        startPlaces.get(0),
-                        rooms.subList(0, rooms.size()/(numComputers+1)),
-                        weapons.subList(0, weapons.size()/(numComputers+1)),
-                        suspects.subList(0, suspects.size()/(numComputers + 1))
-                )
+                this.player
         );
         for(int i = 0; i < numComputers; i++) {
             characters.add(
@@ -117,9 +152,34 @@ public class Game extends Application {
                     )
             );
         }
+    }
 
-        this.isPlaying = true;
-        new Thread(new ClueRunner(this)).start();
+    private void formatBoard() {
+        this.controller.getBoard().format();
+    }
+
+    private void populateStage(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(FXMLURL.CLUE.getUrl());
+
+        Parent root = fxmlLoader.load();
+
+        this.controller = fxmlLoader.getController();
+
+        Scene scene = new Scene(root, SIZE.getWidth(), SIZE.getHeight());
+
+        stage.setTitle(TITLE);
+        stage.setResizable(IS_RESIZABLE);
+
+        stage.setScene(scene);
+    }
+
+    private void addListeners(Stage stage) {
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            this.getController().getSettingsDialogue().close();
+            this.getController().getHelpDialogue().close();
+            this.getController().getGuessDialogue().close();
+        });
+
     }
 
     public boolean isPlaying() {
@@ -150,31 +210,11 @@ public class Game extends Application {
         return characters;
     }
 
-    private void populateStage(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(FXMLURL.CLUE.getUrl());
-
-        Parent root = fxmlLoader.load();
-
-        this.controller = fxmlLoader.getController();
-
-        Scene scene = new Scene(root, SIZE.getWidth(), SIZE.getHeight());
-
-        stage.setTitle(TITLE);
-        stage.setResizable(IS_RESIZABLE);
-        
-        stage.setScene(scene);
-    }
-    
-    private void addListeners(Stage stage) {
-        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
-            this.getController().getSettingsDialogue().close();
-            this.getController().getHelpDialogue().close();
-            this.getController().getGuessDialogue().close();
-        });
-        
-    }
-
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

@@ -19,8 +19,9 @@ public class ClueRunner implements Runnable {
     @Override
     public void run() {
         while(game.isPlaying()) {
+            System.out.println("next turn");
             Character curCharacter = game.getCharacters().get(0);
-            curCharacter.setTurn(Turn.PRE_ROLL);
+            curCharacter.beginTurn();
 
             waitForNextMove();
             curCharacter.setTurn(Turn.OTHER);

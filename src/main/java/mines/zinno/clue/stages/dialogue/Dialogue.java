@@ -22,7 +22,7 @@ import java.util.function.Consumer;
 
 public class Dialogue<T> extends Stage {
     
-    final static int MIN_SIZE = 125;
+    final static int MIN_SIZE = 155;
     private final static Dimension DEFAULT_SIZE = new Dimension(200, 200);
     
     private T controller;
@@ -108,9 +108,5 @@ public class Dialogue<T> extends Stage {
 
     public T getController() {
         return controller;
-    }
-
-    public Parent getRoot() {
-        return root;
     }
 }

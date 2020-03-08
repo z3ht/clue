@@ -38,6 +38,10 @@ public class GuessController implements Initializable {
         return weaponMenu;
     }
 
+    public Button getGuess() {
+        return guess;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         for(Suspect suspect : Suspect.values())

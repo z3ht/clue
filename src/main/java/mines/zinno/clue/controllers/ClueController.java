@@ -18,15 +18,24 @@ public class ClueController implements Initializable {
     @FXML
     private Button settings;
     private Dialogue<SettingsController> settingsDialogue;
-    
+
     @FXML
     private Button help;
     private Dialogue helpDialogue;
-    
+
     @FXML
     private Button guess;
     private Dialogue<GuessController> guessDialogue;
     
+    @FXML
+    private Button roll;
+
+    @FXML
+    private Button skip;
+
+    @FXML
+    private Button next;
+
     @FXML
     private ClueBoard board;
 
@@ -62,6 +71,22 @@ public class ClueController implements Initializable {
 
     public Label getInfoLabel() {
         return infoLabel;
+    }
+
+    public Button getGuess() {
+        return guess;
+    }
+
+    public Button getSkip() {
+        return skip;
+    }
+
+    public Button getNext() {
+        return next;
+    }
+
+    public Button getRoll() {
+        return roll;
     }
 
     public Dialogue<SettingsController> getSettingsDialogue() {

@@ -4,7 +4,11 @@ package mines.zinno.clue.layouts.status.enums;
 
 public enum Alert {
     
-    WELCOME("Welcome", "Welcome to the game of Clue!\nPress the '?' button for a tutorial");
+    WELCOME("Welcome", "Welcome to the game of Clue!\nPress the '?' button for a tutorial"),
+    INCOMPLETE_FEATURE("Error", "This feature is not yet complete.\nPlease try again another time"),
+    INVALID_GUESS("Invalid Guess", "This guess is invalid.\nPlease fill out all of the items and try again"),
+    OUT_OF_TURN("Out of Turn", "You may not perform this action yet")
+    ;
     
     
     private String name;
