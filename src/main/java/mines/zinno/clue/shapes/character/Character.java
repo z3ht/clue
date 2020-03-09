@@ -23,7 +23,7 @@ public abstract class Character extends Circle {
     private static final int NUM_DICE = 1;
     
     protected final Game game;
-    protected final Suspect suspect;
+    protected final Suspect character;
     
     // Items the character is provided with at the start
     private final List<Room> providedRooms;
@@ -40,9 +40,9 @@ public abstract class Character extends Circle {
     protected ObservableList<Weapon> knownWeapons = FXCollections.observableArrayList();
     protected ObservableList<Suspect> knownSuspects = FXCollections.observableArrayList();
     
-    public Character(Game game, Suspect suspect, Place startPlace, List<Room> providedRooms, List<Weapon> providedWeapons, List<Suspect> providedSuspects) {
+    public Character(Game game, Suspect character, Place startPlace, List<Room> providedRooms, List<Weapon> providedWeapons, List<Suspect> providedSuspects) {
         this.game = game;
-        this.suspect = suspect;
+        this.character = character;
 
         game.getController().getBoard().getChildren().add(this);
         
@@ -115,8 +115,8 @@ public abstract class Character extends Circle {
         
     }
     
-    public Suspect getSuspect() {
-        return suspect;
+    public Suspect getCharacter() {
+        return character;
     }
 
     public void setTurn(Turn turn) {
@@ -168,7 +168,7 @@ public abstract class Character extends Circle {
     private void displaySuspect() {
         Board board = this.game.getController().getBoard();
         this.setRadius(Math.min(board.getGrid()[0][0].getWidth(), board.getGrid()[0][0].getHeight())/1.66);
-        this.setFill(suspect.getColor());
+        this.setFill(character.getColor());
         this.setVisible(true);
     }
 }

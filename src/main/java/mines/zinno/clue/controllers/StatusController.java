@@ -1,15 +1,23 @@
 package mines.zinno.clue.controllers;
 
 import javafx.fxml.FXML;
-import mines.zinno.clue.layouts.status.StatusPane;
+import mines.zinno.clue.layouts.status.InfoPane;
 
+/**
+ * The {@link StatusController} is the controller linked to the Status.fxml file
+ */
 public class StatusController {
     
     @FXML
-    private StatusPane statusPane;
+    private InfoPane infoPane;
 
-    public StatusPane getStatusPane() {
-        return statusPane;
+    /**
+     * Get the {@link InfoPane}
+     * 
+     * @return {@link InfoPane}
+     */
+    public InfoPane getInfoPane() {
+        return infoPane;
     }
     
 }

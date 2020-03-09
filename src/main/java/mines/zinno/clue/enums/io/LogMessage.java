@@ -3,6 +3,9 @@ package mines.zinno.clue.enums.io;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * The {@link LogMessage} enum is used to send log messages
+ */
 public enum LogMessage {
     
     START(Level.INFO, "Clue Game Started"),
@@ -23,19 +26,29 @@ public enum LogMessage {
         this.message = message;
     }
 
+    /**
+     * Get log {@link Level}
+     */
     public Level getLevel() {
         return level;
     }
 
+    /**
+     * Get log message
+     * 
+     * @return Message {@link String}
+     */
     public String getMessage() {
         return message;
     }
-    
+
+    /**
+     * Send log messages
+     * 
+     * @param args Wildcard character values
+     */
     public void log(Object... args) {
         LOGGER.log(this.getLevel(), String.format(this.getMessage(), args));
     }
-
-    public static Logger getLOGGER() {
-        return LOGGER;
-    }
+    
 }

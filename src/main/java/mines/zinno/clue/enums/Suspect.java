@@ -4,6 +4,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
+/**
+ * The {@link Suspect} enum holds suspect information
+ */
 public enum Suspect {
 
     COL_MUSTARD("Col. Mustard", 1, Color.ORANGE),
@@ -24,23 +27,38 @@ public enum Suspect {
         this.color = color;
     }
 
+    /**
+     * Get the {@link Suspect} id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @return {@link Suspect#getName()}
+     */
     @Override
     public String toString() {
         return getName();
     }
 
+    /**
+     * {@link Suspect} name in {@link String} format
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return Corresponding {@link ValueMenuItem}<{@link Suspect}>
+     */
     public ValueMenuItem<Suspect> getMenuItem() {
         return new ValueMenuItem<>(name, this);
     }
 
+    /**
+     * Get the {@link Color} of the character
+     */
     public Color getColor() {
         return color;
     }

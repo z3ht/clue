@@ -27,6 +27,8 @@ public class Place extends Rectangle {
     }
 
     public Place(DirectionKey direction, boolean isReachable, int moveCost) {
+        super();
+        
         this.isReachable = isReachable;
         this.moveCost = moveCost;
         this.direction = direction;

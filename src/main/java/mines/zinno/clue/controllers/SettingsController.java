@@ -12,6 +12,9 @@ import mines.zinno.clue.enums.Suspect;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * The {@link SettingsController} is the controller linked to the Settings.fxml file
+ */
 public class SettingsController implements Initializable {
 
     @FXML
@@ -25,19 +28,37 @@ public class SettingsController implements Initializable {
 
     @FXML
     private Button begin;
-    
+
+    /**
+     * The character {@link SelectableMenu}<{@link Suspect}>
+     * 
+     * @return Character {@link SelectableMenu}<{@link Suspect}>
+     */
     public SelectableMenu<Suspect> getCharacter() {
         return character;
     }
 
+    /**
+     * The difficulty {@link SelectableMenu}<{@link Difficulty}>
+     *
+     * @return Difficulty {@link SelectableMenu}<{@link Difficulty}>
+     */
     public SelectableMenu<Difficulty> getDifficulty() {
         return difficulty;
     }
 
+    /**
+     * The computer {@link SelectableMenu}<{@link Digit}>
+     *
+     * @return Computer {@link SelectableMenu}<{@link Digit}>
+     */
     public SelectableMenu<Digit> getComputers() {
         return computers;
     }
 
+    /**
+     * Called by {@link javafx.fxml.FXMLLoader}. Initialize computer, difficulty, and character options
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         

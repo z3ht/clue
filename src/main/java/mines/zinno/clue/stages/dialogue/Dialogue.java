@@ -20,6 +20,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.function.Consumer;
 
+/**
+ * The {@link Dialogue} class extends JavaFX's {@link Stage} class. It makes creating a dialogue window from an FXML file
+ * simple.
+ * 
+ * @param <T> Controller class type
+ */
 public class Dialogue<T> extends Stage {
     
     final static int MIN_SIZE = 155;
@@ -27,11 +33,24 @@ public class Dialogue<T> extends Stage {
     
     private T controller;
     private Parent root;
-    
+
+    /**
+     * Create a dialogue window
+     * 
+     * @param name Name of the dialogue box
+     * @param dialogueURL FXML URL
+     */
     public Dialogue(String name, URL dialogueURL) {
         this(name, dialogueURL, DEFAULT_SIZE);
     }
-    
+
+    /**
+     * Create a dialogue window
+     *
+     * @param name Name of the dialogue box
+     * @param dialogueURL FXML URL
+     * @param size Size of the dialogue window
+     */
     public Dialogue(String name, URL dialogueURL, Dimension size) {
         FXMLLoader fxmlLoader = new FXMLLoader(dialogueURL);
         try {
@@ -51,7 +70,10 @@ public class Dialogue<T> extends Stage {
         
         this.setOnShown(event -> addListeners());
     }
-    
+
+    /**
+     * Recursive function that applies a consumer function to all children nodes. Used by {@link Dialogue#addListeners()}
+     */
     private void applyAllChildren(Parent parent, Consumer<Node> consumer) {
         if(parent == null || consumer == null)
             return;
@@ -64,8 +86,12 @@ public class Dialogue<T> extends Stage {
             consumer.accept(child);
         }
     }
-    
+
+    /**
+     * Listeners used by all dialogues
+     */
     protected void addListeners() {
+        // Close dialogue window if a cancel button is clicked
         applyAllChildren(this.getScene().getRoot(), node -> {
             if(!(node instanceof Button))
                 return;
@@ -75,19 +101,7 @@ public class Dialogue<T> extends Stage {
             node.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> this.close());
         });
         
-        applyAllChildren(root, node -> {
-            if(!(node instanceof Hyperlink))
-                return;
-            Hyperlink link = (Hyperlink) node;
-            link.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-                try {
-                    Desktop.getDesktop().browse(new URI(link.getText()));
-                } catch (IOException | URISyntaxException e) {
-                    LogMessage.HYPERLINK_NOT_FOUND.log(link);
-                }
-            });
-        });
-        
+        // Support for selecting menu items in selectable menus
         applyAllChildren(root, node -> {
             
             if(!(node instanceof SelectableMenu))
@@ -106,6 +120,9 @@ public class Dialogue<T> extends Stage {
         });
     }
 
+    /**
+     * Get the dialogue window's controller
+     */
     public T getController() {
         return controller;
     }

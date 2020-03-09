@@ -4,11 +4,11 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.Game;
 import mines.zinno.clue.controllers.GuessController;
-import mines.zinno.clue.layouts.status.Status;
+import mines.zinno.clue.layouts.status.Info;
 import mines.zinno.clue.layouts.status.enums.Alert;
 import mines.zinno.clue.shapes.character.Player;
 import mines.zinno.clue.shapes.character.enums.Turn;
-import mines.zinno.clue.stages.dialogue.StatusDialogue;
+import mines.zinno.clue.stages.dialogue.InfoDialogue;
 
 public class OnGuessConfirm implements EventHandler<MouseEvent> {
 
@@ -29,10 +29,10 @@ public class OnGuessConfirm implements EventHandler<MouseEvent> {
 
         // Ensure player has moved if moves are available
         if(player.getTurn() != Turn.POST_MOVE && !player.calcPosMoves().isEmpty()) {
-            StatusDialogue statusDialogue = new StatusDialogue(Alert.WELCOME.getName());
-            statusDialogue.getController().getStatusPane().getStatuses().add(new Status(Alert.OUT_OF_TURN));
-            statusDialogue.setSize();
-            statusDialogue.show();
+            InfoDialogue infoDialogue = new InfoDialogue(Alert.WELCOME.getName());
+            infoDialogue.getController().getInfoPane().getInfos().add(new Info(Alert.OUT_OF_TURN));
+            infoDialogue.setSize();
+            infoDialogue.show();
         }
 
         

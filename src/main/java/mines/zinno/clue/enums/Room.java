@@ -3,6 +3,9 @@ package mines.zinno.clue.enums;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 import mines.zinno.clue.layouts.board.utils.Location;
 
+/**
+ * The {@link Room} enum holds room information
+ */
 public enum Room {
 
     HALL("hall", 1, 'h', new Location(11, 3)),
@@ -29,31 +32,52 @@ public enum Room {
         this.center = center;
     }
 
+    /**
+     * @return Corresponding Room {@link Character} key
+     */
     public char getKey() {
         return key;
     }
 
+    /**
+     * Get the {@link Room} id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * {@link Room} name in {@link String} format
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Get the center Location of {@link Room}
+     */
     public Location getCenter() {
         return center;
     }
 
+    /**
+     * @return Corresponding {@link ValueMenuItem}<{@link Room}>
+     */
     public ValueMenuItem<Room> getMenuItem() {
         return new ValueMenuItem<>(name, this);
     }
 
+    /**
+     * @return {@link Room#getName()}
+     */
     @Override
     public String toString() {
         return getName();
     }
 
+    /**
+     * Get the room whose key matches the provided key or null if none exist
+     */
     public static Room getRoom(char key) {
         for(Room room : Room.values()) {
             if(room.getKey() == key || (char) (key + 32) == room.getKey())

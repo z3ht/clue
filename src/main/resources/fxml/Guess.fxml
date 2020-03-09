@@ -35,7 +35,7 @@
             <SelectableMenu fx:id="weaponMenu" id="weaponMenu" mnemonicParsing="false" prefHeight="300.0" prefWidth="300.0" styleClass="guess-option" text="Weapons" GridPane.columnIndex="1" GridPane.margin="$x1" GridPane.rowIndex="2"/>
             <Label ellipsisString="" text="The murderer was . . . . . . . . . . . ." GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.valignment="BOTTOM">
               <font>
-                <Font name="Z003 Medium Italic" size="27.0" fx:id="x2" />
+                <Font name="Z003 Medium Italic" size="20.0" fx:id="x2" />
               </font>
               <GridPane.margin>
                 <Insets bottom="5.0" />

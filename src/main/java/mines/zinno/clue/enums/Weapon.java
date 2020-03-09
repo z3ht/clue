@@ -2,6 +2,9 @@ package mines.zinno.clue.enums;
 
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
+/**
+ * The {@link Weapon} enum holds weapon information
+ */
 public enum Weapon {
 
     KNIFE("knife", 1),
@@ -20,19 +23,31 @@ public enum Weapon {
         this.name = name;
     }
 
+    /**
+     * Get the {@link Weapon} id
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * {@link Weapon} name in {@link String} format
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return {@link Weapon#getName()}
+     */
     @Override
     public String toString() {
         return getName();
     }
-    
+
+    /**
+     * @return Corresponding {@link ValueMenuItem}<{@link Suspect}>
+     */
     public ValueMenuItem<Weapon> getMenuItem() {
         return new ValueMenuItem<>(name, this);
     }

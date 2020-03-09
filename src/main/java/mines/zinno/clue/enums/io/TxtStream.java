@@ -6,10 +6,13 @@ import java.io.InputStream;
 import java.util.Scanner;
 import java.util.function.Function;
 
+/**
+ * The {@link TxtStream} enum converts .txt files to {@link InputStream}s
+ */
 public enum TxtStream {
     
     BOARD(ClueBoard.class.getResourceAsStream("/board.txt"));
-    
+
     public final static Function<InputStream, String[]> PARSE = (stream) -> {
         Scanner s = new Scanner(stream).useDelimiter("\\A");
         String rawMap = s.hasNext() ? s.next() : "";
@@ -22,6 +25,10 @@ public enum TxtStream {
         this.inputStream = inputStream;
     }
 
+    /**
+     * Get {@link InputStream}
+     * @return {@link InputStream}
+     */
     public InputStream getInputStream() {
         return inputStream;
     }

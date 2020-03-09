@@ -2,6 +2,9 @@ package mines.zinno.clue.enums;
 
 import mines.zinno.clue.control.menu.ValueMenuItem;
 
+/**
+ * The {@link Difficulty} enum holds difficulty information
+ */
 public enum Difficulty {
     
     EASY("Easy"),
@@ -15,15 +18,24 @@ public enum Difficulty {
         this.name = name;
     }
 
+    /**
+     * {@link Difficulty} in {@link String} format
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * @return {@link Difficulty#getName()}
+     */
     @Override
     public String toString() {
         return getName();
     }
 
+    /**
+     * @return Corresponding {@link ValueMenuItem}<{@link Difficulty}>
+     */
     public ValueMenuItem<Difficulty> getMenuItem() {
         return new ValueMenuItem<>(name, this);
     }

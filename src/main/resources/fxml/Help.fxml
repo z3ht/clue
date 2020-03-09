@@ -21,11 +21,11 @@
                 <Insets bottom="10.0" left="35.0" right="35.0" top="10.0" />
               </GridPane.margin>
             </Label>
-            <Hyperlink text="https://www.wikihow.com/Play-Clue-(Cluedo)" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
+            <Label text="Coming soon... (or never)" textAlignment="CENTER" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="TOP">
               <font>
                 <Font size="14.0" />
               </font>
-            </Hyperlink>
+            </Label>
           </children>
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

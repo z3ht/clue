@@ -32,7 +32,7 @@ public class ClueBoard extends Board<Place> {
 
                 switch(PlaceKey.getPlaceKey(line.charAt(i))) {
                     case PATH:
-                        super.grid[y][x] = new Place();
+                        super.grid[y][x] = new BasicPlace();
                         break;
                     case UNREACHABLE:
                         super.grid[y][x] = new Place(DirectionKey.ALL, false, 1);
