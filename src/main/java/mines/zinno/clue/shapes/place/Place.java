@@ -3,8 +3,11 @@ package mines.zinno.clue.shapes.place;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 import mines.zinno.clue.layouts.board.enums.DirectionKey;
 import mines.zinno.clue.layouts.board.utils.Location;
+
+import java.util.*;
 
 /**
  * The {@link Place} class is the most generic cell type used by the {@link mines.zinno.clue.layouts.board.ClueBoard}.
@@ -12,7 +15,7 @@ import mines.zinno.clue.layouts.board.utils.Location;
  */
 public class Place extends Rectangle {
 
-    private static final int MAX_SPREAD = 15;
+    private static final int MAX_SPREAD = 12;
     
     private Place[] adjacent;
 
@@ -34,10 +37,6 @@ public class Place extends Rectangle {
         this.direction = direction;
         
         this.delHighlight();
-        
-        // TODO Remove
-        this.setOnMouseClicked(event -> addHighlight(Color.RED));
-        // END
     }
 
     /**
@@ -61,9 +60,9 @@ public class Place extends Rectangle {
     }
 
     /**
-     * Get the Manhattan distance from this place to another (max. {@value MAX_SPREAD})
+     * Get the Manhattan distance from another place to this one (max. {@value MAX_SPREAD})
      * 
-     * @param place Opposing place
+     * @param place Start place
      * @return the Manhattan distance between the places (max. {@value MAX_SPREAD})
      */
     public int getDistance(Place place) {
@@ -71,15 +70,53 @@ public class Place extends Rectangle {
     }
 
     /**
-     * Get the Manhattan distance from this place to another with custom maximum
-     * 
-     * @param place Opposing place
-     * @param maxSpread Maximum radius searched for opposing place
+     * Breadth first recursive search that spans through adjacent places in search of this {@link Place}
+     *
+     * @param place Start place
+     * @param maxSpread Maximum radius searched for this place
      * @return the Manhattan distance between the places (max {@value MAX_SPREAD})
      */
-    public int getDistance(Place place, int maxSpread) {
-        //TODO code distance from pieces
-        return -1;
+    private int getDistance(Place place, int maxSpread) {
+        Queue<Pair<Place, Integer>> tree = new LinkedList<>();
+        tree.add(new Pair<>(place, 0));
+        return getDistance(tree, maxSpread);
+    }
+    
+    
+    private int getDistance(Queue<Pair<Place, Integer>> tree, int maxSpread) {
+        Pair<Place, Integer> top = tree.peek();
+        
+        // Exit point
+        if(top.getValue() == maxSpread)
+            return -1;
+        
+        // Exit point
+        if(top.getKey() == this)
+            return top.getValue();
+        
+        // Remove when value is known to not be the target
+        tree.remove();
+        
+        // Add adjacents not already in the tree
+        for(Place adj : top.getKey().getAdjacent()) {
+            if(adj == null)
+                continue;
+            
+            boolean shouldContinue = false;
+            for(Pair<Place, Integer> val : tree) {
+                if(adj == val.getKey()) {
+                    shouldContinue = true;
+                    break;
+                }
+            }
+            if(shouldContinue)
+                continue;
+            
+            tree.add(new Pair<>(adj, top.getValue() + adj.getMoveCost()));
+        }
+        
+        // Continue through tree
+        return getDistance(tree, maxSpread);
     }
 
     /**

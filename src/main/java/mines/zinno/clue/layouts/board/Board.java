@@ -11,9 +11,6 @@ import mines.zinno.clue.layouts.board.utils.Location;
  */
 public class Board<T extends Rectangle> extends Pane {
 
-    /**
-     *  Raw board
-     */
     protected T[][] grid;
 
     /**
@@ -72,6 +69,8 @@ public class Board<T extends Rectangle> extends Pane {
      * size is set or changed.
      */
     public void format() {
+        this.getChildren().clear();
+        
         if(grid == null)
             return;
         for(int y = 0; y < grid.length; y++) {

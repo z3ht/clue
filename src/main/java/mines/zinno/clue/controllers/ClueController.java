@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.enums.io.FXMLURL;
+import mines.zinno.clue.layouts.board.Board;
 import mines.zinno.clue.stages.dialogue.Dialogue;
 import mines.zinno.clue.layouts.board.ClueBoard;
 import mines.zinno.clue.layouts.Sheet;
@@ -17,7 +18,7 @@ import java.util.ResourceBundle;
 /**
  * The {@link ClueController} is the controller linked to the Clue.fxml file
  */
-public class ClueController implements Initializable {
+public class ClueController extends GameController implements Initializable {
     
     @FXML
     private Button settings;
@@ -65,8 +66,8 @@ public class ClueController implements Initializable {
     }
 
     /**
-     * Called by {@link javafx.fxml.FXMLLoader}. Adds click listeners to corresponding buttons that opens the dialogue
-     * window
+     * Called by {@link javafx.fxml.FXMLLoader}. Add click listeners to corresponding buttons that open dialogue
+     * windows
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -174,11 +175,7 @@ public class ClueController implements Initializable {
         return guessDialogue;
     }
 
-    /**
-     * Get the {@link ClueBoard}
-     *
-     * @return {@link ClueBoard}
-     */
+    @Override
     public ClueBoard getBoard() {
         return board;
     }

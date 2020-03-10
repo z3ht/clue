@@ -4,12 +4,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
-import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.enums.Room;
 import mines.zinno.clue.enums.Suspect;
 import mines.zinno.clue.enums.Weapon;
-import mines.zinno.clue.listeners.OnGuessConfirm;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,29 +30,23 @@ public class GuessController implements Initializable {
     private Button guess;
 
     /**
-     * Get the suspect {@link MenuButton}
-     * 
-     * @return Suspect {@link MenuButton}
+     * Get the {@link SelectableMenu}<{@link Suspect}>
      */
-    public MenuButton getSuspectMenu() {
+    public SelectableMenu<Suspect> getSuspectMenu() {
         return suspectMenu;
     }
 
     /**
-     * Get the room {@link MenuButton}
-     *
-     * @return Room {@link MenuButton}
+     * Get the {@link SelectableMenu}<{@link Room}>
      */
-    public MenuButton getRoomMenu() {
+    public SelectableMenu<Room> getRoomMenu() {
         return roomMenu;
     }
 
     /**
-     * Get the room {@link MenuButton}
-     *
-     * @return Room {@link MenuButton}
+     * Get the {@link SelectableMenu}<{@link Weapon}>
      */
-    public MenuButton getWeaponMenu() {
+    public SelectableMenu<Weapon> getWeaponMenu() {
         return weaponMenu;
     }
 

@@ -1,4 +1,4 @@
-package mines.zinno.clue.layouts.status.enums;
+package mines.zinno.clue.enums;
 
 //TODO add font parsing enum to allow for in line bolding and coloring
 /**
@@ -10,9 +10,11 @@ public enum Alert {
     WELCOME("Welcome", "Welcome to the game of Clue!\nPress the '?' button for a tutorial"),
     INCOMPLETE_FEATURE("Error", "This feature is not yet complete.\nPlease try again another time"),
     INVALID_GUESS("Invalid Guess", "This guess is invalid.\nPlease fill out all of the items and try again"),
-    OUT_OF_TURN("Out of Turn", "You may not perform this action yet")
+    OUT_OF_TURN("Out of Turn", "You may not perform this action yet"),
+    IMPOSSIBLE_MOVE("Impossible Move", "This action is not possible\n%s"),
+    INCOMPLETE_GUESS("Incomplete Guess", "Your guess must include a %s"),
+    REACHED_EXIT("Warning", "You have entered the exit room\nGuesses here will win or lose you the game")
     ;
-    
     
     private String name;
     private String text;
@@ -25,18 +27,10 @@ public enum Alert {
     /**
      * Get the {@link Alert} text message
      */
-    public String getText() {
-        return text;
+    public String getText(Object... args) {
+        return String.format(text, args);
     }
-
-    /**
-     * @return {@link Alert#getText()}
-     */
-    @Override
-    public String toString() {
-        return getText();
-    }
-
+    
     /**
      * Get the name of an {@link Alert} in {@link String} format
      */

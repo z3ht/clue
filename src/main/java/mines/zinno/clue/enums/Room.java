@@ -6,7 +6,7 @@ import mines.zinno.clue.layouts.board.utils.Location;
 /**
  * The {@link Room} enum holds room information
  */
-public enum Room {
+public enum Room implements Card {
 
     HALL("hall", 1, 'h', new Location(11, 3)),
     LOUNGE("lounge", 2, 'l', new Location(20, 2)),
@@ -39,16 +39,12 @@ public enum Room {
         return key;
     }
 
-    /**
-     * Get the {@link Room} id
-     */
+    @Override
     public int getId() {
         return id;
     }
 
-    /**
-     * {@link Room} name in {@link String} format
-     */
+    @Override
     public String getName() {
         return name;
     }

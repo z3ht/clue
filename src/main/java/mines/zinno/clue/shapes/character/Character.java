@@ -1,174 +1,272 @@
 package mines.zinno.clue.shapes.character;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.shape.Circle;
-import mines.zinno.clue.Game;
-import mines.zinno.clue.enums.Room;
-import mines.zinno.clue.enums.Suspect;
-import mines.zinno.clue.enums.Weapon;
+import mines.zinno.clue.enums.*;
+import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.layouts.board.Board;
 import mines.zinno.clue.layouts.board.utils.Location;
+import mines.zinno.clue.shapes.character.enums.RevealContext;
 import mines.zinno.clue.shapes.character.enums.Turn;
-import mines.zinno.clue.shapes.character.exceptions.BadTurnOrder;
-import mines.zinno.clue.shapes.character.exceptions.ImpossibleMove;
 import mines.zinno.clue.shapes.place.Place;
-import mines.zinno.clue.vo.GuessVO;
+import mines.zinno.clue.shapes.place.RoomPlace;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+/**
+ * The {@link Character} class extends JavaFX's {@link Circle} class. It holds information and logic pertaining to
+ * a character's position and status.
+ */
 public abstract class Character extends Circle {
     
     private static final int NUM_DICE = 1;
     
-    protected final Game game;
+    protected final BoardGame boardGame;
     protected final Suspect character;
     
-    // Items the character is provided with at the start
-    private final List<Room> providedRooms;
-    private final List<Weapon> providedWeapons;
-    private final List<Suspect> providedSuspects;
+    protected List<Card> providedCards = new ArrayList<>();
 
     protected Turn turn;
     protected int rollNum;
     protected Place curPlace;
-    protected List<Place> posMoves = new ArrayList<>();
+    protected Set<Place> posMoves = new HashSet<>();
     
-    // Items the character knows from guessing/being provided with
-    protected ObservableList<Room> knownRooms = FXCollections.observableArrayList();
-    protected ObservableList<Weapon> knownWeapons = FXCollections.observableArrayList();
-    protected ObservableList<Suspect> knownSuspects = FXCollections.observableArrayList();
-    
-    public Character(Game game, Suspect character, Place startPlace, List<Room> providedRooms, List<Weapon> providedWeapons, List<Suspect> providedSuspects) {
-        this.game = game;
+    public Character(BoardGame boardGame, Suspect character, Place startPlace) {
+        this.boardGame = boardGame;
         this.character = character;
 
-        game.getController().getBoard().getChildren().add(this);
+        boardGame.getController().getBoard().getChildren().add(this);
         
-        moveTo(startPlace);
+        moveTo(startPlace, true);
         
-        this.providedRooms = providedRooms;
-        this.providedWeapons = providedWeapons;
-        this.providedSuspects = providedSuspects;
-        
-        this.knownRooms.addAll(providedRooms);
-        this.knownWeapons.addAll(providedWeapons);
-        this.knownSuspects.addAll(providedSuspects);
-        
-        displaySuspect();
-    }
-    
-    public void beginTurn() {
-        this.turn = Turn.PRE_ROLL;
-        this.rollNum = -1;
+        display();
     }
 
+    /**
+     * Called by {@link mines.zinno.clue.runners.ClueRunner} when a character's turn is ready to begin
+     */
+    public void beginTurn() {
+        this.turn = Turn.PRE_ROLL;
+    }
+
+    /**
+     * Roll dice
+     */
     public int roll() {
-        if(turn != Turn.PRE_ROLL)
-            throw new BadTurnOrder(Turn.PRE_ROLL.getBadTurnMessage());
         int rollNum = 0;
         for(int i = 0; i < NUM_DICE; i++)
             rollNum += Math.random() * 6 + 1;
         this.rollNum = rollNum;
         this.turn = Turn.POST_ROLL;
+        
+        this.posMoves = calcPosMoves();
+        
         return rollNum;
     }
-    
-    public List<Place> calcPosMoves() {
-        return this.calcPosMoves(this.getCurPlace(), this.rollNum);
+
+    /**
+     * Calculate possible moves from {@link Character#getCurPlace()} and {@link Character#getRollNum()}
+     */
+    public Set<Place> calcPosMoves() {
+        return this.calcPosMoves(this.getCurPlace(), this.getRollNum());
     }
-    
-    public List<Place> calcPosMoves(Place loc, int distance) {
-        if(turn != Turn.POST_ROLL)
-            throw new BadTurnOrder(Turn.POST_ROLL.getBadTurnMessage());
-        if(distance == 0)
-            return new ArrayList<>();
-        List<Place> moves = new ArrayList<>();
+
+    /**
+     * Calculate possible moves from a given place and distance
+     */
+    public Set<Place> calcPosMoves(Place loc, int distance) {
+        if(distance <= 0)
+            return new HashSet<>();
+        Set<Place> moves = new HashSet<>();
         for(Place place : loc.getAdjacent()) {
-            if(place.isOccupied())
+            if(place == null || place.isOccupied())
                 continue;
-            moves.addAll(calcPosMoves(place, --distance));
+            moves.addAll(calcPosMoves(place, distance-place.getMoveCost()));
             moves.add(place);
         }
         return moves;
     }
-    
-   public void moveTo(Place place) {
+
+    /**
+     * Request movement to a place
+     */
+    public void moveTo(Place place) {
         this.moveTo(place, false);
-   } 
-    
+    }
+
+    /**
+     * Move to a place
+     * 
+     * @param forceMove Force movement (t:y; f:n)
+     */
     public void moveTo(Place place, boolean forceMove) {
-        if(!forceMove && curPlace != null && curPlace.getDistance(place) > this.rollNum)
-                throw new ImpossibleMove();
+        this.setVisible(true);
         
-        if(curPlace != null)
+        // Set turn to post move
+        this.turn = Turn.POST_MOVE;
+        
+        if(curPlace != null) {
+            // Mark previous place as unoccupied
             curPlace.setOccupied(false);
+
+            // Decrement roll number
+            this.rollNum -= curPlace.getDistance(place);
+        }
+        
+        // Move to the void
+        if(place == null) {
+            this.setVisible(false);
+            this.setCenterX(Integer.MAX_VALUE);
+            this.setCenterY(Integer.MAX_VALUE);
+            return;
+        }
+        
+        // Move to new place
         this.curPlace = place;
         Location location = curPlace.getCenter();
         this.setCenterX(location.getX());
         this.setCenterY(location.getY());
         place.setOccupied(true);
+
+        // Calc new possible moves
+        this.posMoves = calcPosMoves();
     }
-    
-    public void guess(GuessVO guess) {
+
+    /**
+     * Make a guess
+     * 
+     * @return True when another player shows a card; False when no card is shown; null if the player wins or loses
+     */
+    public Boolean guess(Suspect suspect, Room room, Weapon weapon) {
+        this.turn = Turn.POST_GUESS;
         
+        boolean isFound = false;
+        
+        for(int i = 1; i < boardGame.getCharacters().size(); i++) {
+            Character c = (Character) boardGame.getCharacters().get(i);
+            
+            for(Card card : c.getCards()) {
+                if(!(card.getName().equals(suspect.getName()) ||
+                        card.getName().equals(room.getName()) ||
+                        card.getName().equals(weapon.getName())))
+                    continue;
+                
+                this.receiveCard(c, card, RevealContext.ON_GUESS);
+                isFound = true;
+                break;
+            }
+            
+            if(isFound)
+                break;
+        }
+        
+        // Character not in exit room
+        if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT)))
+            return isFound;
+
+        // Character has won the game
+        if(!isFound) {
+            onWin();
+            boardGame.setPlaying(false);
+            return null;
+        }
+
+        // Character has lost the game
+        onLose();
+        for(Object o : boardGame.getCharacters()) {
+            Character c = (Character) o;
+            for(Card card : getCards())
+                c.receiveCard(this, card, RevealContext.LOST_GAME);
+        }
+        boardGame.getCharacters().remove(this);
+        this.moveTo(null, true);
+        
+        return null;
     }
-    
+
+    /**
+     * Receive a card
+     */
+    public abstract void receiveCard (Character sender, Card card, RevealContext revealContext);
+
+    /**
+     * Called when a character wins
+     */
+    public abstract void onWin();
+
+    /**
+     * Called when a character loses
+     */
+    public abstract void onLose();
+
+    /**
+     * Get character's {@link Suspect}
+     */
     public Suspect getCharacter() {
         return character;
     }
 
+    /**
+     * Set the character's {@link Turn}
+     */
     public void setTurn(Turn turn) {
         this.turn = turn;
     }
 
+    /**
+     * Get the character's {@link Turn}
+     */
     public Turn getTurn() {
         return turn;
     }
 
+    /**
+     * Get the character's roll number
+     */
     public int getRollNum() {
         return rollNum;
     }
 
+    /**
+     * Get the character's current {@link Place}
+     */
     public Place getCurPlace() {
         return curPlace;
     }
 
-    public List<Place> getPosMoves() {
+    /**
+     * Get the character's possible moves
+     * 
+     * @return {@link Set}<{@link Place}>
+     */
+    public Set<Place> getPosMoves() {
         if(posMoves == null)
-            calcPosMoves();
+            this.posMoves = calcPosMoves();
         return posMoves;
     }
 
-    public ObservableList<Room> getKnownRooms() {
-        return knownRooms;
+    /**
+     * Get the character's provided cards
+     */
+    public List<Card> getCards() {
+        return this.providedCards;
     }
 
-    public ObservableList<Weapon> getKnownWeapons() {
-        return knownWeapons;
+    /**
+     * Provide character with a card
+     */
+    public void addProvidedCard(Card card) {
+        this.providedCards.add(card);
     }
 
-    public ObservableList<Suspect> getKnownSuspects() {
-        return knownSuspects;
-    }
-
-    public List<Room> getProvidedRooms() {
-        return providedRooms;
-    }
-
-    public List<Weapon> getProvidedWeapons() {
-        return providedWeapons;
-    }
-
-    public List<Suspect> getProvidedSuspects() {
-        return providedSuspects;
-    }
-
-    private void displaySuspect() {
-        Board board = this.game.getController().getBoard();
+    /**
+     * Display character
+     */
+    private void display() {
+        Board board = this.boardGame.getController().getBoard();
         this.setRadius(Math.min(board.getGrid()[0][0].getWidth(), board.getGrid()[0][0].getHeight())/1.66);
         this.setFill(character.getColor());
-        this.setVisible(true);
     }
 }

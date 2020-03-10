@@ -22,7 +22,7 @@ public class InfoPane extends GridPane implements ListChangeListener<Info> {
     public final static int HGAP = 5;
     public final static int PADDING = 15;
     
-    private final ObservableList<Info> infos;
+    private ObservableList<Info> infos;
 
     /**
      * Create a info pane
@@ -37,7 +37,7 @@ public class InfoPane extends GridPane implements ListChangeListener<Info> {
     }
 
     /**
-     * Get all {@link Info}es currently held in this {@link InfoPane}
+     * Get all {@link Info} currently held in this {@link InfoPane}
      * 
      * @return {@link List}<{@link Info}> contained within this {@link InfoPane}
      */

@@ -1,6 +1,7 @@
 package mines.zinno.clue.runners;
 
-import mines.zinno.clue.Game;
+import mines.zinno.clue.game.Clue;
+import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.shapes.character.Character;
 import mines.zinno.clue.shapes.character.enums.Turn;
 
@@ -14,10 +15,10 @@ public class ClueRunner implements Runnable {
 
     private static final int REFRESH_RATE = 100;
     
-    private Game game;
+    private BoardGame boardGame;
     
-    public ClueRunner(Game game) {
-        this.game = game;
+    public ClueRunner(Clue game) {
+        this.boardGame = game;
     }
 
     /**
@@ -26,19 +27,23 @@ public class ClueRunner implements Runnable {
      */
     @Override
     public void run() {
-        while(game.isPlaying()) {
-            Character curCharacter = game.getCharacters().get(0);
+        while(boardGame.isPlaying()) {
+            Character curCharacter = (Character) boardGame.getCharacters().get(0);
             curCharacter.beginTurn();
 
-            waitForNextMove();
+            wait(curCharacter.getTurn() != Turn.POST_MOVE);
+            wait(boardGame.getNumMoves() <= 0);
             curCharacter.setTurn(Turn.OTHER);
-            Collections.rotate(game.getCharacters(), 1);
-            game.addMoves(-1);
+            Collections.rotate(boardGame.getCharacters(), 1);
+            boardGame.addMoves(-1);
         }
     }
-    
-    private void waitForNextMove() {
-        while (game.getNumMoves() <= 0 && game.isPlaying()) {
+
+    /**
+     * Pauses thread until isWait is no longer true
+     */
+    private void wait(boolean isWait) {
+        while (isWait && boardGame.isPlaying()) {
             try {
                 Thread.sleep(REFRESH_RATE);
             } catch (InterruptedException e) {

@@ -13,8 +13,19 @@ import mines.zinno.clue.enums.io.ImgURL;
  */
 public class Sheet extends Pane {
 
+    /**
+     * Distance between each sheet value
+     */
     private final static int SEPARATION = 144/6;
+
+    /**
+     * Width of sheet
+     */
     private final static int WIDTH = 135;
+
+    /**
+     * Coverable sheet value space
+     */
     private final static double HEIGHT_COVER = 0.2;
 
     /**
@@ -30,6 +41,8 @@ public class Sheet extends Pane {
         image.setFitWidth(WIDTH);
 
         image.setX(0);
+        // Set the y value to the center of the value location minus the half the cover amount in pixel form
+        // Essentially centering the image around the sheet value
         image.setY(SEPARATION * (value - (-0.5 + (HEIGHT_COVER/2))));
 
         this.getChildren().add(image);

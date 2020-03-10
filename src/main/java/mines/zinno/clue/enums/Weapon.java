@@ -5,7 +5,7 @@ import mines.zinno.clue.control.menu.ValueMenuItem;
 /**
  * The {@link Weapon} enum holds weapon information
  */
-public enum Weapon {
+public enum Weapon implements Card {
 
     KNIFE("knife", 1),
     CANDLESTICK("candlestick", 2),
@@ -23,16 +23,12 @@ public enum Weapon {
         this.name = name;
     }
 
-    /**
-     * Get the {@link Weapon} id
-     */
+    @Override
     public int getId() {
         return id;
     }
 
-    /**
-     * {@link Weapon} name in {@link String} format
-     */
+    @Override
     public String getName() {
         return name;
     }

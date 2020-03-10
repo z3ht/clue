@@ -7,7 +7,7 @@ import mines.zinno.clue.control.menu.ValueMenuItem;
 /**
  * The {@link Suspect} enum holds suspect information
  */
-public enum Suspect {
+public enum Suspect implements Card {
 
     COL_MUSTARD("Col. Mustard", 1, Color.ORANGE),
     PROF_PLUM("Prof. Plum", 2, Color.PURPLE),
@@ -27,9 +27,7 @@ public enum Suspect {
         this.color = color;
     }
 
-    /**
-     * Get the {@link Suspect} id
-     */
+    @Override
     public int getId() {
         return id;
     }
@@ -42,9 +40,7 @@ public enum Suspect {
         return getName();
     }
 
-    /**
-     * {@link Suspect} name in {@link String} format
-     */
+    @Override
     public String getName() {
         return name;
     }
@@ -57,7 +53,7 @@ public enum Suspect {
     }
 
     /**
-     * Get the {@link Color} of the character
+     * Get {@link Color} of the character
      */
     public Color getColor() {
         return color;

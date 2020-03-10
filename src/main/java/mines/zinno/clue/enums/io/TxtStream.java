@@ -13,6 +13,10 @@ public enum TxtStream {
     
     BOARD(ClueBoard.class.getResourceAsStream("/board.txt"));
 
+    /**
+     * The PARSE {@link Function}<{@link InputStream}, {@link String}> converts text {@link InputStream}s to
+     * String arrays split at newline characters
+     */
     public final static Function<InputStream, String[]> PARSE = (stream) -> {
         Scanner s = new Scanner(stream).useDelimiter("\\A");
         String rawMap = s.hasNext() ? s.next() : "";

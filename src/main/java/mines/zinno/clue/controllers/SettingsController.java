@@ -3,11 +3,13 @@ package mines.zinno.clue.controllers;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuButton;
+import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.control.menu.SelectableMenu;
+import mines.zinno.clue.enums.Alert;
 import mines.zinno.clue.enums.Difficulty;
 import mines.zinno.clue.enums.Digit;
 import mines.zinno.clue.enums.Suspect;
+import mines.zinno.clue.stages.dialogue.BasicInfoDialogue;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,7 +32,7 @@ public class SettingsController implements Initializable {
     private Button begin;
 
     /**
-     * The character {@link SelectableMenu}<{@link Suspect}>
+     * Get the character {@link SelectableMenu}<{@link Suspect}>
      * 
      * @return Character {@link SelectableMenu}<{@link Suspect}>
      */
@@ -39,7 +41,7 @@ public class SettingsController implements Initializable {
     }
 
     /**
-     * The difficulty {@link SelectableMenu}<{@link Difficulty}>
+     * Get the difficulty {@link SelectableMenu}<{@link Difficulty}>
      *
      * @return Difficulty {@link SelectableMenu}<{@link Difficulty}>
      */
@@ -48,7 +50,7 @@ public class SettingsController implements Initializable {
     }
 
     /**
-     * The computer {@link SelectableMenu}<{@link Digit}>
+     * Get the computer {@link SelectableMenu}<{@link Digit}>
      *
      * @return Computer {@link SelectableMenu}<{@link Digit}>
      */
@@ -61,7 +63,6 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        
         for(Digit digit : Digit.values())
             this.computers.getItems().add(digit.getMenuItem());
         this.computers.setSelectedItem(Digit.FIVE);
@@ -74,5 +75,9 @@ public class SettingsController implements Initializable {
 
         for(Suspect character : Suspect.values())
             this.character.getItems().add(character.getMenuItem());
+        
+        begin.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->
+            new BasicInfoDialogue(Alert.INCOMPLETE_FEATURE.getName(), Alert.INCOMPLETE_FEATURE.getText()).show()
+        );
     }
 }

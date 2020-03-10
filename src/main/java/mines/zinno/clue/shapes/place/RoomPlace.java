@@ -46,6 +46,7 @@ public class RoomPlace extends Place {
      */
     @Override
     public void addHighlight(Paint fill, double opacity) {
+        super.addHighlight(fill, opacity);
         this.highlightFamily(fill, opacity, 10);
     }
 
@@ -54,25 +55,33 @@ public class RoomPlace extends Place {
      */
     @Override
     public void delHighlight() {
+        super.delHighlight();
         this.highlightFamily(Color.TRANSPARENT, 0, 10);
     }
 
-    private void highlightFamily(Paint fill, double opacity, int spread) {
-        if(spread <= 0)
+    /**
+     * Recursive function to highlight all {@link Place}s in the same {@link Room}
+     */
+    private void highlightFamily(Paint fill, double opacity, int maxSpread) {
+        // Reached max spread
+        if(maxSpread <= 0)
             return;
         
-        super.addHighlight(fill, opacity);
-
+        // Continue if adjacent values are null
         if(this.getAdjacent() == null)
             return;
         
+        // Loop through adjacent places
         for(Place place : this.getAdjacent()) {
             if(!(place instanceof RoomPlace))
                 continue;
             RoomPlace roomPlace = (RoomPlace) place;
+            
+            // If RoomPlace not in this room, continue (teleporter)
             if(!(roomPlace.getRoom().equals(this.getRoom())))
                 continue;
-            roomPlace.highlightFamily(fill, opacity, spread-1);
+            
+            roomPlace.highlightFamily(fill, opacity, maxSpread-1);
         }
     }
 

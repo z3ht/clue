@@ -24,12 +24,15 @@ public class ClueBoard extends Board<Place> {
 
         super.grid = new Place[rawMap.length][rawMap[0].length()/2];
 
-        int y = 0;
+        int y = -1;
         for(String line : rawMap) {
+            y+=1;
+            
             int x = -1;
             for(int i = 0; i < line.length(); i += 2) {
                 x+=1;
 
+                // Create new Place instance from grid character key value
                 switch(PlaceKey.getPlaceKey(line.charAt(i))) {
                     case PATH:
                         super.grid[y][x] = new BasicPlace();
@@ -60,7 +63,6 @@ public class ClueBoard extends Board<Place> {
                         super.grid[y][x] = new RoomPlace(Room.getRoom(line.charAt(i)));
                 }
             }
-            y+=1;
         }
     }
 
@@ -83,9 +85,11 @@ public class ClueBoard extends Board<Place> {
                 for(Location shift : shifts) {
                     i++;
 
+                    // Check if it is theoretically possible to move to adjacent location
                     if(!grid[y][x].getDirection().isOpen(i))
                         continue;
                     
+                    // Create adjacent location if it exists
                     try {
                         Place adj = super.getItemFromCoordinate(x + shift.getX(), y + shift.getY());
                         
@@ -95,9 +99,11 @@ public class ClueBoard extends Board<Place> {
                         if(!adj.isReachable())
                             continue;
                         
+                        // Continue if RoomPlace does not connect with RoomPlace
                         if(grid[y][x] instanceof RoomPlace && !(adj instanceof RoomPlace))
                             continue;
                         
+                        // Continue if BasicPlace does not connect with BasicPlace or DoorPlace
                         if(grid[y][x] instanceof BasicPlace && !(adj instanceof BasicPlace || adj instanceof DoorPlace))
                             continue;
                         
@@ -105,15 +111,12 @@ public class ClueBoard extends Board<Place> {
                         if(adj instanceof DoorPlace && !adj.getDirection().isOpen((i + 2) % 4)) {
                             continue;
                         }
-                        
-                        // Add the place outside of door instead of the door itself
-                        if(grid[y][x] instanceof RoomPlace && adj instanceof DoorPlace)
-                            adj = super.getItemFromCoordinate(x + shift.getX()*2, y + shift.getY()*2);
 
                         adjacents[i] = adj;
                     } catch (IndexOutOfBoundsException e) {}
                 }
                 
+                // Add adjacent places or null
                 grid[y][x].setAdjacent(adjacents);
             }
         }

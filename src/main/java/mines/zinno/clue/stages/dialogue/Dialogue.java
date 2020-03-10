@@ -64,7 +64,6 @@ public class Dialogue<T> extends Stage {
             e.printStackTrace();
         }
         
-        this.setAlwaysOnTop(true);
         this.setResizable(false);
         this.setTitle(name);
         

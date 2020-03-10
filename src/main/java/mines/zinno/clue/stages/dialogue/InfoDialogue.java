@@ -15,6 +15,8 @@ public class InfoDialogue extends Dialogue<StatusController> {
      */
     public InfoDialogue(String name) {
         super(name, FXMLURL.STATUS.getUrl());
+        
+        this.setAlwaysOnTop(true);
     }
 
     /**
