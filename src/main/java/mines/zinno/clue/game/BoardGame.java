@@ -2,15 +2,15 @@ package mines.zinno.clue.game;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import mines.zinno.clue.controllers.ClueController;
+import mines.zinno.clue.controller.ClueController;
 import javafx.application.Application;
 import javafx.scene.Scene;
 
 import javafx.stage.Stage;
-import mines.zinno.clue.controllers.GameController;
-import mines.zinno.clue.enums.io.FXMLURL;
-import mines.zinno.clue.enums.io.LogMessage;
-import mines.zinno.clue.shapes.character.Character;
+import mines.zinno.clue.controller.GameController;
+import mines.zinno.clue.constant.io.FXMLURL;
+import mines.zinno.clue.constant.io.LogMessage;
+import mines.zinno.clue.shape.character.Character;
 
 import java.awt.*;
 import java.io.IOException;

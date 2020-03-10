@@ -4,7 +4,7 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
-import mines.zinno.clue.enums.io.ImgURL;
+import mines.zinno.clue.constant.io.ImgURL;
 
 import java.util.Optional;
 

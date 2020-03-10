@@ -7,7 +7,7 @@
 <?import javafx.scene.text.*?>
 
 <?import mines.zinno.clue.control.menu.SelectableMenu?>
-<AnchorPane fx:controller="mines.zinno.clue.controllers.SettingsController" id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<AnchorPane fx:controller="mines.zinno.clue.controller.SettingsController" id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="400.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
     <GridPane layoutX="-15.0" layoutY="-1.0" prefHeight="500.0" prefWidth="415.0" vgap="10.0">
       <children>
