@@ -3,7 +3,7 @@ package mines.zinno.clue.shape.character;
 import mines.zinno.clue.constant.Card;
 import mines.zinno.clue.constant.Suspect;
 import mines.zinno.clue.game.BoardGame;
-import mines.zinno.clue.shape.character.enums.RevealContext;
+import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.place.Place;
 
 import java.util.List;

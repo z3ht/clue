@@ -1,4 +1,4 @@
-package mines.zinno.clue.shape.character.listeners;
+package mines.zinno.clue.shape.character.listener;
 
 import mines.zinno.clue.constant.Alert;
 import mines.zinno.clue.constant.Room;

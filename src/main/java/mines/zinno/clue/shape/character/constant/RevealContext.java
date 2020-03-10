@@ -1,4 +1,4 @@
-package mines.zinno.clue.shape.character.enums;
+package mines.zinno.clue.shape.character.constant;
 
 /**
  * The {@link RevealContext} enum provides Context for when a card is revealed to a character 

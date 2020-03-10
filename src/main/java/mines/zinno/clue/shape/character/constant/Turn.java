@@ -1,4 +1,4 @@
-package mines.zinno.clue.shape.character.enums;
+package mines.zinno.clue.shape.character.constant;
 
 /**
  * The {@link} Turn enum holds a character's turn information

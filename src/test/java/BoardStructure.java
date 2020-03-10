@@ -2,7 +2,7 @@ import mines.zinno.clue.layout.board.ClueBoard;
 import org.junit.Before;
 import org.junit.Test;
 
-public class Board {
+public class BoardStructure {
 
     private ClueBoard board;
     

@@ -3,7 +3,7 @@ package mines.zinno.clue.runner;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.shape.character.Character;
-import mines.zinno.clue.shape.character.enums.Turn;
+import mines.zinno.clue.shape.character.constant.Turn;
 
 import java.util.Collections;
 

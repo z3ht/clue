@@ -5,8 +5,8 @@ import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.layout.board.Board;
 import mines.zinno.clue.layout.board.util.Location;
-import mines.zinno.clue.shape.character.enums.RevealContext;
-import mines.zinno.clue.shape.character.enums.Turn;
+import mines.zinno.clue.shape.character.constant.RevealContext;
+import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 
