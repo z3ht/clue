@@ -23,17 +23,9 @@ public enum Action {
     }
 
     /**
-     * @return {@link Action#getText()}
-     */
-    @Override
-    public String toString() {
-        return getText();
-    }
-
-    /**
      * Get the {@link Action} text message
      */
-    public String getText() {
-        return text;
+    public String getText(Object... args) {
+        return String.format(text, args);
     }
 }

@@ -34,7 +34,7 @@ public class Player extends Character {
             return -1;
         }
         int returnVal = super.roll();
-        game.getController().getInfoLabel().setText(String.format(Action.ROLL_NUM.getText(), this.rollNum));
+        game.getController().getInfoLabel().setText(Action.ROLL_NUM.getText(this.getRollNum()));
         highlightPosMoves();
         return returnVal;
     }
@@ -120,7 +120,7 @@ public class Player extends Character {
 
         switch (revealContext) {
             case ON_GUESS:
-                new BasicInfoDialogue(Action.GUESS_TITLE, Action.CLUE.getText()).show();
+                new BasicInfoDialogue(Action.GUESS_TITLE, Action.CLUE.getText(sender.getCharacter().getName(), card.getName())).show();
                 break;
             case LOST_GAME:
                 break;
@@ -170,6 +170,6 @@ public class Player extends Character {
     }
     
     private void displayMovesLeft() {
-        game.getController().getInfoLabel().setText(String.format(Action.MOVES_LEFT.getText(), this.rollNum));
+        game.getController().getInfoLabel().setText(Action.MOVES_LEFT.getText(this.rollNum));
     }
 }

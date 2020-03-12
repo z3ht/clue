@@ -9,9 +9,12 @@ import mines.zinno.clue.layout.board.util.Location;
  * 
  * @param <T> Board Cell type
  */
-public class Board<T extends Rectangle> extends Pane {
+public abstract class Board<T extends Rectangle> extends Pane {
 
     protected T[][] grid;
+    
+    protected char[][][] rawMap;
+    protected String bgImg;
 
     /**
      * Retrieve a board cell using it's coordinate
@@ -86,6 +89,17 @@ public class Board<T extends Rectangle> extends Pane {
                 this.getChildren().add(grid[y][x]);
             }
         }
+    }
+    
+    public abstract void draw();
+    
+    public void setMap(char[][][] rawMap) {
+        setMap(rawMap, null);
+    }
+    
+    public void setMap(char[][][] rawMap, String bgImg) {
+        this.rawMap = rawMap;
+        this.bgImg = bgImg;
     }
 
 }

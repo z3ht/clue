@@ -9,6 +9,7 @@ public enum ImgURL {
     
     CROSS(Object.class.getResource("/imgs/cross.png")),
     CHECK(Object.class.getResource("/imgs/check.png")),
+    BOARD(Object.class.getResource("/imgs/board.jpeg"))
     ;
     
     private URL url;

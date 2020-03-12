@@ -4,13 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import mines.zinno.clue.constant.*;
+import mines.zinno.clue.constant.io.FXMLURL;
 import mines.zinno.clue.control.menu.SelectableMenu;
-import mines.zinno.clue.constant.Alert;
-import mines.zinno.clue.constant.Difficulty;
-import mines.zinno.clue.constant.Digit;
-import mines.zinno.clue.constant.Suspect;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+import mines.zinno.clue.stage.dialogue.Dialogue;
 
+import java.awt.*;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -18,6 +18,9 @@ import java.util.ResourceBundle;
  * The {@link SettingsController} is the controller linked to the Settings.fxml file
  */
 public class SettingsController implements Initializable {
+
+    @FXML
+    private SelectableMenu<BoardVersion> boardVersion;
 
     @FXML
     private SelectableMenu<Suspect> character;
@@ -76,8 +79,8 @@ public class SettingsController implements Initializable {
         for(Suspect character : Suspect.values())
             this.character.getItems().add(character.getMenuItem());
         
-        begin.addEventHandler(MouseEvent.MOUSE_CLICKED, event ->
-            new BasicInfoDialogue(Alert.INCOMPLETE_FEATURE.getName(), Alert.INCOMPLETE_FEATURE.getText()).show()
-        );
+        for(BoardVersion boardVersion : BoardVersion.values())
+            this.boardVersion.getItems().add(boardVersion.getMenuItem());
+        this.boardVersion.setSelectedItem(BoardVersion.CLASSIC);
     }
 }

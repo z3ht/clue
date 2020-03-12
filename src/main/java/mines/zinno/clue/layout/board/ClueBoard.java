@@ -1,6 +1,7 @@
 package mines.zinno.clue.layout.board;
 
 import mines.zinno.clue.constant.Room;
+import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.constant.io.TxtStream;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.layout.board.util.Location;
@@ -13,27 +14,65 @@ import mines.zinno.clue.shape.place.*;
  * characters into places.
  */
 public class ClueBoard extends Board<Place> {
-
-    public ClueBoard() {
-        initializeGrid();
-        calcAdjacent();
+    
+    private final static char[][][] DEFAULT_MAP;
+    
+    static {
+        String[] defRawMap = TxtStream.PARSE.apply(TxtStream.BOARD.getInputStream());
+        
+        DEFAULT_MAP = new char[defRawMap.length][defRawMap[0].length()/2][2];
+        int y = -1;
+        for(String line : defRawMap) {
+            y+= 1;
+            for(int x = 0; x < line.length()/2; x++) {
+                DEFAULT_MAP[y][x][0] = line.charAt(x*2);
+                DEFAULT_MAP[y][x][1] = line.charAt((x*2)+1);
+            }
+        }
     }
 
-    private void initializeGrid() {
-        String[] rawMap = TxtStream.PARSE.apply(TxtStream.BOARD.getInputStream());
+    @Override
+    public void draw() {
+        initializeGrid();
+        calcAdjacent();
 
-        super.grid = new Place[rawMap.length][rawMap[0].length()/2];
+        if(bgImg != null || (rawMap == null || rawMap == DEFAULT_MAP))
+            drawImage();
+        else
+            drawCustom();
+        
+        format();
+    }
+    
+    private void drawImage() {
+        String image = ImgURL.BOARD.getUrl().toExternalForm();
+        
+        if(bgImg != null) {
+            image = bgImg;
+        }
+        
+        super.getParent().setStyle(String.format("-fx-background-image: url(%s);", image));
+    }
+    
+    private void drawCustom() {
+        for(Place[] places : grid) {
+            for(Place place : places) {
+                place.draw();
+            }
+        }
+    }
 
-        int y = -1;
-        for(String line : rawMap) {
-            y+=1;
-            
-            int x = -1;
-            for(int i = 0; i < line.length(); i += 2) {
-                x+=1;
+    protected void initializeGrid() {        
+        if(rawMap == null)
+            rawMap = DEFAULT_MAP;
 
+        this.grid = new Place[rawMap.length][rawMap[0].length];
+        
+        for(int y = 0; y < rawMap.length; y++) {
+            for(int x = 0; x < rawMap[y].length; x++)   {
+                
                 // Create new Place instance from grid character key value
-                switch(PlaceKey.getPlaceKey(line.charAt(i))) {
+                switch(PlaceKey.getPlaceKey(rawMap[y][x][0])) {
                     case PATH:
                         super.grid[y][x] = new BasicPlace();
                         break;
@@ -46,32 +85,43 @@ public class ClueBoard extends Board<Place> {
                 }
 
                 // Continue if grid place already filled
-                if(PlaceKey.getPlaceKey(line.charAt(i)) != PlaceKey.OTHER)
+                if(PlaceKey.getPlaceKey(rawMap[y][x][0]) != PlaceKey.OTHER)
                     continue;
 
                 // Is uppercase (teleporter)
-                if(line.charAt(i) > 64 && line.charAt(i) < 91) {
-                    super.grid[y][x] = new TeleportPlace(DirectionKey.getDirection(line.charAt(i+1)), Room.getRoom(line.charAt(i)));
+                if(rawMap[y][x][0] > 64 && rawMap[y][x][0] < 91) {
+                    super.grid[y][x] = new TeleportPlace(
+                            DirectionKey.getDirection(rawMap[y][x][1]), 
+                            Room.getRoom(rawMap[y][x][0])
+                    );
                 }
                 // Is lowercase (room/door)
-                else if (line.charAt(i) > 96 && line.charAt(i) < 123) {
+                else if (rawMap[y][x][0] > 96 && rawMap[y][x][0] < 123) {
                     // Is door
-                    if(line.charAt(i+1) != DirectionKey.ALL.getKey())
-                        super.grid[y][x] = new DoorPlace(DirectionKey.getDirection(line.charAt(i+1)), Room.getRoom(line.charAt(i)));
+                    if(rawMap[y][x][1] != DirectionKey.ALL.getKey())
+                        super.grid[y][x] = new DoorPlace(
+                                DirectionKey.getDirection(rawMap[y][x][1]), 
+                                Room.getRoom(rawMap[y][x][0])
+                        );
                     // Is room
                     else
-                        super.grid[y][x] = new RoomPlace(Room.getRoom(line.charAt(i)));
+                        super.grid[y][x] = new RoomPlace(Room.getRoom(rawMap[y][x][0]));
                 }
             }
         }
     }
 
-    private void calcAdjacent() {
+    protected void calcAdjacent() {
         for(int y = 0; y < super.grid.length; y++) {
             for(int x = 0; x < super.grid[y].length; x++) {
-
+                
                 // Possible directions (NESW)
-                Location[] shifts = new Location[] {new Location(0,-1), new Location(1, 0), new Location(0, 1), new Location(-1, 0)};
+                Location[] shifts = new Location[] {
+                        new Location(0,-1), 
+                        new Location(1, 0), 
+                        new Location(0, 1), 
+                        new Location(-1, 0)
+                };
 
                 // Possible adjacent locations
                 Place[] adjacents = new Place[5];
@@ -100,7 +150,7 @@ public class ClueBoard extends Board<Place> {
                             continue;
                         
                         // Continue if RoomPlace does not connect with RoomPlace
-                        if(grid[y][x] instanceof RoomPlace && !(adj instanceof RoomPlace))
+                        if(!(grid[y][x] instanceof DoorPlace) && grid[y][x] instanceof RoomPlace && !(adj instanceof RoomPlace))
                             continue;
                         
                         // Continue if BasicPlace does not connect with BasicPlace or DoorPlace
@@ -121,5 +171,4 @@ public class ClueBoard extends Board<Place> {
             }
         }
     }
-
 }

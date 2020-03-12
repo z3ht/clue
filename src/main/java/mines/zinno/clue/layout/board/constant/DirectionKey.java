@@ -8,7 +8,8 @@ public enum DirectionKey {
 
     HORIZONTAL_DOOR('-', new boolean[] {false, true, false, true}),
     VERTICAL_DOOR('|', new boolean[] {true, false, true, false}),
-    ALL(' ', new boolean[] {true, true, true, true});
+    ALL(' ', new boolean[] {true, true, true, true}),
+    CENTER('*', new boolean[] {true, true, true, true});
 
     private char key;
     private boolean[] openLocs;

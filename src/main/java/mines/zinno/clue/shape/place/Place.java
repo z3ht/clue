@@ -86,7 +86,7 @@ public class Place extends Rectangle {
         Pair<Place, Integer> top = tree.peek();
         
         // Exit point
-        if(top.getValue() == maxSpread)
+        if(top == null || top.getValue() == maxSpread)
             return -1;
         
         // Exit point
@@ -189,5 +189,8 @@ public class Place extends Rectangle {
      */
     public Place[] getAdjacent() {
         return adjacent;
+    }
+
+    public void draw() {
     }
 }

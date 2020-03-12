@@ -9,6 +9,7 @@ import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
+import mines.zinno.clue.shape.place.Teleportable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -77,13 +78,18 @@ public abstract class Character extends Circle {
      * Calculate possible moves from a given place and distance
      */
     public Set<Place> calcPosMoves(Place loc, int distance) {
-        if(distance <= 0)
+        return this.calcPosMoves(loc, distance, distance+8);
+    }
+    
+    public Set<Place> calcPosMoves(Place loc, int distance, int maxSpread) {
+        distance -= loc.getMoveCost();
+        if((distance < 0 && loc.getMoveCost() != 0) || maxSpread < 0)
             return new HashSet<>();
         Set<Place> moves = new HashSet<>();
         for(Place place : loc.getAdjacent()) {
             if(place == null || place.isOccupied())
                 continue;
-            moves.addAll(calcPosMoves(place, distance-place.getMoveCost()));
+            moves.addAll(calcPosMoves(place, distance, maxSpread-1));
             moves.add(place);
         }
         return moves;
@@ -102,6 +108,12 @@ public abstract class Character extends Circle {
      * @param forceMove Force movement (t:y; f:n)
      */
     public void moveTo(Place place, boolean forceMove) {
+        
+        if(place instanceof Teleportable) {
+            moveTo((Place) boardGame.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo()));
+            return;
+        }
+            
         this.setVisible(true);
         
         // Set turn to post move
@@ -111,8 +123,9 @@ public abstract class Character extends Circle {
             // Mark previous place as unoccupied
             curPlace.setOccupied(false);
 
-            // Decrement roll number
-            this.rollNum -= curPlace.getDistance(place);
+            if(!forceMove)
+                // Decrement roll number
+                this.rollNum -= curPlace.getDistance(place);
         }
         
         // Move to the void

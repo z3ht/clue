@@ -11,6 +11,7 @@ import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
 import mines.zinno.clue.shape.character.Player;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
+import mines.zinno.clue.shape.character.listener.PromptGuess;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
@@ -76,21 +77,16 @@ public class Clue extends BoardGame<ClueController> {
                 MouseEvent.MOUSE_CLICKED,
                 event -> this.getPlayer().guess()
         );
-
-        // Implement move functionality
-        for(Place[] places : this.getController().getBoard().getGrid()) {
-            for(Place place : places) {
-                place.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> this.getPlayer().moveTo((Place) event.getTarget()));
-            }
-        }
     }
 
     @Override
     protected void startGame() {
-        formatBoard();
+        drawBoard();
         createCharacters();
         createWelcomeStatus();
         beginGameThread();
+        
+        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
     }
 
     /**
@@ -155,6 +151,7 @@ public class Clue extends BoardGame<ClueController> {
         );
         player.addMoveListener(new UpdateRoomGuess(this));
         player.addMoveListener(new OnExitEnter());
+//        player.addMoveListener(new PromptGuess(this));
 
         this.characters.add(
                 this.player
@@ -187,10 +184,17 @@ public class Clue extends BoardGame<ClueController> {
     }
 
     /**
-     * Format clue board
+     * Draw clue board
      */
-    private void formatBoard() {
-        getController().getBoard().format();
+    private void drawBoard() {
+        getController().getBoard().draw();
+
+        // Implement move functionality
+        for(Place[] places : this.getController().getBoard().getGrid()) {
+            for(Place place : places) {
+                place.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> this.getPlayer().moveTo((Place) event.getTarget()));
+            }
+        }
     }
 
 
