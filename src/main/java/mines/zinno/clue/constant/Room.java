@@ -8,16 +8,16 @@ import mines.zinno.clue.layout.board.util.Location;
  */
 public enum Room implements Card {
 
-    HALL("hall", 1, 'h', new Location(11, 3)),
-    LOUNGE("lounge", 2, 'l', new Location(20, 2)),
-    DINING_ROOM("dining room", 3, 'd', new Location(20, 11)),
-    KITCHEN("kitchen", 4, 'k', new Location(20, 20)),
-    BALL_ROOM("ball room", 5, 'a', new Location(11, 20)),
-    CONSERVATORY("conservatory", 6, 'c', new Location(2, 20)),
-    BILLIARD_ROOM("billiard room", 7, 'b', new Location(2, 14)),
-    LIBRARY("library", 8, 'i', new Location(3, 8)),
-    STUDY("study", 9, 's', new Location(3, 1)),
-    EXIT("exit", 10, 'e', new Location(11, 11))
+    HALL("Hall", 0, 'h', new Location(11, 3)),
+    LOUNGE("Lounge", 1, 'l', new Location(20, 2)),
+    DINING_ROOM("Dining Room", 2, 'd', new Location(20, 11)),
+    KITCHEN("Kitchen", 3, 'k', new Location(20, 20)),
+    BALL_ROOM("Ball Room", 4, 'a', new Location(11, 20)),
+    CONSERVATORY("Conservatory", 5, 'c', new Location(2, 20)),
+    BILLIARD_ROOM("Billiard Room", 6, 'b', new Location(2, 14)),
+    LIBRARY("Library", 7, 'i', new Location(3, 8)),
+    STUDY("Study", 8, 's', new Location(3, 1)),
+    EXIT("Exit", 9, 'e', new Location(11, 11))
     ;
 
     private int id;

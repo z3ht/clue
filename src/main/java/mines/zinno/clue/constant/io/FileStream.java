@@ -7,11 +7,11 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 /**
- * The {@link TxtStream} enum converts .txt files to {@link InputStream}s
+ * The {@link FileStream} enum converts {@link InputStream}s to {@link java.util.List><{@link String}>
  */
-public enum TxtStream {
+public enum FileStream {
     
-    BOARD(ClueBoard.class.getResourceAsStream("/board.txt"));
+    BOARD(ClueBoard.class.getResourceAsStream("/board.csv"));
 
     /**
      * The PARSE {@link Function}<{@link InputStream}, {@link String}> converts text {@link InputStream}s to
@@ -20,12 +20,12 @@ public enum TxtStream {
     public final static Function<InputStream, String[]> PARSE = (stream) -> {
         Scanner s = new Scanner(stream).useDelimiter("\\A");
         String rawMap = s.hasNext() ? s.next() : "";
-        return rawMap.split("\\r?\\n");
+        return rawMap.replace(",", "").split("\\r?\\n");
     };
     
     private InputStream inputStream;
 
-    TxtStream(InputStream inputStream) {
+    FileStream(InputStream inputStream) {
         this.inputStream = inputStream;
     }
 

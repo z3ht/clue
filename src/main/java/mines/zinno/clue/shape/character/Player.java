@@ -82,19 +82,23 @@ public class Player extends Character {
         // Send missing value alerts or store selected value
         Suspect suspect = game.getController().getGuessDialogue().getController().getSuspectMenu().getSelected().orElse(null);
         if(suspect == null) {
-            new BasicInfoDialogue(Action.GUESS_TITLE, String.format(Alert.INCOMPLETE_GUESS.getText(), "suspect")).show();
+            new BasicInfoDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("suspect")).show();
             return;
         }
         Room room = game.getController().getGuessDialogue().getController().getRoomMenu().getSelected().orElse(null);
         if(room == null) {
-            new BasicInfoDialogue(Action.GUESS_TITLE, String.format(Alert.INCOMPLETE_GUESS.getText(), "room")).show();
+            new BasicInfoDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("room")).show();
             return;
         }
         Weapon weapon = game.getController().getGuessDialogue().getController().getWeaponMenu().getSelected().orElse(null);
         if(weapon == null) {
-            new BasicInfoDialogue(Action.GUESS_TITLE, String.format(Alert.INCOMPLETE_GUESS.getText(), "weapon")).show();
+            new BasicInfoDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("weapon")).show();
             return;
         }
+        
+        delHighlightPosMoves();
+        this.rollNum = 0;
+        this.posMoves = null;
         
         Boolean isFound = super.guess(suspect, room, weapon);
         
@@ -102,10 +106,6 @@ public class Player extends Character {
         if(isFound != null && !isFound) {
             new BasicInfoDialogue(Action.GUESS_TITLE, Action.NOTHING_FOUND.getText()).show();
         }
-        
-        this.rollNum = 0;
-        this.posMoves = null;
-        delHighlightPosMoves();
     }
 
 

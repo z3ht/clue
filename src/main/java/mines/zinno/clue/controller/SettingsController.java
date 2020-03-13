@@ -7,7 +7,6 @@ import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.constant.io.FXMLURL;
 import mines.zinno.clue.control.menu.SelectableMenu;
-import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 import mines.zinno.clue.stage.dialogue.Dialogue;
 
 import java.awt.*;
@@ -19,8 +18,10 @@ import java.util.ResourceBundle;
  */
 public class SettingsController implements Initializable {
 
+    private Dialogue<CustomBoardController> boardVersionDialogue;
+    
     @FXML
-    private SelectableMenu<BoardVersion> boardVersion;
+    private Button boardVersion;
 
     @FXML
     private SelectableMenu<Suspect> character;
@@ -53,6 +54,24 @@ public class SettingsController implements Initializable {
     }
 
     /**
+     * Get the board version {@link Button}
+     */
+    public Button getBoardVersion() {
+        return boardVersion;
+    }
+
+    public Dialogue<CustomBoardController> getBoardVersionDialogue() {
+        return boardVersionDialogue;
+    }
+
+    /**
+     * Get the begin {@link Button}
+     */
+    public Button getBegin() {
+        return begin;
+    }
+
+    /**
      * Get the computer {@link SelectableMenu}<{@link Digit}>
      *
      * @return Computer {@link SelectableMenu}<{@link Digit}>
@@ -66,21 +85,19 @@ public class SettingsController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        for(Digit digit : Digit.values())
+        for (Digit digit : Digit.values())
             this.computers.getItems().add(digit.getMenuItem());
         this.computers.setSelectedItem(Digit.FIVE);
-        this.computers.setLocked(true);
-        
-        for(Difficulty difficulty : Difficulty.values())
+
+        for (Difficulty difficulty : Difficulty.values())
             this.difficulty.getItems().add(difficulty.getMenuItem());
         this.difficulty.setSelectedItem(Difficulty.REGULAR);
         this.difficulty.setLocked(true);
 
-        for(Suspect character : Suspect.values())
+        for (Suspect character : Suspect.values())
             this.character.getItems().add(character.getMenuItem());
         
-        for(BoardVersion boardVersion : BoardVersion.values())
-            this.boardVersion.getItems().add(boardVersion.getMenuItem());
-        this.boardVersion.setSelectedItem(BoardVersion.CLASSIC);
+        this.boardVersionDialogue = new Dialogue<>(FXMLURL.CUSTOM_BOARD.getName(), FXMLURL.CUSTOM_BOARD.getUrl(), new Dimension(450, 250));
+        this.boardVersion.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> boardVersionDialogue.show());
     }
 }

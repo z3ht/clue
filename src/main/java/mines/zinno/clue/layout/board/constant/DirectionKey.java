@@ -11,10 +11,10 @@ public enum DirectionKey {
     ALL(' ', new boolean[] {true, true, true, true}),
     CENTER('*', new boolean[] {true, true, true, true});
 
-    private char key;
+    private Character key;
     private boolean[] openLocs;
 
-    DirectionKey(char key, boolean[] openLocs) {
+    DirectionKey(Character key, boolean[] openLocs) {
         this.openLocs = openLocs;
         this.key = key;
     }
@@ -24,7 +24,7 @@ public enum DirectionKey {
      * 
      * @return character key
      */
-    public char getKey() {
+    public Character getKey() {
         return key;
     }
 

@@ -6,16 +6,18 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mines.zinno.clue.controller.ClueController;
 import mines.zinno.clue.constant.*;
+import mines.zinno.clue.controller.CustomBoardController;
+import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.runner.ClueRunner;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
 import mines.zinno.clue.shape.character.Player;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
-import mines.zinno.clue.shape.character.listener.PromptGuess;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+
 
 import java.awt.*;
 import java.io.IOException;
@@ -76,6 +78,20 @@ public class Clue extends BoardGame<ClueController> {
         this.getController().getGuessDialogue().getController().getGuess().addEventHandler(
                 MouseEvent.MOUSE_CLICKED,
                 event -> this.getPlayer().guess()
+        );
+        
+        // Add OnSettingsConfirm listener
+        this.getController().getSettingsDialogue().getController().getBegin().addEventHandler(
+                MouseEvent.MOUSE_CLICKED,
+                event -> {
+                    try {
+                        this.setPlaying(false);
+                        Thread.sleep(350);
+                        this.startGame();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
         );
     }
 
@@ -176,17 +192,26 @@ public class Clue extends BoardGame<ClueController> {
         // Assign characters with known suspects, weapons, and rooms
         int i = 0;
         while (suspects.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(suspects.remove(0));
+            this.characters.get(i++%numComputers+1).addProvidedCard(suspects.remove(0));
         while (weapons.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(weapons.remove(0));
+            this.characters.get(i++%numComputers+1).addProvidedCard(weapons.remove(0));
         while (rooms.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(rooms.remove(0));
+            this.characters.get(i++%numComputers+1).addProvidedCard(rooms.remove(0));
     }
 
     /**
      * Draw clue board
      */
     private void drawBoard() {
+        CustomBoardController customBoardController = this.getController().getSettingsDialogue().getController().getBoardVersionDialogue().getController();
+        
+        try {
+            getController().getBoard().setMap(customBoardController.getMapLocation().getText(), customBoardController.getImgLocation().getText());
+        } catch (BadMapFormatException e) {
+            new BasicInfoDialogue(BadMapFormatException.getName(), e.getMessage()).show();
+        }
+        
+        
         getController().getBoard().draw();
 
         // Implement move functionality

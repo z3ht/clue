@@ -2,7 +2,14 @@ package mines.zinno.clue.layout.board;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
+import mines.zinno.clue.constant.io.FileStream;
+import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.util.Location;
+
+import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
 
 /**
  * The {@link Board} class holds all board necessary board information
@@ -13,8 +20,10 @@ public abstract class Board<T extends Rectangle> extends Pane {
 
     protected T[][] grid;
     
-    protected char[][][] rawMap;
+    protected Character[][][] rawMap;
     protected String bgImg;
+    
+    private Set<Function<Character[][][], Boolean>> mapValidators = new HashSet<>();
 
     /**
      * Retrieve a board cell using it's coordinate
@@ -93,13 +102,56 @@ public abstract class Board<T extends Rectangle> extends Pane {
     
     public abstract void draw();
     
-    public void setMap(char[][][] rawMap) {
-        setMap(rawMap, null);
+    public void setMap(String mapLoc) throws BadMapFormatException {
+        setMap(mapLoc, null);
     }
     
-    public void setMap(char[][][] rawMap, String bgImg) {
-        this.rawMap = rawMap;
-        this.bgImg = bgImg;
+    public void setMap(String mapLoc, String bgImg) throws BadMapFormatException {
+        Character[][][] map = createMap(mapLoc);
+        for(Function<Character[][][], Boolean> mapValidator : mapValidators) {
+            if(!(mapValidator.apply(map)))
+                throw new BadMapFormatException("The map could not be validated");
+        }
+        this.rawMap = map;
+        if(bgImg != null && !(bgImg.equals("")))
+            this.bgImg = bgImg;
+    }
+    
+    public Character[][][] createMap(String mapLoc) throws BadMapFormatException {
+        if(mapLoc == null || mapLoc.equals(""))
+            return null;
+        
+        File locFile = new File(mapLoc);
+        
+        try {
+            String[] rawMap = FileStream.PARSE.apply(new FileInputStream(locFile));
+            
+            for(String line : rawMap)
+                System.out.println(line);
+            
+            Character[][][] map = new Character[rawMap.length][rawMap[0].length()/2][2];
+
+            int y = -1;
+            for(String line : rawMap) {
+                y+= 1;
+                for(int x = 0; x < line.length()/2; x++) {
+                    map[y][x][0] = line.charAt(x*2);
+                    map[y][x][1] = line.charAt((x*2)+1);
+                }
+            }
+
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BadMapFormatException(String.format("The map file could not be read\nIs '%s' the right location?", locFile.getAbsolutePath()));
+        }
     }
 
+    public void addMapValidator(Function<Character[][][], Boolean> mapValidator) {
+        this.mapValidators.add(mapValidator);
+    }
+    
+    public void delMapValidator(Function<Character[][][], Boolean> mapValidator) {
+        this.mapValidators.remove(mapValidator);
+    }
 }

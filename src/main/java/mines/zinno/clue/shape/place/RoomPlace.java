@@ -1,8 +1,11 @@
 package mines.zinno.clue.shape.place;
 
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import mines.zinno.clue.constant.Room;
+import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 
 /**
@@ -13,6 +16,7 @@ import mines.zinno.clue.layout.board.constant.DirectionKey;
 public class RoomPlace extends Place {
 
     private final Room room;
+    private boolean isCenter;
 
     public RoomPlace(Room room) {
         this(room ,true, 0);
@@ -83,6 +87,25 @@ public class RoomPlace extends Place {
             
             roomPlace.highlightFamily(fill, opacity, maxSpread-1);
         }
+    }
+    
+    @Override
+    public void display() {
+        this.setFill(new ImagePattern(new Image(ImgURL.ROOM_PLACE.getUrl().toExternalForm())));
+        this.setOpacity(1);
+    }
+
+    public boolean isCenter() {
+        return isCenter;
+    }
+
+    public void setCenter(boolean center) {
+        isCenter = center;
+    }
+
+    @Override
+    public boolean isOccupied() {
+        return false;
     }
 
     /**

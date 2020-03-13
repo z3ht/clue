@@ -8,6 +8,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import mines.zinno.clue.constant.Alert;
 import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 import mines.zinno.clue.constant.io.LogMessage;
@@ -29,7 +30,7 @@ public class Dialogue<T> extends Stage {
     private final static Dimension DEFAULT_SIZE = new Dimension(200, 200);
     
     private T controller;
-    private Parent root;
+    protected Parent root;
 
     /**
      * Create a dialogue window
@@ -70,7 +71,7 @@ public class Dialogue<T> extends Stage {
     /**
      * Recursive function that applies a consumer function to all children nodes. Used by {@link Dialogue#addListeners()}
      */
-    private void applyAllChildren(Parent parent, Consumer<Node> consumer) {
+    void applyAllChildren(Parent parent, Consumer<Node> consumer) {
         if(parent == null || consumer == null)
             return;
         for(Node child : parent.getChildrenUnmodifiable()) {
@@ -105,13 +106,13 @@ public class Dialogue<T> extends Stage {
 
             SelectableMenu menuButton = (SelectableMenu) node;
             
-            if(menuButton.isLocked())
+            if(menuButton.isLocked()) 
                 return;
             
             for(MenuItem menuItem : menuButton.getItems()) {
                 if(!(menuItem instanceof ValueMenuItem))
                     continue;
-                menuItem.setOnAction(event -> menuButton.setSelectedItem((ValueMenuItem) menuItem));
+                menuItem.setOnAction((event -> menuButton.setSelectedItem((ValueMenuItem) menuItem)));
             }
         });
     }

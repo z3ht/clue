@@ -14,16 +14,16 @@ public enum PlaceKey {
     UNREACHABLE('.'),
     OTHER((char) 0);    // null
 
-    private char key;
+    private Character key;
 
-    PlaceKey(char key) {
+    PlaceKey(Character key) {
         this.key = key;
     }
 
     /**
      * Get {@link Place}s key
      */
-    public char getKey() {
+    public Character getKey() {
         return key;
     }
 

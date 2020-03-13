@@ -2,7 +2,8 @@ package mines.zinno.clue.layout.board;
 
 import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.constant.io.ImgURL;
-import mines.zinno.clue.constant.io.TxtStream;
+import mines.zinno.clue.constant.io.FileStream;
+import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.layout.board.util.Location;
 import mines.zinno.clue.layout.board.constant.PlaceKey;
@@ -10,17 +11,17 @@ import mines.zinno.clue.shape.place.*;
 
 /**
  * {@link ClueBoard} extends the {@link Board} class using {@link Place} as it's generic cell type. This class initializes
- * the board with values from board.txt using the {@link PlaceKey} and {@link DirectionKey} enums which help to convert
+ * the board with values from board.csv using the {@link PlaceKey} and {@link DirectionKey} enums which help to convert
  * characters into places.
  */
 public class ClueBoard extends Board<Place> {
     
-    private final static char[][][] DEFAULT_MAP;
+    private final static Character[][][] DEFAULT_MAP;
     
     static {
-        String[] defRawMap = TxtStream.PARSE.apply(TxtStream.BOARD.getInputStream());
+        String[] defRawMap = FileStream.PARSE.apply(FileStream.BOARD.getInputStream());
         
-        DEFAULT_MAP = new char[defRawMap.length][defRawMap[0].length()/2][2];
+        DEFAULT_MAP = new Character[defRawMap.length][defRawMap[0].length()/2][2];
         int y = -1;
         for(String line : defRawMap) {
             y+= 1;
@@ -36,12 +37,12 @@ public class ClueBoard extends Board<Place> {
         initializeGrid();
         calcAdjacent();
 
+        format();
+        
         if(bgImg != null || (rawMap == null || rawMap == DEFAULT_MAP))
             drawImage();
         else
             drawCustom();
-        
-        format();
     }
     
     private void drawImage() {
@@ -51,13 +52,14 @@ public class ClueBoard extends Board<Place> {
             image = bgImg;
         }
         
-        super.getParent().setStyle(String.format("-fx-background-image: url(%s);", image));
+        this.getParent().setStyle(String.format("-fx-background-image: url(%s);", image));
     }
     
     private void drawCustom() {
+        this.getParent().setStyle("");
         for(Place[] places : grid) {
             for(Place place : places) {
-                place.draw();
+                place.display();
             }
         }
     }
@@ -70,7 +72,6 @@ public class ClueBoard extends Board<Place> {
         
         for(int y = 0; y < rawMap.length; y++) {
             for(int x = 0; x < rawMap[y].length; x++)   {
-                
                 // Create new Place instance from grid character key value
                 switch(PlaceKey.getPlaceKey(rawMap[y][x][0])) {
                     case PATH:
@@ -156,7 +157,12 @@ public class ClueBoard extends Board<Place> {
                         // Continue if BasicPlace does not connect with BasicPlace or DoorPlace
                         if(grid[y][x] instanceof BasicPlace && !(adj instanceof BasicPlace || adj instanceof DoorPlace))
                             continue;
-                        
+
+                        // Add the place outside of door instead of the door itself
+                        if(grid[y][x] instanceof RoomPlace && adj instanceof DoorPlace)
+                            adj = super.getItemFromCoordinate(x + shift.getX()*2, y + shift.getY()*2);
+
+
                         // Continue if a door is adjacent but points in the wrong direction
                         if(adj instanceof DoorPlace && !adj.getDirection().isOpen((i + 2) % 4)) {
                             continue;

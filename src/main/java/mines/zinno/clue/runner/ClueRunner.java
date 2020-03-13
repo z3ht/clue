@@ -1,9 +1,12 @@
 package mines.zinno.clue.runner;
 
+import javafx.application.Platform;
+import mines.zinno.clue.controller.ClueController;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.constant.Turn;
+import mines.zinno.clue.shape.place.Place;
 
 import java.util.Collections;
 
@@ -15,7 +18,7 @@ public class ClueRunner implements Runnable {
 
     private static final int REFRESH_RATE = 100;
     
-    private BoardGame boardGame;
+    private BoardGame<ClueController> boardGame;
     
     public ClueRunner(Clue game) {
         this.boardGame = game;
@@ -28,7 +31,7 @@ public class ClueRunner implements Runnable {
     @Override
     public void run() {
         while(boardGame.isPlaying()) {
-            Character curCharacter = (Character) boardGame.getCharacters().get(0);
+            Character curCharacter = boardGame.getCharacters().get(0);
             curCharacter.beginTurn();
 
             wait(curCharacter.getTurn() != Turn.POST_MOVE);
@@ -37,6 +40,15 @@ public class ClueRunner implements Runnable {
             Collections.rotate(boardGame.getCharacters(), 1);
             boardGame.addMoves(-1);
         }
+        kill();
+    }
+    
+    public void kill() {
+        Platform.runLater(() -> {
+            boardGame.getController().getSuspectsSheet().getChildren().clear();
+            boardGame.getController().getWeaponsSheet().getChildren().clear();
+            boardGame.getController().getRoomsSheet().getChildren().clear(); 
+        });
     }
 
     /**

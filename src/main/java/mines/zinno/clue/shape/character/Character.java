@@ -82,14 +82,15 @@ public abstract class Character extends Circle {
     }
     
     public Set<Place> calcPosMoves(Place loc, int distance, int maxSpread) {
-        distance -= loc.getMoveCost();
-        if((distance < 0 && loc.getMoveCost() != 0) || maxSpread < 0)
+        if(maxSpread < 0)
             return new HashSet<>();
         Set<Place> moves = new HashSet<>();
         for(Place place : loc.getAdjacent()) {
             if(place == null || place.isOccupied())
                 continue;
-            moves.addAll(calcPosMoves(place, distance, maxSpread-1));
+            if(distance - place.getMoveCost() < 0)
+                continue;
+            moves.addAll(calcPosMoves(place, distance - place.getMoveCost(), maxSpread-1));
             moves.add(place);
         }
         return moves;
@@ -108,11 +109,8 @@ public abstract class Character extends Circle {
      * @param forceMove Force movement (t:y; f:n)
      */
     public void moveTo(Place place, boolean forceMove) {
-        
-        if(place instanceof Teleportable) {
-            moveTo((Place) boardGame.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo()));
-            return;
-        }
+        if(place instanceof Teleportable)
+            place = (Place) boardGame.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo());
             
         this.setVisible(true);
         
@@ -142,6 +140,7 @@ public abstract class Character extends Circle {
         this.setCenterX(location.getX());
         this.setCenterY(location.getY());
         place.setOccupied(true);
+        this.toFront();
 
         // Calc new possible moves
         this.posMoves = calcPosMoves();
@@ -165,10 +164,11 @@ public abstract class Character extends Circle {
                         card.getName().equals(room.getName()) ||
                         card.getName().equals(weapon.getName())))
                     continue;
-                
-                this.receiveCard(c, card, RevealContext.ON_GUESS);
+
+                if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT)))
+                    this.receiveCard(c, card, RevealContext.ON_GUESS);
                 isFound = true;
-                break;
+                 break;
             }
             
             if(isFound)
@@ -195,7 +195,7 @@ public abstract class Character extends Circle {
         }
         boardGame.getCharacters().remove(this);
         this.moveTo(null, true);
-        
+
         return null;
     }
 
@@ -281,5 +281,6 @@ public abstract class Character extends Circle {
         Board board = this.boardGame.getController().getBoard();
         this.setRadius(Math.min(board.getGrid()[0][0].getWidth(), board.getGrid()[0][0].getHeight())/1.66);
         this.setFill(character.getColor());
+        this.setVisible(true);
     }
 }

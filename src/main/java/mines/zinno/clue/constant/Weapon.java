@@ -7,12 +7,12 @@ import mines.zinno.clue.control.menu.ValueMenuItem;
  */
 public enum Weapon implements Card {
 
-    KNIFE("knife", 1),
-    CANDLESTICK("candlestick", 2),
-    REVOLVER("revolver", 3),
-    ROPE("rope", 4),
-    LEAD_PIPE("lead pipe", 5),
-    WRENCH("wrench", 6)
+    KNIFE("Knife", 0),
+    CANDLESTICK("Candlestick", 1),
+    REVOLVER("Revolver", 2),
+    ROPE("Rope", 3),
+    LEAD_PIPE("Lead Pipe", 4),
+    WRENCH("Wrench", 5)
     ;
 
     private int id;

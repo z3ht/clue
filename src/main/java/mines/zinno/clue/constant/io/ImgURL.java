@@ -9,7 +9,10 @@ public enum ImgURL {
     
     CROSS(Object.class.getResource("/imgs/cross.png")),
     CHECK(Object.class.getResource("/imgs/check.png")),
-    BOARD(Object.class.getResource("/imgs/board.jpeg"))
+    BOARD(Object.class.getResource("/imgs/board.jpeg")),
+    BASIC_PLACE(Object.class.getResource("/imgs/basicplace.png")),
+    PLACE(Object.class.getResource("/imgs/place.png")),
+    ROOM_PLACE(Object.class.getResource("/imgs/roomplace.png"))
     ;
     
     private URL url;

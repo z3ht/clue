@@ -1,11 +1,20 @@
 package mines.zinno.clue.shape.place;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
+import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.layout.board.util.Location;
+import sun.plugin.dom.css.Rect;
 
+import javax.swing.text.html.ImageView;
 import java.util.*;
 
 /**
@@ -23,6 +32,8 @@ public class Place extends Rectangle {
     private final int moveCost;
 
     private boolean isOccupied;
+    
+    private final Rectangle highlight;
 
     public Place() {
         this(DirectionKey.ALL, true, 1);
@@ -35,9 +46,16 @@ public class Place extends Rectangle {
         this.moveCost = moveCost;
         this.direction = direction;
         
-        this.delHighlight();
+        this.highlight = new Rectangle();
+        
+        this.setOpacity(0);
     }
 
+    public void display() {
+        this.setFill(new ImagePattern(new Image(ImgURL.PLACE.getUrl().toExternalForm())));
+        this.setOpacity(1);
+    }
+    
     /**
      * Highlight this place
      * 
@@ -54,8 +72,30 @@ public class Place extends Rectangle {
      * @param opacity Opacity value [0,1]
      */
     public void addHighlight(Paint fill, double opacity) {
-        this.opacityProperty().set(opacity);
-        this.setFill(fill);
+        if(!(this.getParent().getChildrenUnmodifiable().contains(highlight)))
+            createHighlight();
+        this.highlight.opacityProperty().set(opacity);
+        this.highlight.setFill(fill);
+    }
+
+    private void createHighlight() {
+        ((Pane) this.getParent()).getChildren().add(highlight);
+        this.highlight.setWidth(this.getWidth());
+        this.highlight.setHeight(this.getHeight());
+        this.highlight.setX(this.getX());
+        this.highlight.setY(this.getY());
+        this.highlight.setVisible(true);
+        this.highlight.addEventFilter(Event.ANY, (event) -> {
+            this.fireEvent(event);
+            event.consume();
+        });
+    }
+
+    /**
+     * Remove a highlight
+     */
+    public void delHighlight() {
+        this.highlight.opacityProperty().set(0);
     }
 
     /**
@@ -119,13 +159,6 @@ public class Place extends Rectangle {
     }
 
     /**
-     * Remove a highlight
-     */
-    public void delHighlight() {
-        this.opacityProperty().set(0);
-    }
-
-    /**
      * Set place occupied
      * 
      * @param occupied isOccupied
@@ -158,7 +191,7 @@ public class Place extends Rectangle {
     public int getMoveCost() {
         return moveCost;
     }
-
+    
     /**
      * Get center pixel location of this place
      * 
@@ -189,8 +222,5 @@ public class Place extends Rectangle {
      */
     public Place[] getAdjacent() {
         return adjacent;
-    }
-
-    public void draw() {
     }
 }
