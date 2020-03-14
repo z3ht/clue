@@ -12,9 +12,7 @@ import javafx.util.Pair;
 import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.layout.board.util.Location;
-import sun.plugin.dom.css.Rect;
 
-import javax.swing.text.html.ImageView;
 import java.util.*;
 
 /**
