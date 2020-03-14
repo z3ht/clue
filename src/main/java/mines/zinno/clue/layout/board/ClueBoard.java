@@ -9,6 +9,9 @@ import mines.zinno.clue.layout.board.util.Location;
 import mines.zinno.clue.layout.board.constant.PlaceKey;
 import mines.zinno.clue.shape.place.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+
 /**
  * {@link ClueBoard} extends the {@link Board} class using {@link Place} as it's generic cell type. This class initializes
  * the board with values from board.csv using the {@link PlaceKey} and {@link DirectionKey} enums which help to convert
@@ -32,11 +35,14 @@ public class ClueBoard extends Board<Place> {
         }
     }
 
-    @Override
-    public void draw() {
+    public void initialize() {
         initializeGrid();
         calcAdjacent();
-
+    }
+    
+    @Override
+    public void draw() {
+        initialize();
         format();
         
         if(bgImg != null || (rawMap == null || rawMap == DEFAULT_MAP))
@@ -177,4 +183,44 @@ public class ClueBoard extends Board<Place> {
             }
         }
     }
+
+    @Override
+    protected Character[][][] createMap(String mapLoc) throws BadMapFormatException {
+        if(mapLoc == null || mapLoc.equals(""))
+            return null;
+
+        File locFile = new File(mapLoc);
+
+        try {
+            String[] rawMap = FileStream.PARSE.apply(new FileInputStream(locFile));
+
+            Character[][][] map = new Character[rawMap.length][rawMap[0].length()/2][2];
+
+            int y = -1;
+            for(String rawLine : rawMap) {
+                StringBuilder line = new StringBuilder(rawLine);
+                
+                y+= 1;
+                int x = 0;
+                while(x < line.length()/2) {
+                    if(line.charAt(x*2) == ',')
+                        line.deleteCharAt(x*2);
+                    
+                    map[y][x][0] = line.charAt(x*2);
+
+                    if(line.charAt((x*2)+1) == ',')
+                        map[y][x][1] = DirectionKey.ALL.getKey();
+                    else
+                        map[y][x][1] = line.charAt((x*2)+1);
+                    x++;
+                }
+            }
+
+            return map;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BadMapFormatException(String.format("The map file could not be read\nIs '%s' the right location?", locFile.getAbsolutePath()));
+        }
+    }
+
 }

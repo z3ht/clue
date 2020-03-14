@@ -272,6 +272,7 @@ public abstract class Character extends Circle {
      */
     public void addProvidedCard(Card card) {
         this.providedCards.add(card);
+        receiveCard(null, card, RevealContext.PROVIDED);
     }
 
     /**

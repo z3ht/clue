@@ -1,6 +1,5 @@
 package mines.zinno.clue.constant;
 
-//TODO add font parsing enum to allow for in line bolding and coloring
 /**
  * The {@link Alert} enum holds alert messages used throughout the Clue game. An alert is a popup message that occurs
  * throughout the game.

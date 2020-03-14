@@ -20,7 +20,7 @@ public enum FileStream {
     public final static Function<InputStream, String[]> PARSE = (stream) -> {
         Scanner s = new Scanner(stream).useDelimiter("\\A");
         String rawMap = s.hasNext() ? s.next() : "";
-        return rawMap.replace(",", "").split("\\r?\\n");
+        return rawMap.split("\\r?\\n");
     };
     
     private InputStream inputStream;

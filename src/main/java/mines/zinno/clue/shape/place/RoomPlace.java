@@ -95,10 +95,16 @@ public class RoomPlace extends Place {
         this.setOpacity(1);
     }
 
+    /**
+     * Returns true if this is the center of the room
+     */
     public boolean isCenter() {
         return isCenter;
     }
 
+    /**
+     * Set the center of the room
+     */
     public void setCenter(boolean center) {
         isCenter = center;
     }

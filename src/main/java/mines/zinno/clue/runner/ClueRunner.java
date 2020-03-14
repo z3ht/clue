@@ -40,15 +40,6 @@ public class ClueRunner implements Runnable {
             Collections.rotate(boardGame.getCharacters(), 1);
             boardGame.addMoves(-1);
         }
-        kill();
-    }
-    
-    public void kill() {
-        Platform.runLater(() -> {
-            boardGame.getController().getSuspectsSheet().getChildren().clear();
-            boardGame.getController().getWeaponsSheet().getChildren().clear();
-            boardGame.getController().getRoomsSheet().getChildren().clear(); 
-        });
     }
 
     /**

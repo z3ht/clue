@@ -12,7 +12,9 @@ public enum ImgURL {
     BOARD(Object.class.getResource("/imgs/board.jpeg")),
     BASIC_PLACE(Object.class.getResource("/imgs/basicplace.png")),
     PLACE(Object.class.getResource("/imgs/place.png")),
-    ROOM_PLACE(Object.class.getResource("/imgs/roomplace.png"))
+    ROOM_PLACE(Object.class.getResource("/imgs/roomplace.png")),
+    DOOR_PLACE(Object.class.getResource("/imgs/door.png")),
+    TELEPORT_PLACE(Object.class.getResource("/imgs/teleportplace.png"))
     ;
     
     private URL url;

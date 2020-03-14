@@ -2,14 +2,12 @@ package mines.zinno.clue.layout.board;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import mines.zinno.clue.constant.io.FileStream;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.layout.board.validator.MapValidator;
 
-import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Function;
 
 /**
  * The {@link Board} class holds all board necessary board information
@@ -23,7 +21,7 @@ public abstract class Board<T extends Rectangle> extends Pane {
     protected Character[][][] rawMap;
     protected String bgImg;
     
-    private Set<Function<Character[][][], Boolean>> mapValidators = new HashSet<>();
+    private Set<MapValidator> mapValidators = new HashSet<>();
 
     /**
      * Retrieve a board cell using it's coordinate
@@ -81,10 +79,14 @@ public abstract class Board<T extends Rectangle> extends Pane {
      * size is set or changed.
      */
     public void format() {
+        // Clear children from previous format call
         this.getChildren().clear();
         
+        // Return if grid is null (can not be formatted)
         if(grid == null)
             return;
+        
+        
         for(int y = 0; y < grid.length; y++) {
             if(grid[y] == null)
                 continue;
@@ -99,59 +101,76 @@ public abstract class Board<T extends Rectangle> extends Pane {
             }
         }
     }
-    
+
+    /**
+     * Draw a board
+     */
     public abstract void draw();
-    
+
+    /**
+     * Set the board's map. Satisfies {@link mines.zinno.clue.Assignments#C12A1} requirement
+     * 
+     * @param mapLoc Map file location (Supports .txt and .csv files)
+     * @throws BadMapFormatException Thrown when a map is not correctly formatted
+     */
     public void setMap(String mapLoc) throws BadMapFormatException {
         setMap(mapLoc, null);
     }
-    
+
+    /**
+     * Set the board's map. Satisfies {@link mines.zinno.clue.Assignments#C12A1} requirement
+     *
+     * @param mapLoc Map file location (Supports .txt and .csv files)
+     * @param bgImg Background image file location
+     * @throws BadMapFormatException Thrown when a map is not correctly formatted
+     */
     public void setMap(String mapLoc, String bgImg) throws BadMapFormatException {
         Character[][][] map = createMap(mapLoc);
-        for(Function<Character[][][], Boolean> mapValidator : mapValidators) {
-            if(!(mapValidator.apply(map)))
+        
+        // Validate map
+        if(map != null) {
+            // Map must have an x and y value
+            if(map[0] == null)
                 throw new BadMapFormatException("The map could not be validated");
+            
+            // Ensure there are no commas
+            // Commas indicate a csv file was parsed incorrectly
+            for(int y = 0; y < map.length; y++) {
+                for(int x = 0; x < map[y].length; x++) {
+                    for(int i = 0; i < map[y][x].length; i++) {
+                        if (map[y][x][i] == null || map[y][x][i] == ',')
+                            throw new BadMapFormatException("The map could not be validated");
+                    }
+                }
+            }
+            
+            // Validate using validators
+            for(MapValidator mapValidator : mapValidators) {
+                if(!(mapValidator.apply(map)))
+                    throw new BadMapFormatException("The map could not be validated");
+            }
         }
         this.rawMap = map;
+        
         if(bgImg != null && !(bgImg.equals("")))
             this.bgImg = bgImg;
     }
-    
-    public Character[][][] createMap(String mapLoc) throws BadMapFormatException {
-        if(mapLoc == null || mapLoc.equals(""))
-            return null;
-        
-        File locFile = new File(mapLoc);
-        
-        try {
-            String[] rawMap = FileStream.PARSE.apply(new FileInputStream(locFile));
-            
-            for(String line : rawMap)
-                System.out.println(line);
-            
-            Character[][][] map = new Character[rawMap.length][rawMap[0].length()/2][2];
 
-            int y = -1;
-            for(String line : rawMap) {
-                y+= 1;
-                for(int x = 0; x < line.length()/2; x++) {
-                    map[y][x][0] = line.charAt(x*2);
-                    map[y][x][1] = line.charAt((x*2)+1);
-                }
-            }
+    /**
+     * Create a map given the map's file location
+     * 
+     * @param mapLoc Map file location
+     *               
+     * @return {@link Character[][][]} map
+     * @throws BadMapFormatException Thrown when a map is not formatted correctly
+     */
+    protected abstract Character[][][] createMap(String mapLoc) throws BadMapFormatException;
 
-            return map;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new BadMapFormatException(String.format("The map file could not be read\nIs '%s' the right location?", locFile.getAbsolutePath()));
-        }
-    }
-
-    public void addMapValidator(Function<Character[][][], Boolean> mapValidator) {
+    public void addMapValidator(MapValidator mapValidator) {
         this.mapValidators.add(mapValidator);
     }
     
-    public void delMapValidator(Function<Character[][][], Boolean> mapValidator) {
+    public void delMapValidator(MapValidator mapValidator) {
         this.mapValidators.remove(mapValidator);
     }
 }

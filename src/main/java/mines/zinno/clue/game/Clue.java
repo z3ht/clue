@@ -8,6 +8,8 @@ import mines.zinno.clue.controller.ClueController;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.controller.CustomBoardController;
 import mines.zinno.clue.exception.BadMapFormatException;
+import mines.zinno.clue.layout.board.validator.IsRectangleValidator;
+import mines.zinno.clue.layout.board.validator.NoBadDoorsValidator;
 import mines.zinno.clue.runner.ClueRunner;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
@@ -17,6 +19,7 @@ import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
 
 
 import java.awt.*;
@@ -86,6 +89,9 @@ public class Clue extends BoardGame<ClueController> {
                 event -> {
                     try {
                         this.setPlaying(false);
+                        this.getController().getSuspectsSheet().getChildren().clear();
+                        this.getController().getWeaponsSheet().getChildren().clear();
+                        this.getController().getRoomsSheet().getChildren().clear();
                         Thread.sleep(350);
                         this.startGame();
                     } catch (InterruptedException e) {
@@ -102,7 +108,7 @@ public class Clue extends BoardGame<ClueController> {
         createWelcomeStatus();
         beginGameThread();
         
-        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
+//        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
     }
 
     /**
@@ -142,6 +148,7 @@ public class Clue extends BoardGame<ClueController> {
         }
 
         List<Room> rooms = new LinkedList<>(Arrays.asList(Room.values()));
+        rooms.remove(Room.EXIT);
         List<Weapon> weapons = new LinkedList<>(Arrays.asList(Weapon.values()));
         List<Suspect> suspects = new LinkedList<>(Arrays.asList(Suspect.values()));
 
@@ -192,26 +199,31 @@ public class Clue extends BoardGame<ClueController> {
         // Assign characters with known suspects, weapons, and rooms
         int i = 0;
         while (suspects.size() > 0)
-            this.characters.get(i++%numComputers+1).addProvidedCard(suspects.remove(0));
+            this.characters.get(i++%characters.size()).addProvidedCard(suspects.remove(0));
         while (weapons.size() > 0)
-            this.characters.get(i++%numComputers+1).addProvidedCard(weapons.remove(0));
+            this.characters.get(i++%characters.size()).addProvidedCard(weapons.remove(0));
         while (rooms.size() > 0)
-            this.characters.get(i++%numComputers+1).addProvidedCard(rooms.remove(0));
+            this.characters.get(i++%characters.size()).addProvidedCard(rooms.remove(0));
     }
 
     /**
      * Draw clue board
      */
     private void drawBoard() {
-        CustomBoardController customBoardController = this.getController().getSettingsDialogue().getController().getBoardVersionDialogue().getController();
+        // Add map validators
+        getController().getBoard().addMapValidator(new SubMaxSizeMapValidator());
+        getController().getBoard().addMapValidator(new IsRectangleValidator());
+        getController().getBoard().addMapValidator(new NoBadDoorsValidator());
         
+        // Check if custom board has any provided values
+        CustomBoardController customBoardController = this.getController().getSettingsDialogue().getController().getBoardVersionDialogue().getController();
         try {
             getController().getBoard().setMap(customBoardController.getMapLocation().getText(), customBoardController.getImgLocation().getText());
         } catch (BadMapFormatException e) {
             new BasicInfoDialogue(BadMapFormatException.getName(), e.getMessage()).show();
         }
         
-        
+        // Draw the board
         getController().getBoard().draw();
 
         // Implement move functionality
