@@ -37,12 +37,13 @@ public abstract class Character extends Circle {
     public Character(BoardGame boardGame, Suspect character, Place startPlace) {
         this.boardGame = boardGame;
         this.character = character;
-
-        boardGame.getController().getBoard().getChildren().add(this);
+        
+        if(boardGame != null) {
+            boardGame.getController().getBoard().getChildren().add(this);
+            display();
+        }
         
         moveTo(startPlace, true);
-        
-        display();
     }
 
     /**

@@ -11,7 +11,7 @@ public enum Room implements Card {
     HALL("Hall", 0, 'h', new Location(11, 3)),
     LOUNGE("Lounge", 1, 'l', new Location(20, 2)),
     DINING_ROOM("Dining Room", 2, 'd', new Location(20, 11)),
-    KITCHEN("Kitchen", 3, 'k', new Location(20, 20)),
+    KITCHEN("Kitchen", 3, 'k', new Location(22, 23)),
     BALL_ROOM("Ball Room", 4, 'a', new Location(11, 20)),
     CONSERVATORY("Conservatory", 5, 'c', new Location(2, 20)),
     BILLIARD_ROOM("Billiard Room", 6, 'b', new Location(2, 14)),

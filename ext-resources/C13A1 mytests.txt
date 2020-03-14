@@ -1,0 +1,2 @@
+I chose the tests I used because they best covered what the board class is responsible for. I did not use your
+test files so that is not an issue.

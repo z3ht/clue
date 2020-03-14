@@ -16,6 +16,7 @@ public class NoBadDoorsValidator implements MapValidator {
         for(int y = 0; y < characters.length; y++) {
             for(int x = 0; x < characters[y].length; x++) {
 
+                // Continue if not a door
                 if(characters[y][x][1] != DirectionKey.HORIZONTAL_DOOR.getKey() && characters[y][x][1] != DirectionKey.VERTICAL_DOOR.getKey())
                     continue;
                 
@@ -27,6 +28,7 @@ public class NoBadDoorsValidator implements MapValidator {
                         new Location(-1, 0)
                 };
 
+                // Counts surrounding rooms
                 int roomPlaceCount = 0;
                 for(Location shift : shifts) {
                     Character val = characters[y+shift.getY()][x+shift.getX()][0];
@@ -42,6 +44,7 @@ public class NoBadDoorsValidator implements MapValidator {
                     
                 }
                 
+                // False if no rooms are all rooms
                 if(roomPlaceCount == 0 || roomPlaceCount == 4)
                     return false;
                 

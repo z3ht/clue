@@ -16,6 +16,9 @@ import java.util.ResourceBundle;
 
 /**
  * The {@link ClueController} is the controller linked to the Clue.fxml file
+ * 
+ * This controller (as well as others linked to it) satisfy {@link mines.zinno.clue.Assignments#C21A} and
+ * {@link mines.zinno.clue.Assignments#C22A} requirements
  */
 public class ClueController extends GameController implements Initializable {
     

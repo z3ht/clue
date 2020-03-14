@@ -9,7 +9,7 @@ public enum Assignments {
     /**
      * Design game board and load it into the game
      * 
-     * Check board.csv as well as the 
+     * Check the external resources folder for a color coded board as well
      */
     C12A1,
     

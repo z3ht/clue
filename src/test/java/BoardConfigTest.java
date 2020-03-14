@@ -10,8 +10,7 @@ import org.junit.Test;
 /**
  * Tests to verify maps are loaded in and validated properly.
  * 
- * Satisfies {@link mines.zinno.clue.Assignments#C12A2} and {@link mines.zinno.clue.Assignments#C13A2}
- * requirements
+ * Satisfies {@link mines.zinno.clue.Assignments#C13A2} requirements
  */
 public class BoardConfigTest {
 
@@ -27,12 +26,21 @@ public class BoardConfigTest {
 
     @Test
     public void testSetMap_Valid() {
+        // Add all validators to ensure they do not trigger a false positive
         board.addMapValidator(new IsRectangleValidator());
         board.addMapValidator(new NoBadDoorsValidator());
         board.addMapValidator(new SubMaxSizeMapValidator());
         
         try {
+            // Set the map. The validators validate the map here
             board.setMap(Object.class.getResource("/board.csv").getPath());
+            
+            // Initialize
+            board.initialize();
+            
+            // Assert correct size
+            Assert.assertEquals(25, board.getGrid().length);
+            Assert.assertEquals(24, board.getGrid()[0].length);
         } catch (BadMapFormatException e) {
             e.printStackTrace();
 
@@ -43,55 +51,65 @@ public class BoardConfigTest {
     
     @Test
     public void testSetMap_TooLong() {
+        // Ensures maps are not too long
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
             board.setMap(Object.class.getResource("/badmaps/tootall.csv").getPath());
 
+            // Fail if validator did not catch this map's error
             Assert.fail();
         } catch (BadMapFormatException e) {}
     }
     
     @Test
     public void testSetMap_TooTall() {
+        // Ensures maps are not too tall
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
             board.setMap(Object.class.getResource("/badmaps/toolong.csv").getPath());
 
+            // Fail if validator did not catch this map's error
             Assert.fail();
         } catch (BadMapFormatException e) {}
     }
     
     @Test
     public void testSetMap_RemoteDoor() {
+        // Ensures maps do not have stand alone doors
         board.addMapValidator(new NoBadDoorsValidator());
 
         try {
             board.setMap(Object.class.getResource("/badmaps/remotedoor.csv").getPath());
 
+            // Fail if validator did not catch this map's error
             Assert.fail();
         } catch (BadMapFormatException e) {}
     }
     
     @Test
     public void testSetMap_InnerDoor() {
+        // Ensures maps do not have doors inside rooms
         board.addMapValidator(new NoBadDoorsValidator());
 
         try {
             board.setMap(Object.class.getResource("/badmaps/insidedoor.csv").getPath());
 
+            // Fail if validator did not catch this map's error
             Assert.fail();
         } catch (BadMapFormatException e) {}
     }
     
     @Test
     public void testSetMap_NotRectangular() {
+        // Ensures maps are rectangular
         board.addMapValidator(new IsRectangleValidator());
 
         try {
             board.setMap(Object.class.getResource("/badmaps/nonrectangular.csv").getPath());
 
+            // Fail if validator did not catch this map's error
             Assert.fail();
         } catch (BadMapFormatException e) {}
     }

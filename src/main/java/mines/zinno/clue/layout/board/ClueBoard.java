@@ -16,6 +16,8 @@ import java.io.FileInputStream;
  * {@link ClueBoard} extends the {@link Board} class using {@link Place} as it's generic cell type. This class initializes
  * the board with values from board.csv using the {@link PlaceKey} and {@link DirectionKey} enums which help to convert
  * characters into places.
+ * 
+ * Satisfies {@link mines.zinno.clue.Assignments#C12A2} requirements
  */
 public class ClueBoard extends Board<Place> {
     
