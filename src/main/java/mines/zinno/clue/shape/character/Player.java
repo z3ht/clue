@@ -26,6 +26,12 @@ public class Player extends Character {
         super(game, suspect, startPlace);
         this.game = game;
     }
+    
+    @Override
+    public void endTurn() {
+        super.endTurn();
+        delHighlightPosMoves();
+    }
 
     @Override
     public int roll() {
@@ -34,7 +40,6 @@ public class Player extends Character {
             return -1;
         }
         int returnVal = super.roll();
-        game.getController().getInfoLabel().setText(Action.ROLL_NUM.getText(this.getRollNum()));
         highlightPosMoves();
         return returnVal;
     }

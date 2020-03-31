@@ -1,12 +1,15 @@
 package mines.zinno.clue.shape.character;
 
+import javafx.application.Platform;
 import javafx.scene.shape.Circle;
+import javafx.util.Pair;
 import mines.zinno.clue.constant.*;
-import mines.zinno.clue.game.BoardGame;
+import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.layout.board.Board;
 import mines.zinno.clue.layout.board.util.Location;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
+import mines.zinno.clue.shape.character.vo.GuessVO;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.shape.place.Teleportable;
@@ -24,7 +27,7 @@ public abstract class Character extends Circle {
     
     private static final int NUM_DICE = 1;
     
-    protected final BoardGame boardGame;
+    protected final Clue game;
     protected final Suspect character;
     
     protected List<Card> providedCards = new ArrayList<>();
@@ -34,12 +37,12 @@ public abstract class Character extends Circle {
     protected Place curPlace;
     protected Set<Place> posMoves = new HashSet<>();
     
-    public Character(BoardGame boardGame, Suspect character, Place startPlace) {
-        this.boardGame = boardGame;
+    public Character(Clue game, Suspect character, Place startPlace) {
+        this.game = game;
         this.character = character;
         
-        if(boardGame != null) {
-            boardGame.getController().getBoard().getChildren().add(this);
+        if(game != null) {
+            game.getController().getBoard().getChildren().add(this);
             display();
         }
         
@@ -54,6 +57,13 @@ public abstract class Character extends Circle {
     }
 
     /**
+     * Called by {@link mines.zinno.clue.runner.ClueRunner} when a character's turn ends
+     */
+    public void endTurn() {
+        this.turn = Turn.OTHER;
+    }
+
+    /**
      * Roll dice
      */
     public int roll() {
@@ -64,6 +74,14 @@ public abstract class Character extends Circle {
         this.turn = Turn.POST_ROLL;
         
         this.posMoves = calcPosMoves();
+
+        Platform.runLater(() -> 
+                game.getController().getInfoLabel().setText(
+                        Action.ROLL_NUM.getText((this instanceof Player) ? "You" : this.getCharacter().getName(),
+                                this.getRollNum()
+                        )
+                )
+        );
         
         return rollNum;
     }
@@ -81,18 +99,32 @@ public abstract class Character extends Circle {
     public Set<Place> calcPosMoves(Place loc, int distance) {
         return this.calcPosMoves(loc, distance, distance+8);
     }
-    
+
+    /**
+     * Calculate possible moves from a given place and distance
+     */
     public Set<Place> calcPosMoves(Place loc, int distance, int maxSpread) {
-        if(maxSpread < 0)
+        return this.calcPosMoves(loc, loc, distance, maxSpread);
+    }
+    
+    private Set<Place> calcPosMoves(Place startLoc, Place loc, int distance, int maxSpread) {
+        if(maxSpread <= 0)
             return new HashSet<>();
+        
         Set<Place> moves = new HashSet<>();
+        
         for(Place place : loc.getAdjacent()) {
             if(place == null || place.isOccupied())
                 continue;
             if(distance - place.getMoveCost() < 0)
                 continue;
-            moves.addAll(calcPosMoves(place, distance - place.getMoveCost(), maxSpread-1));
-            moves.add(place);
+            
+            moves.addAll(calcPosMoves(startLoc, place, distance - place.getMoveCost(), maxSpread-1));
+
+            if(!(startLoc instanceof RoomPlace &&
+                    place instanceof RoomPlace &&
+                    ((RoomPlace) startLoc).getRoom() == ((RoomPlace) place).getRoom()))
+                moves.add(place);
         }
         return moves;
     }
@@ -107,12 +139,14 @@ public abstract class Character extends Circle {
     /**
      * Move to a place
      * 
-     * @param forceMove Force movement (t:y; f:n)
+     * @param forceMove Force movement (t:y; f:n) (Currently not used)
      */
     public void moveTo(Place place, boolean forceMove) {
-        if(place instanceof Teleportable)
-            place = (Place) boardGame.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo());
-            
+        if(place instanceof Teleportable) {
+            place = game.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo());
+            forceMove = true;
+        }
+        
         this.setVisible(true);
         
         // Set turn to post move
@@ -122,9 +156,11 @@ public abstract class Character extends Circle {
             // Mark previous place as unoccupied
             curPlace.setOccupied(false);
 
-            if(!forceMove)
+            if(!forceMove) {
                 // Decrement roll number
-                this.rollNum -= curPlace.getDistance(place);
+                int cost = curPlace.getDistance(place);
+                this.rollNum -= (cost == -1) ? this.rollNum : cost;
+            }
         }
         
         // Move to the void
@@ -138,15 +174,23 @@ public abstract class Character extends Circle {
         // Move to new place
         this.curPlace = place;
         Location location = curPlace.getCenter();
-        this.setCenterX(location.getX());
-        this.setCenterY(location.getY());
         place.setOccupied(true);
-        this.toFront();
 
-        // Calc new possible moves
-        this.posMoves = calcPosMoves();
+        Platform.runLater(() -> {
+            this.setCenterX(location.getX());
+            this.setCenterY(location.getY());
+            this.toFront();
+        });
+
+        if(!forceMove)
+            // Calc new possible moves
+            this.posMoves = calcPosMoves();
     }
 
+    public Boolean guess(GuessVO guessVO) {
+        return this.guess(guessVO.suspect, guessVO.room, guessVO.weapon);
+    }
+    
     /**
      * Make a guess
      * 
@@ -157,8 +201,8 @@ public abstract class Character extends Circle {
         
         boolean isFound = false;
         
-        for(int i = 1; i < boardGame.getCharacters().size(); i++) {
-            Character c = (Character) boardGame.getCharacters().get(i);
+        for(int i = 1; i < game.getCharacters().size(); i++) {
+            Character c = (Character) game.getCharacters().get(i);
             
             for(Card card : c.getCards()) {
                 if(!(card.getName().equals(suspect.getName()) ||
@@ -183,18 +227,18 @@ public abstract class Character extends Circle {
         // Character has won the game
         if(!isFound) {
             onWin();
-            boardGame.setPlaying(false);
+            game.setPlaying(false);
             return null;
         }
 
         // Character has lost the game
         onLose();
-        for(Object o : boardGame.getCharacters()) {
+        for(Object o : game.getCharacters()) {
             Character c = (Character) o;
             for(Card card : getCards())
                 c.receiveCard(this, card, RevealContext.LOST_GAME);
         }
-        boardGame.getCharacters().remove(this);
+        game.getCharacters().remove(this);
         this.moveTo(null, true);
 
         return null;
@@ -280,7 +324,7 @@ public abstract class Character extends Circle {
      * Display character
      */
     private void display() {
-        Board board = this.boardGame.getController().getBoard();
+        Board board = this.game.getController().getBoard();
         this.setRadius(Math.min(board.getGrid()[0][0].getWidth(), board.getGrid()[0][0].getHeight())/1.66);
         this.setFill(character.getColor());
         this.setVisible(true);

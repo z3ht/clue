@@ -9,6 +9,7 @@ import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.place.Place;
 
 import java.util.Collections;
+import java.util.function.Supplier;
 
 /**
  * The {@link ClueRunner} class implements the {@link Runnable} interface. It holds game code that will be run on a
@@ -34,19 +35,18 @@ public class ClueRunner implements Runnable {
             Character curCharacter = boardGame.getCharacters().get(0);
             curCharacter.beginTurn();
 
-            wait(curCharacter.getTurn() != Turn.POST_MOVE);
-            wait(boardGame.getNumMoves() <= 0);
-            curCharacter.setTurn(Turn.OTHER);
+            wait(() -> boardGame.getNumMoves() <= 0);
+            curCharacter.endTurn();
             Collections.rotate(boardGame.getCharacters(), 1);
             boardGame.addMoves(-1);
         }
     }
 
     /**
-     * Pauses thread until isWait is no longer true
+     * Pauses thread until waitWhile is no longer true or the game has ended
      */
-    private void wait(boolean isWait) {
-        while (isWait && boardGame.isPlaying()) {
+    private void wait(Supplier<Boolean> waitWhile) {
+        while (waitWhile.get() && boardGame.isPlaying()) {
             try {
                 Thread.sleep(REFRESH_RATE);
             } catch (InterruptedException e) {

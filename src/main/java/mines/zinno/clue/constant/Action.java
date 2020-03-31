@@ -10,7 +10,7 @@ public enum Action {
     NOTHING_FOUND("Nobody has the cards you're looking for"),
     ANONYMOUS_CLUE("\t- %s showed %s a card"),
     CLUE("%s reveals %s to you"),
-    ROLL_NUM("You rolled a %d"),
+    ROLL_NUM("%s rolled a %d"),
     MOVES_LEFT("You have %d move(s) left")
     ;
     

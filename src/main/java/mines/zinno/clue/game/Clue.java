@@ -14,6 +14,7 @@ import mines.zinno.clue.runner.ClueRunner;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
 import mines.zinno.clue.shape.character.Player;
+import mines.zinno.clue.shape.character.listener.OnContinue;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
@@ -69,12 +70,12 @@ public class Clue extends BoardGame<ClueController> {
 
         // Skip to next player turn
         this.getController().getSkip().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                (mouseEvent) -> this.setNumMoves(this.getCharacters().indexOf(player))
+                new OnContinue(() -> this.setNumMoves(this.getCharacters().indexOf(player)), this)
         );
 
         // Continue to next character's turn
         this.getController().getNext().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                (mouseEvent) -> this.addMoves(1)
+                new OnContinue(() -> this.addMoves(1), this)
         );
 
         // Add OnGuessConfirm listener
@@ -87,16 +88,11 @@ public class Clue extends BoardGame<ClueController> {
         this.getController().getSettingsDialogue().getController().getBegin().addEventHandler(
                 MouseEvent.MOUSE_CLICKED,
                 event -> {
-                    try {
-                        this.setPlaying(false);
-                        this.getController().getSuspectsSheet().getChildren().clear();
-                        this.getController().getWeaponsSheet().getChildren().clear();
-                        this.getController().getRoomsSheet().getChildren().clear();
-                        Thread.sleep(350);
-                        this.startGame();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    this.setPlaying(false);
+                    this.getController().getSuspectsSheet().getChildren().clear();
+                    this.getController().getWeaponsSheet().getChildren().clear();
+                    this.getController().getRoomsSheet().getChildren().clear();
+                    this.startGame();
                 }
         );
     }
@@ -108,7 +104,7 @@ public class Clue extends BoardGame<ClueController> {
         createWelcomeStatus();
         beginGameThread();
         
-//        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
+        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
     }
 
     /**
@@ -199,11 +195,12 @@ public class Clue extends BoardGame<ClueController> {
         // Assign characters with known suspects, weapons, and rooms
         int i = 0;
         while (suspects.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(suspects.remove(0));
+            this.characters.get(i++%this.characters.size())
+                    .addProvidedCard(suspects.remove(0));
         while (weapons.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(weapons.remove(0));
+            this.characters.get(i++%this.characters.size()).addProvidedCard(weapons.remove(0));
         while (rooms.size() > 0)
-            this.characters.get(i++%characters.size()).addProvidedCard(rooms.remove(0));
+            this.characters.get(i++%this.characters.size()).addProvidedCard(rooms.remove(0));
     }
 
     /**

@@ -1,8 +1,6 @@
 package mines.zinno.clue.shape.place;
 
 import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
@@ -109,53 +107,47 @@ public class Place extends Rectangle {
     }
 
     /**
-     * Breadth first recursive search that spans through adjacent places in search of this {@link Place}
+     * Search spanning all adjacent places in search of this {@link Place}
      *
      * @param place Start place
      * @param maxSpread Maximum radius searched for this place
      * @return the Manhattan distance between the places (max {@value MAX_SPREAD})
      */
     private int getDistance(Place place, int maxSpread) {
-        Queue<Pair<Place, Integer>> tree = new LinkedList<>();
-        tree.add(new Pair<>(place, 0));
-        return getDistance(tree, maxSpread);
+        if(place == null)
+            return -1;
+
+        if(place instanceof RoomPlace &&
+                this instanceof RoomPlace &&
+                ((RoomPlace) place).getRoom() == ((RoomPlace) this).getRoom())
+            return 2;
+        
+        return getDistances(place, 0, maxSpread).stream()
+                // Filter all items whose key is not this place
+                .filter((Pair<Place, Integer> item) -> item.getKey().equals(this))
+                // Get the minimum moves required to make the connection
+                .min((Pair<Place, Integer> first, Pair<Place, Integer> second) -> {
+                    if(first.getValue().equals(second.getValue()))
+                        return 0;
+                    return (first.getValue() > second.getValue()) ? 1 : -1;
+                })
+                // If no values connect, return -1
+                .orElseGet(() -> new Pair<>(null, -1)).getValue();
     }
     
-    
-    private int getDistance(Queue<Pair<Place, Integer>> tree, int maxSpread) {
-        Pair<Place, Integer> top = tree.peek();
+    private Set<Pair<Place, Integer>> getDistances(Place place, int curDistance, int maxSpread) {
+        if(place == null || maxSpread <= 0)
+            return new HashSet<>();
         
-        // Exit point
-        if(top == null || top.getValue() == maxSpread)
-            return -1;
-        
-        // Exit point
-        if(top.getKey() == this)
-            return top.getValue();
-        
-        // Remove when value is known to not be the target
-        tree.remove();
-        
-        // Add adjacents not already in the tree
-        for(Place adj : top.getKey().getAdjacent()) {
-            if(adj == null)
+        Set<Pair<Place, Integer>> vals = new HashSet<>();
+        vals.add(new Pair<>(place, curDistance));
+        for(Place adj : place.getAdjacent()) {
+            if(adj == null || adj.isOccupied())
                 continue;
             
-            boolean shouldContinue = false;
-            for(Pair<Place, Integer> val : tree) {
-                if(adj == val.getKey()) {
-                    shouldContinue = true;
-                    break;
-                }
-            }
-            if(shouldContinue)
-                continue;
-            
-            tree.add(new Pair<>(adj, top.getValue() + adj.getMoveCost()));
+            vals.addAll(getDistances(adj, curDistance+adj.getMoveCost(), maxSpread-1));
         }
-        
-        // Continue through tree
-        return getDistance(tree, maxSpread);
+        return vals;
     }
 
     /**

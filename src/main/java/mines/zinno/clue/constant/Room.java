@@ -11,13 +11,13 @@ public enum Room implements Card {
     HALL("Hall", 0, 'h', new Location(11, 3)),
     LOUNGE("Lounge", 1, 'l', new Location(20, 2)),
     DINING_ROOM("Dining Room", 2, 'd', new Location(20, 11)),
-    KITCHEN("Kitchen", 3, 'k', new Location(22, 23)),
-    BALL_ROOM("Ball Room", 4, 'a', new Location(11, 20)),
-    CONSERVATORY("Conservatory", 5, 'c', new Location(2, 20)),
+    KITCHEN("Kitchen", 3, 'k', new Location(22, 22)),
+    BALL_ROOM("Ball Room", 4, 'a', new Location(11, 22)),
+    CONSERVATORY("Conservatory", 5, 'c', new Location(2, 22)),
     BILLIARD_ROOM("Billiard Room", 6, 'b', new Location(2, 14)),
     LIBRARY("Library", 7, 'i', new Location(3, 8)),
     STUDY("Study", 8, 's', new Location(3, 1)),
-    EXIT("Exit", 9, 'e', new Location(11, 11))
+    EXIT("Exit", 9, 'e', new Location(11, 10))
     ;
 
     private int id;
