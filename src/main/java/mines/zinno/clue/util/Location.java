@@ -1,4 +1,4 @@
-package mines.zinno.clue.layout.board.util;
+package mines.zinno.clue.util;
 
 /**
  * The {@link Location} utility class makes storing x and y coordinates simple and uniform

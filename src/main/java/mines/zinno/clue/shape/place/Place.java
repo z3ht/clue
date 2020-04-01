@@ -1,17 +1,20 @@
 package mines.zinno.clue.shape.place;
 
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import javafx.event.Event;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
 import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
+import mines.zinno.clue.util.Node;
+import mines.zinno.clue.util.Tree;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * The {@link Place} class is the most generic cell type used by the {@link mines.zinno.clue.layout.board.ClueBoard}.
@@ -109,47 +112,46 @@ public class Place extends Rectangle {
     /**
      * Search spanning all adjacent places in search of this {@link Place}
      *
-     * @param place Start place
+     * @param startLoc Start place
      * @param maxSpread Maximum radius searched for this place
-     * @return the Manhattan distance between the places (max {@value MAX_SPREAD})
+     * @return the travel distance between the places (max {@value MAX_SPREAD})
      */
-    private int getDistance(Place place, int maxSpread) {
-        if(place == null)
+    public int getDistance(Place startLoc, int maxSpread) {
+        if(startLoc == null)
             return -1;
 
-        if(place instanceof RoomPlace &&
+        if(startLoc instanceof RoomPlace &&
                 this instanceof RoomPlace &&
-                ((RoomPlace) place).getRoom() == ((RoomPlace) this).getRoom())
+                ((RoomPlace) startLoc).getRoom() == ((RoomPlace) this).getRoom())
             return 2;
         
-        return getDistances(place, 0, maxSpread).stream()
-                // Filter all items whose key is not this place
-                .filter((Pair<Place, Integer> item) -> item.getKey().equals(this))
-                // Get the minimum moves required to make the connection
-                .min((Pair<Place, Integer> first, Pair<Place, Integer> second) -> {
-                    if(first.getValue().equals(second.getValue()))
-                        return 0;
-                    return (first.getValue() > second.getValue()) ? 1 : -1;
-                })
-                // If no values connect, return -1
-                .orElseGet(() -> new Pair<>(null, -1)).getValue();
-    }
-    
-    private Set<Pair<Place, Integer>> getDistances(Place place, int curDistance, int maxSpread) {
-        if(place == null || maxSpread <= 0)
-            return new HashSet<>();
+        Tree<Place> tree = new Tree<>(startLoc);
+        tree.populate(
+                (curNode) -> (curNode.getValue() == this) ? null :
+                        // This casts correctly. Java doesn't like Parameterized arrays
+                        Arrays.stream(curNode.getValue().getAdjacent())
+                                .filter((place) -> place != null && !place.isOccupied())
+                                .map((place) -> new Node<>(place, curNode))
+                                .toArray(Node[]::new),
+                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other),
+                maxSpread
+        );
         
-        Set<Pair<Place, Integer>> vals = new HashSet<>();
-        vals.add(new Pair<>(place, curDistance));
-        for(Place adj : place.getAdjacent()) {
-            if(adj == null || adj.isOccupied())
-                continue;
-            
-            vals.addAll(getDistances(adj, curDistance+adj.getMoveCost(), maxSpread-1));
-        }
-        return vals;
+        return calcDistance(tree.findBestPath(
+                this, 
+                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other)
+        ));
     }
 
+    private int calcDistance(Tree<Place> placeNode) {
+        int distance = 0;
+        while(placeNode instanceof Node && ((Node<Place>) placeNode).getParent() != null) {
+            distance += placeNode.getValue().getMoveCost();
+            placeNode = ((Node<Place>) placeNode).getParent();
+        }
+        return distance;
+    }
+    
     /**
      * Set place occupied
      * 

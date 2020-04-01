@@ -2,7 +2,7 @@ package mines.zinno.clue.layout.board.validator;
 
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.layout.board.constant.PlaceKey;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 
 /**
  * The {@link NoBadDoorsValidator} validates a map has no doors inside rooms or doors totally separated from a room

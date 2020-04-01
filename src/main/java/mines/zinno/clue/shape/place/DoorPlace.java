@@ -5,14 +5,14 @@ import javafx.scene.paint.ImagePattern;
 import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 
 /**
  * The {@link DoorPlace} is a subclass of the {@link RoomPlace} class. This class corresponds to the doors on the
  * {@link mines.zinno.clue.layout.board.ClueBoard}. It implements the {@link Teleportable} interface to send characters
  * to the middle of a room after entering.
  */
-public class DoorPlace extends RoomPlace implements Teleportable {
+public class DoorPlace extends RoomPlace implements Teleportable, Entrance {
 
     public DoorPlace(DirectionKey direction, Room room) {
         this(direction, room, true, 1);

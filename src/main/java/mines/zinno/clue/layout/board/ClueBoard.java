@@ -5,7 +5,7 @@ import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.constant.io.FileStream;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 import mines.zinno.clue.layout.board.constant.PlaceKey;
 import mines.zinno.clue.shape.place.*;
 

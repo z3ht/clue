@@ -3,7 +3,7 @@ package mines.zinno.clue.layout.board;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import mines.zinno.clue.exception.BadMapFormatException;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 import mines.zinno.clue.layout.board.validator.MapValidator;
 
 import java.util.HashSet;

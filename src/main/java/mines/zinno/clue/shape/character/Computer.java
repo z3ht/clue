@@ -2,14 +2,13 @@ package mines.zinno.clue.shape.character;
 
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
-import mines.zinno.clue.layout.board.validator.MapValidator;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.vo.GuessVO;
 import mines.zinno.clue.shape.place.DoorPlace;
+import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
-import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -83,12 +82,12 @@ public class Computer extends Character {
     public Place calcBestMove() {
         // Determine the closest door that hasn't been ruled out yet
         double minDoorDistance = Double.MAX_VALUE;
-        DoorPlace closestGoodDoor = null;
+        RoomPlace closestGoodEntrance = null;
         for (Place[] places : game.getController().getBoard().getGrid()) {
             for(Place place : places) {
-                if(!(place instanceof DoorPlace))
+                if(!(place instanceof RoomPlace && place instanceof Entrance))
                     continue;
-                DoorPlace door = (DoorPlace) place;
+                RoomPlace entrance = (RoomPlace) place;
 
                 boolean shouldContinue = false;
                 for(Card c : getCards()) {
@@ -96,7 +95,7 @@ public class Computer extends Character {
                         continue;
                     DoorPlace doorCard = (DoorPlace) c;
                     
-                    if(doorCard.equals(door)) {
+                    if(doorCard.equals(entrance)) {
                         shouldContinue = true;
                         break;
                     }
@@ -104,20 +103,20 @@ public class Computer extends Character {
                 if(shouldContinue)
                     continue;
                 
-                double curDistance = this.getManhattanDistance(this.curPlace, door);
+                double curDistance = this.getManhattanDistance(this.curPlace, entrance);
                 if(curDistance == -1 || curDistance > minDoorDistance)
                     continue;
                 
                 minDoorDistance = curDistance;
-                closestGoodDoor = door;
+                closestGoodEntrance = entrance;
             }
         }
         
         // Do the move that puts the computer closest to the best door
         Place bestMove = null;
-        int minDistance = Integer.MAX_VALUE;
+        double minDistance = Double.MAX_VALUE;
         for(Place place : this.getPosMoves()) {
-            int curDistance = place.getDistance(closestGoodDoor);
+            double curDistance = getManhattanDistance(place, closestGoodEntrance);
             if(curDistance == -1 || curDistance > minDistance)
                 continue;
 

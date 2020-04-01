@@ -2,11 +2,10 @@ package mines.zinno.clue.shape.character;
 
 import javafx.application.Platform;
 import javafx.scene.shape.Circle;
-import javafx.util.Pair;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.layout.board.Board;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.vo.GuessVO;

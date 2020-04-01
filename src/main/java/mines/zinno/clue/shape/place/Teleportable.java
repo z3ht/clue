@@ -1,6 +1,6 @@
 package mines.zinno.clue.shape.place;
 
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 
 /**
  * The {@link Teleportable} interface is used by {@link Place}s on the {@link mines.zinno.clue.layout.board.ClueBoard}

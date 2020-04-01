@@ -1,7 +1,7 @@
 package mines.zinno.clue.constant;
 
 import mines.zinno.clue.control.menu.ValueMenuItem;
-import mines.zinno.clue.layout.board.util.Location;
+import mines.zinno.clue.util.Location;
 
 /**
  * The {@link Room} enum holds room information
