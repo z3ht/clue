@@ -1,6 +1,7 @@
 package mines.zinno.clue.util;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 
@@ -35,13 +36,11 @@ public class Tree<T> {
 
             if(this.getChildren() == null)
                 return;
-            
-            if(spread > 5) {
-                for(int i = 0; i < this.getChildren().length; i++) {
-                    if(this.getChildren()[i] == null)
-                        continue;
-                    this.getChildren()[i] = findBestPath(this.getChildren()[i].getValue(), copyRemover);
-                }
+
+            for(int i = 0; i < this.getChildren().length; i++) {
+                if(this.getChildren()[i] == null)
+                    continue;
+                this.getChildren()[i] = top.findBestPath(this.getChildren()[i].getValue(), copyRemover);
             }
         }
         
@@ -58,40 +57,28 @@ public class Tree<T> {
     }
     
     public Tree<T> findBestPath(T target,  BiPredicate<Tree<T>, Tree<T>> copyRemover) {
-        return this.findBestPath(target, null, copyRemover);
+        return this.findBestPath(target, new HashSet<>(), null, copyRemover);
     }
     
-    private Tree<T> findBestPath(T target, Tree<T> curClosest, BiPredicate<Tree<T>, Tree<T>> copyRemover) {
-        if(this.getChildren() == null)
+    private Tree<T> findBestPath(T target, Set<Tree<T>> curPath, Tree<T> curClosest, BiPredicate<Tree<T>, Tree<T>> copyRemover) {
+        if(this.getChildren() == null || target == null)
             return curClosest;
+        
+        if(curPath.contains(this))
+            return curClosest;
+        curPath.add(this);
         
         for(Tree<T> child : this.getChildren()) {
 
-            if(curClosest == child)
+            if(child == null || curClosest == child)
                 continue;
 
             if(target.equals(child.getValue())) {
 
                 // If current closest > other
                 // Remove current closest
-                if (copyRemover.test(curClosest, child)) {
-                    if(curClosest instanceof Node) {
-                        Tree<T>[] bestParentChildren = ((Node<T>) curClosest).getParent().getChildren();
-                        for(int i = 0; i < bestParentChildren.length; i++) {
-                            if(bestParentChildren[i] == curClosest)
-                                bestParentChildren[i] = null;
-                        }
-                    }
-                    
+                if (curClosest == null || copyRemover.test(curClosest, child)) {
                     curClosest = child;
-                } else {
-                    if(child instanceof Node) {
-                        Tree<T>[] bestParentChildren = ((Node<T>) child).getParent().getChildren();
-                        for(int i = 0; i < bestParentChildren.length; i++) {
-                            if(bestParentChildren[i] == child)
-                                bestParentChildren[i] = null;
-                        }
-                    }
                 }
                 continue;
             }
@@ -99,11 +86,38 @@ public class Tree<T> {
             if(child.getChildren() == null || child.getChildren().length == 0)
                 continue;
             
-            child.findBestPath(target, curClosest, copyRemover);
+            curClosest = child.findBestPath(target, curPath, curClosest, copyRemover);
         }
         return curClosest;
     }
 
+    public Set<T> retrieveAllValues() {
+        return this.retrieveAllValues(new HashSet<>());
+    }
+    
+    private Set<T> retrieveAllValues(Set<Tree<T>> curPath) {        
+        Set<T> vals = new HashSet<>();
+        if(this.getValue() != null)
+            vals.add(this.getValue());
+
+        if(curPath.contains(this))
+            return vals;
+        curPath.add(this);
+
+        if(this.getChildren() == null || this.getChildren().length == 0) {
+            return vals;
+        }
+
+        for(Tree<T> child : this.getChildren()) {
+            if (child == null)
+                continue;
+
+            vals.addAll(child.retrieveAllValues(curPath));
+        }
+
+        return vals;
+    }
+    
     public T getValue() {
         return value;
     }

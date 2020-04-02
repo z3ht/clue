@@ -116,8 +116,9 @@ public class Computer extends Character {
         Place bestMove = null;
         double minDistance = Double.MAX_VALUE;
         for(Place place : this.getPosMoves()) {
-            double curDistance = getManhattanDistance(place, closestGoodEntrance);
-            if(curDistance == -1 || curDistance > minDistance)
+            int curDistance = place.getDistance(closestGoodEntrance, 10);
+            
+            if(curDistance > minDistance)
                 continue;
 
             minDistance = curDistance;
@@ -142,7 +143,7 @@ public class Computer extends Character {
 
     }
     
-    private double getManhattanDistance(Place p1, Place p2) {
-        return Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getX() - p2.getX());
+    private int getManhattanDistance(Place p1, Place p2) {
+        return (int) (Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getX() - p2.getX()));
     }
 }

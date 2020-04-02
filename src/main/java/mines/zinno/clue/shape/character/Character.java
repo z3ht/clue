@@ -12,11 +12,12 @@ import mines.zinno.clue.shape.character.vo.GuessVO;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.shape.place.Teleportable;
+import mines.zinno.clue.util.Node;
+import mines.zinno.clue.util.Tree;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The {@link Character} class extends JavaFX's {@link Circle} class. It holds information and logic pertaining to
@@ -102,30 +103,38 @@ public abstract class Character extends Circle {
     /**
      * Calculate possible moves from a given place and distance
      */
-    public Set<Place> calcPosMoves(Place loc, int distance, int maxSpread) {
-        return this.calcPosMoves(loc, loc, distance, maxSpread);
-    }
-    
-    private Set<Place> calcPosMoves(Place startLoc, Place loc, int distance, int maxSpread) {
-        if(maxSpread <= 0)
+    public Set<Place> calcPosMoves(Place startLoc, int distance, int maxSpread) {
+        
+        if(distance == 0)
             return new HashSet<>();
         
-        Set<Place> moves = new HashSet<>();
+        Predicate<Place> placeReqs = (place) -> place != null && !place.isOccupied();
         
-        for(Place place : loc.getAdjacent()) {
-            if(place == null || place.isOccupied())
-                continue;
-            if(distance - place.getMoveCost() < 0)
-                continue;
-            
-            moves.addAll(calcPosMoves(startLoc, place, distance - place.getMoveCost(), maxSpread-1));
+        Tree<Place> tree = new Tree<>(startLoc);
+        tree.populate(
+                (curNode) -> 
+                        // This casts correctly. Java doesn't like Parameterized arrays
+                        Arrays.stream(curNode.getValue().getAdjacent())
+                                .filter(placeReqs)
+                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= distance))
+                                .map((adj) -> new Node<>(adj, curNode))
+                                .toArray(Node[]::new),
+                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other),
+                maxSpread
+        );
 
-            if(!(startLoc instanceof RoomPlace &&
-                    place instanceof RoomPlace &&
-                    ((RoomPlace) startLoc).getRoom() == ((RoomPlace) place).getRoom()))
-                moves.add(place);
+        return tree.retrieveAllValues().stream()
+                .filter(placeReqs)
+                .collect(Collectors.toSet());
+    }
+
+    private int calcDistance(Tree<Place> placeNode) {
+        int distance = 0;
+        while(placeNode instanceof Node && ((Node<Place>) placeNode).getParent() != null) {
+            distance += placeNode.getValue().getMoveCost();
+            placeNode = ((Node<Place>) placeNode).getParent();
         }
-        return moves;
+        return distance;
     }
 
     /**
@@ -143,7 +152,6 @@ public abstract class Character extends Circle {
     public void moveTo(Place place, boolean forceMove) {
         if(place instanceof Teleportable) {
             place = game.getController().getBoard().getItemFromCoordinate(((Teleportable) place).teleportTo());
-            forceMove = true;
         }
         
         this.setVisible(true);
@@ -157,7 +165,7 @@ public abstract class Character extends Circle {
 
             if(!forceMove) {
                 // Decrement roll number
-                int cost = curPlace.getDistance(place);
+                int cost = place.getDistance(curPlace);
                 this.rollNum -= (cost == -1) ? this.rollNum : cost;
             }
         }

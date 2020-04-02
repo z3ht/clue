@@ -1,6 +1,5 @@
 package mines.zinno.clue.shape.place;
 
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import javafx.event.Event;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -14,7 +13,6 @@ import mines.zinno.clue.util.Node;
 import mines.zinno.clue.util.Tree;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * The {@link Place} class is the most generic cell type used by the {@link mines.zinno.clue.layout.board.ClueBoard}.
@@ -24,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class Place extends Rectangle {
 
-    private static final int MAX_SPREAD = 12;
+    private static final int MAX_SPREAD = 14;
     
     private Place[] adjacent;
 
@@ -127,7 +125,7 @@ public class Place extends Rectangle {
         
         Tree<Place> tree = new Tree<>(startLoc);
         tree.populate(
-                (curNode) -> (curNode.getValue() == this) ? null :
+                (curNode) -> 
                         // This casts correctly. Java doesn't like Parameterized arrays
                         Arrays.stream(curNode.getValue().getAdjacent())
                                 .filter((place) -> place != null && !place.isOccupied())
