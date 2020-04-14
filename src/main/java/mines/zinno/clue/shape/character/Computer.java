@@ -2,6 +2,7 @@ package mines.zinno.clue.shape.character;
 
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
+import mines.zinno.clue.shape.character.constant.Result;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.vo.GuessVO;
@@ -9,6 +10,7 @@ import mines.zinno.clue.shape.place.DoorPlace;
 import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
+import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,17 +132,12 @@ public class Computer extends Character {
 
     @Override
     public void onWin() {
-        
+        new BasicInfoDialogue(Result.COMPUTER_WIN.getName(), Result.COMPUTER_WIN.getText(this.getCharacter(), game.getMurderer())).show();
     }
 
     @Override
     public void onLose() {
-
-    }
-
-    @Override
-    public void receiveCard(Character sender, Card card, RevealContext revealContext) {
-
+        new BasicInfoDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show();
     }
     
     private int getManhattanDistance(Place p1, Place p2) {

@@ -1,4 +1,4 @@
-package mines.zinno.clue.util;
+package mines.zinno.clue.util.tree;
 
 import java.util.HashSet;
 import java.util.Set;

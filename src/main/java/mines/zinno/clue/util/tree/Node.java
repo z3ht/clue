@@ -1,4 +1,4 @@
-package mines.zinno.clue.util;
+package mines.zinno.clue.util.tree;
 
 public class Node<T> extends Tree<T> {
     

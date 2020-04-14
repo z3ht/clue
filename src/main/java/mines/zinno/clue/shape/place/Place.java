@@ -9,8 +9,8 @@ import javafx.scene.shape.Rectangle;
 import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.util.Location;
-import mines.zinno.clue.util.Node;
-import mines.zinno.clue.util.Tree;
+import mines.zinno.clue.util.tree.Node;
+import mines.zinno.clue.util.tree.Tree;
 
 import java.util.*;
 

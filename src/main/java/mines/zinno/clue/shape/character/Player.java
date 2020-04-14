@@ -3,25 +3,21 @@ package mines.zinno.clue.shape.character;
 import javafx.scene.paint.Color;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.constant.*;
-import mines.zinno.clue.listener.OnMoveListener;
+import mines.zinno.clue.shape.character.constant.Result;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * The player class extends the {@link Character} class. It is used by all person controlled characters in Clue.
  */
 public class Player extends Character {
     
-    List<OnMoveListener<Player>> moveListeners = new ArrayList<>();
-    
-    private Clue game;
-    
+    private final Clue game;
+
     public Player(Clue game, Suspect suspect, Place startPlace) {
         super(game, suspect, startPlace);
         this.game = game;
@@ -64,8 +60,6 @@ public class Player extends Character {
         
         displayMovesLeft();
         highlightPosMoves();
-        
-        updateMoveListeners();
     }
 
     /**
@@ -105,17 +99,14 @@ public class Player extends Character {
         this.rollNum = 0;
         this.posMoves = null;
         
-        Boolean isFound = super.guess(suspect, room, weapon);
-        
-        // Nothing found
-        if(isFound != null && !isFound) {
-            new BasicInfoDialogue(Action.GUESS_TITLE, Action.NOTHING_FOUND.getText()).show();
-        }
+        super.guess(suspect, room, weapon);
     }
 
 
     @Override
-    public void receiveCard(Character sender, Card card, RevealContext revealContext) {
+    public String receiveCard(Character sender, Card card, RevealContext revealContext) {
+
+        //TODO move to handle
         if(card instanceof Room)
             game.getController().getRoomsSheet().crossOut(card.getId());
         if(card instanceof Weapon)
@@ -123,43 +114,16 @@ public class Player extends Character {
         if(card instanceof Suspect)
             game.getController().getSuspectsSheet().crossOut(card.getId());
 
-        switch (revealContext) {
-            case ON_GUESS:
-                new BasicInfoDialogue(Action.GUESS_TITLE, Action.CLUE.getText(sender.getCharacter().getName(), card.getName())).show();
-                break;
-            case LOST_GAME:
-                break;
-            case PROVIDED:
-                break;
-        }
-            
-        
     }
     
     @Override
     public void onWin() {
-        
+        new BasicInfoDialogue(Result.PLAYER_WIN.getName(), Result.PLAYER_WIN.getText(game.getMurderer())).show();
     }
 
     @Override
     public void onLose() {
-
-    }
-
-    /**
-     * Add an observer updated when a player moves
-     */
-    public void addMoveListener(OnMoveListener<Player> moveListener) {
-        this.moveListeners.add(moveListener);
-    }
-
-    /**
-     * Update move listeners
-     */
-    protected void updateMoveListeners() {
-        for(OnMoveListener<Player> moveListener : this.moveListeners) {
-            moveListener.update(this);
-        }
+        new BasicInfoDialogue(Result.PLAYER_LOSE.getName(), Result.PLAYER_LOSE.getText(game.getMurderer())).show();
     }
     
     private void highlightPosMoves() {
