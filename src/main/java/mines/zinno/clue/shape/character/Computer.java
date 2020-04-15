@@ -5,12 +5,14 @@ import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.shape.character.constant.Result;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
+import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.character.vo.GuessVO;
 import mines.zinno.clue.shape.place.DoorPlace;
 import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+import mines.zinno.clue.util.handler.Handler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,11 +21,8 @@ import java.util.List;
 
 public class Computer extends Character {
 
-    private Clue game;
-
-    public Computer(Clue game, Suspect suspect, Place startPlace) {
-        super(game, suspect, startPlace);
-        this.game = game;
+    public Computer(Clue game, GuessHandler guessHandler, Suspect suspect, Place startPlace) {
+        super(game, guessHandler, suspect, startPlace);
     }
 
     @Override

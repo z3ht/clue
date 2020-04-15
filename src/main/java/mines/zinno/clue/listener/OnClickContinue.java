@@ -1,4 +1,4 @@
-package mines.zinno.clue.shape.character.listener;
+package mines.zinno.clue.listener;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
@@ -8,12 +8,12 @@ import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 
-public class OnContinue implements EventHandler<MouseEvent> {
+public class OnClickContinue implements EventHandler<MouseEvent> {
 
     private Runnable action;
     private Clue clue;
 
-    public OnContinue(Runnable action, Clue clue) {
+    public OnClickContinue(Runnable action, Clue clue) {
         this.action = action;
         this.clue = clue;
     }

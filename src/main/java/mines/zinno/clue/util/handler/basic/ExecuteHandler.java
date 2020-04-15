@@ -10,12 +10,12 @@ public class ExecuteHandler extends Handler {
 
     public void execute(Object id, Object... args) {
 
-        Method handle = super.getHandle(new SenderData(this.getClass(), id));
-
-        try {
-            handle.invoke(this, args);
-        } catch (InvocationTargetException | IllegalAccessException e) {
-            e.printStackTrace();
+        for(Method handle : super.getMethodHandles(new SenderData(this.getClass(), id))) {
+            try {
+                super.call(handle, args);
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
 
     }

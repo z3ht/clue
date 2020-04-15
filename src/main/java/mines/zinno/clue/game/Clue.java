@@ -14,13 +14,20 @@ import mines.zinno.clue.runner.ClueRunner;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
 import mines.zinno.clue.shape.character.Player;
-import mines.zinno.clue.shape.character.listener.OnContinue;
+import mines.zinno.clue.shape.character.constant.RevealContext;
+import mines.zinno.clue.shape.character.handler.GuessHandler;
+import mines.zinno.clue.listener.OnClickContinue;
+import mines.zinno.clue.shape.character.handler.handles.GuessHandles;
+import mines.zinno.clue.shape.character.handler.identifier.GuessHandle;
+import mines.zinno.clue.shape.character.handler.identifier.RevealHandle;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
+import mines.zinno.clue.shape.character.listener.PromptGuess;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
+import mines.zinno.clue.util.handler.Handler;
 
 
 import java.awt.*;
@@ -48,7 +55,7 @@ public class Clue extends BoardGame<ClueController> {
     @Override
     protected void populateStage(Stage stage) throws IOException {
         super.populateStage(stage);
-        
+
         stage.setTitle(TITLE);
         stage.setResizable(IS_RESIZABLE);
     }
@@ -70,12 +77,12 @@ public class Clue extends BoardGame<ClueController> {
 
         // Skip to next player turn
         this.getController().getSkip().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                new OnContinue(() -> this.setNumMoves(this.getCharacters().indexOf(player)), this)
+                new OnClickContinue(() -> this.setNumMoves(this.getCharacters().indexOf(player)), this)
         );
 
         // Continue to next character's turn
         this.getController().getNext().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                new OnContinue(() -> this.addMoves(1), this)
+                new OnClickContinue(() -> this.addMoves(1), this)
         );
 
         // Add OnGuessConfirm listener
@@ -162,25 +169,40 @@ public class Clue extends BoardGame<ClueController> {
                 getController().getSettingsDialogue().getController().getCharacter().getSelected().orElse(characters.get(0));
         characters.remove(chosenCharacter);
 
+        GuessHandler guessHandler = new GuessHandler(new GuessHandles(this));
+        guessHandler.addIdentifyingAnnotation(
+                RevealHandle.class,
+                (senderData, revealAnnotation) ->
+                        revealAnnotation.type().equals(senderData.handlerCaller) &&
+                                (revealAnnotation.id().equals(senderData.providedID) ||
+                                        Handler.ALL.equals(senderData.providedID) ||
+                                        RevealContext.ANY.equals(senderData.providedID) ||
+                                        RevealContext.ANY.equals(revealAnnotation.id()))
+        );
+        guessHandler.addIdentifyingAnnotation(
+                GuessHandle.class,
+                (senderData, revealAnnotation) -> revealAnnotation.type().equals(senderData.handlerCaller)
+        );
+
         // Create player character
         this.player = new Player(
                 this,
+                guessHandler,
                 chosenCharacter,
                 startPlaces.get(0)
         );
-        player.addMoveListener(new UpdateRoomGuess(this));
-        player.addMoveListener(new OnExitEnter());
-//        player.addMoveListener(new PromptGuess(this));
+        player.addTurnListener(new UpdateRoomGuess(this));
+        player.addTurnListener(new OnExitEnter());
+        player.addTurnListener(new PromptGuess(this));
 
-        this.characters.add(
-                this.player
-        );
+        this.characters.add(this.player);
 
         // Create computer characters
         for(int i = 0; i < numComputers; i++) {
             this.characters.add(
                     new Computer(
                             this,
+                            guessHandler,
                             characters.get(i),
                             startPlaces.get(i+1)
                     )
@@ -230,7 +252,6 @@ public class Clue extends BoardGame<ClueController> {
             }
         }
     }
-
 
     @Override
     public Dimension getSize() {

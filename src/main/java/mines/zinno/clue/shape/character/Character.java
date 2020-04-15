@@ -2,12 +2,14 @@ package mines.zinno.clue.shape.character;
 
 import javafx.application.Platform;
 import javafx.scene.shape.Circle;
-import javafx.util.Pair;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.layout.board.ClueBoard;
-import mines.zinno.clue.listener.OnMoveListener;
-import mines.zinno.clue.listener.OnTurnEndListener;
+import mines.zinno.clue.shape.character.handler.identifier.GuessHandle;
+import mines.zinno.clue.shape.character.handler.identifier.RevealHandle;
+import mines.zinno.clue.shape.character.listener.OnRoll;
+import mines.zinno.clue.shape.character.listener.OnTurnListener;
+import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.util.Location;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
@@ -15,6 +17,8 @@ import mines.zinno.clue.shape.character.vo.GuessVO;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.shape.place.Teleportable;
+import mines.zinno.clue.util.handler.Handler;
+import mines.zinno.clue.util.handler.basic.InsertHandler;
 import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
@@ -40,15 +44,19 @@ public abstract class Character extends Circle {
     protected Place curPlace;
     protected Set<Place> posMoves = new HashSet<>();
 
-    private final List<OnTurnEndListener<Character>> turnEndListeners = new ArrayList<>();
-    private final List<OnMoveListener<Character>> moveListeners = new ArrayList<>();
-    
-    public Character(Clue game, Suspect character, Place startPlace) {
+    private final GuessHandler guessHandler;
+    private final List<OnTurnListener<Character>> turnListeners = new ArrayList<>();
+
+    public Character(Clue game, GuessHandler guessHandler, Suspect character, Place startPlace) {
         this.game = game;
+        this.guessHandler = guessHandler;
         this.character = character;
-        
-        if(game != null) {
-            game.getController().getBoard().getChildren().add(this);
+
+        this.turnListeners.add(this.guessHandler);
+        this.turnListeners.add(new OnRoll(game));
+
+        if(this.game != null) {
+            this.game.getController().getBoard().getChildren().add(this);
             display();
         }
         
@@ -60,7 +68,7 @@ public abstract class Character extends Circle {
      */
     public void beginTurn() {
         this.turn = Turn.PRE_ROLL;
-        updateTurnEndListeners();
+        updateTurnListeners();
     }
 
     /**
@@ -68,7 +76,7 @@ public abstract class Character extends Circle {
      */
     public void endTurn() {
         this.turn = Turn.OTHER;
-        updateTurnEndListeners();
+        updateTurnListeners();
     }
 
     /**
@@ -83,17 +91,7 @@ public abstract class Character extends Circle {
         this.posMoves = calcPosMoves();
 
         this.turn = Turn.POST_ROLL;
-        updateTurnEndListeners();
-        
-
-        //TODO move to turn end  listener
-        Platform.runLater(() -> 
-                game.getController().getInfoLabel().setText(
-                        Action.ROLL_NUM.getText((this instanceof Player) ? "You" : this.getCharacter().getName(),
-                                this.getRollNum()
-                        )
-                )
-        );
+        updateTurnListeners();
         
         return rollNum;
     }
@@ -115,6 +113,7 @@ public abstract class Character extends Circle {
     /**
      * Calculate possible moves from a given place and distance
      */
+    @SuppressWarnings("unchecked")
     public Set<Place> calcPosMoves(Place startLoc, int distance, int maxSpread) {
         
         if(distance == 0)
@@ -205,96 +204,83 @@ public abstract class Character extends Circle {
             // Calc new possible moves
             this.posMoves = calcPosMoves();
 
-        updateMoveListeners();
-        updateTurnEndListeners();
+        updateTurnListeners();
     }
 
-    public Boolean guess(GuessVO guessVO) {
-        return this.guess(guessVO.suspect, guessVO.room, guessVO.weapon);
+    public void guess(GuessVO guessVO) {
+        this.guess(guessVO.suspect, guessVO.room, guessVO.weapon);
     }
     
     /**
      * Make a guess
-     * 
-     * @return True when another player shows a card; False when no card is shown; null if the player wins or loses
      */
-    public Pair<RevealContext, List<String>> guess(Suspect suspect, Room room, Weapon weapon) {
+    public void guess(Suspect suspect, Room room, Weapon weapon) {
         this.turn = Turn.POST_GUESS;
-        
-        Pair<RevealContext, List<String>> returnVal = new Pair<>(null, new ArrayList<>());
+
+        guessHandler
+                .<InsertHandler>get(GuessHandle.class)
+                .insert(Handler.ALL, this, suspect, room, weapon);
+
         boolean isFound = false;
-        
         for(int i = 1; i < game.getCharacters().size(); i++) {
-            Character c = game.getCharacters().get(i);
-            
-            for(Card card : c.getCards()) {
+            Character character = game.getCharacters().get(i);
+
+            for(Card card : character.getCards()) {
                 if(!(card.getName().equals(suspect.getName()) ||
                         card.getName().equals(room.getName()) ||
                         card.getName().equals(weapon.getName())))
                     continue;
 
-                if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT)))
-                    returnVal.getValue().add(Action.CLUE.getText(c, card));
+                guessHandler
+                        .<InsertHandler>get(RevealHandle.class)
+                        .insert(RevealContext.ON_GUESS, character, card);
                 isFound = true;
-                 break;
+                break;
             }
-            
+
             if(isFound)
                 break;
         }
-        
-        // Character not in exit room
-        if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT)))
-            return isFound;
+
+        this.updateTurnListeners();
+
+        // Character is not in an exit
+        if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT))) {
+            return;
+        }
 
         // Character has won the game
         if(!isFound) {
             onWin();
             game.setPlaying(false);
-            return null;
+            return;
         }
 
         // Character has lost the game
         onLose();
-        for(Object o : game.getCharacters()) {
-            Character c = (Character) o;
+        for(Character c : game.getCharacters()) {
             for(Card card : getCards())
-                c.receiveCard(this, card, RevealContext.LOST_GAME);
+                guessHandler
+                        .<InsertHandler>get()
+                        .insert(RevealContext.LOST_GAME, c, card);
         }
         game.getCharacters().remove(this);
         this.moveTo(null, true);
-
-        return null;
+        this.updateTurnListeners();
     }
 
     /**
      * Add an observer updated when a player moves
      */
-    public void addMoveListener(OnMoveListener<Character> moveListener) {
-        this.moveListeners.add(moveListener);
+    public void addTurnListener(OnTurnListener<Character> turnEndListener) {
+        this.turnListeners.add(turnEndListener);
     }
 
     /**
      * Update move listeners
      */
-    protected void updateMoveListeners() {
-        for(OnMoveListener<Character> moveListener : this.moveListeners) {
-            moveListener.update(this);
-        }
-    }
-
-    /**
-     * Add an observer updated when a player moves
-     */
-    public void addTurnEndListener(OnTurnEndListener<Character> turnEndListener) {
-        this.turnEndListeners.add(turnEndListener);
-    }
-
-    /**
-     * Update move listeners
-     */
-    protected void updateTurnEndListeners() {
-        for(OnTurnEndListener<Character> turnEndListener : this.turnEndListeners) {
+    protected void updateTurnListeners() {
+        for(OnTurnListener<Character> turnEndListener : this.turnListeners) {
             turnEndListener.update(this);
         }
     }
@@ -367,7 +353,9 @@ public abstract class Character extends Circle {
      */
     public void addProvidedCard(Card card) {
         this.providedCards.add(card);
-        receiveCard(null, card, RevealContext.PROVIDED);
+        guessHandler
+                .<InsertHandler>get(RevealHandle.class)
+                .insert(RevealContext.PROVIDED, card);
     }
 
     /**

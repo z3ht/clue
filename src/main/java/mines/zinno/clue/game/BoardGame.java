@@ -20,7 +20,8 @@ import java.util.List;
  * The {@link BoardGame} extends JavaFX's {@link Application} class and holds all essential BoardGame information.
  */
 public abstract class BoardGame<T extends GameController> extends Application {
-    
+
+    private Stage stage;
     private T controller;
 
     private boolean isPlaying;
@@ -34,16 +35,18 @@ public abstract class BoardGame<T extends GameController> extends Application {
     public final void start(Stage primaryStage) throws IOException {
         LogMessage.START.log();
 
-        populateStage(primaryStage);
+        this.stage = primaryStage;
+
+        populateStage(this.stage);
 
         LogMessage.STAGE_POPULATED.log();
         
-        addListeners(primaryStage);
-        primaryStage.setOnShown((event) -> startGame());
+        addListeners(stage);
+        stage.setOnShown((event) -> startGame());
         
         LogMessage.LISTENERS_ADDED.log();
 
-        primaryStage.show();
+        stage.show();
 
         LogMessage.STAGE_SHOWN.log();
     }
@@ -80,6 +83,15 @@ public abstract class BoardGame<T extends GameController> extends Application {
      */
     public T getController() {
         return controller;
+    }
+
+    /**
+     * Get the stage
+     *
+     * @return {@link Stage}
+     */
+    public Stage getStage() {
+        return stage;
     }
 
     /**

@@ -6,6 +6,7 @@ import mines.zinno.clue.constant.*;
 import mines.zinno.clue.shape.character.constant.Result;
 import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
+import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
@@ -15,12 +16,9 @@ import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
  * The player class extends the {@link Character} class. It is used by all person controlled characters in Clue.
  */
 public class Player extends Character {
-    
-    private final Clue game;
 
-    public Player(Clue game, Suspect suspect, Place startPlace) {
-        super(game, suspect, startPlace);
-        this.game = game;
+    public Player(Clue game, GuessHandler guessHandler, Suspect suspect, Place startPlace) {
+        super(game, guessHandler, suspect, startPlace);
     }
     
     @Override
