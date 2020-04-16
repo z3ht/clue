@@ -7,40 +7,57 @@ public enum RevealContext {
     PROVIDED(
             Turn.PRE_ROLL,
             "You have been dealt the following cards:\n",
+            "   - %s",
+            null,
             null
     ),
     ON_GUESS(
             Turn.POST_GUESS,
-            "You guessed the murderer was %s in the %s using the %s ",
-            "%s guessed the murderer was %s in the %s using the %s"
+            null,
+            "%s showed you the %s card",
+            null,
+            "%s showed %s the %s card"
     ),
     LOST_GAME(
             Turn.POST_GUESS,
-            "Your accusation was incorrect and you have been murdered by %s using the %s in the %s\n" +
-                    "View the settings menu to play again",
-            "%s has been murdered by %s"
+            "%s has been murdered! They had the following cards:",
+            "   - %s",
+            null,
+            null
     ),
-    ANY(null, null, null);
+    ANY(null, null, null, null, null);
 
     Turn displayTurn;
-    String playerFormat;
-    String computerFormat;
+    String playerHeader;
+    String playerBody;
+    String computerHeader;
+    String computerBody;
 
-    RevealContext(Turn displayTurn, String playerFormat, String computerFormat) {
+    RevealContext(Turn displayTurn, String playerHeader, String playerBody, String computerHeader, String computerBody) {
         this.displayTurn = displayTurn;
-        this.playerFormat = playerFormat;
-        this.computerFormat = computerFormat;
+        this.playerHeader = playerHeader;
+        this.playerBody = playerBody;
+        this.computerHeader = computerHeader;
+        this.computerBody = computerBody;
     }
 
     public Turn getDisplayTurn() {
         return displayTurn;
     }
 
-    public String getPlayerFormat() {
-        return playerFormat;
+    public String getPlayerHeader() {
+        return playerHeader;
     }
 
-    public String getComputerFormat() {
-        return computerFormat;
+    public String getPlayerBody() {
+        return playerBody;
+    }
+
+    public String getComputerHeader() {
+        return computerHeader;
+    }
+
+    public String getComputerBody() {
+        return computerBody;
     }
 }

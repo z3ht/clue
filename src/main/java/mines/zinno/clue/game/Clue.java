@@ -1,6 +1,5 @@
 package mines.zinno.clue.game;
 
-
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -28,10 +27,14 @@ import mines.zinno.clue.shape.place.StartPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
 import mines.zinno.clue.util.handler.Handler;
+import mines.zinno.clue.util.handler.basic.InsertHandler;
 
 
+import javax.jws.Oneway;
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.List;
 
@@ -296,6 +299,5 @@ public class Clue extends BoardGame<ClueController> {
     public static void main(String[] args) {
         launch(args);
     }
-
 
 }

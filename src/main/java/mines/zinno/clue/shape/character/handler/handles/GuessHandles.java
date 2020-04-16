@@ -1,6 +1,5 @@
 package mines.zinno.clue.shape.character.handler.handles;
 
-import javafx.util.Pair;
 import mines.zinno.clue.constant.Card;
 import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.constant.Suspect;
@@ -17,17 +16,15 @@ import mines.zinno.clue.stage.dialogue.InfoDialogue;
 import mines.zinno.clue.util.handler.basic.ExecuteHandler;
 import mines.zinno.clue.util.handler.basic.InsertHandler;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class GuessHandles {
 
     private final Clue game;
 
-    Map<RevealContext, List<Pair<Boolean, Card[]>>> revealCardMap = new HashMap<>();
+    Map<Character, Map<RevealContext, List<String>>> alertsData = new HashMap<>();
+    List<String> upcomingAlerts = new ArrayList<>();
 
     private final static Turn GUESS_TURN = Turn.POST_GUESS;
     private final static String GUESS_FORMAT = "%s guessed the murderer was %s in the %s using the %s";
@@ -44,34 +41,46 @@ public class GuessHandles {
             id = RevealContext.ANY
     )
     public void execute(Character sender) {
-        boolean shouldDisplay = false;
+        upcomingAlerts.add(guess);
+        guess = null;
+
+        for(Character character : alertsData.keySet()) {
+
+            for (Iterator<RevealContext> i = alertsData.get(character).keySet().iterator(); i.hasNext();) {
+                RevealContext revealContext = i.next();
+
+                if(revealContext.getDisplayTurn() != sender.getTurn() ||
+                        alertsData.get(character).get(revealContext) == null ||
+                        alertsData.get(character).get(revealContext).size() == 0)
+                    continue;
+
+                upcomingAlerts.add(
+                        String.format(
+                                (game.getPlayer().equals(character)) ?
+                                        revealContext.getPlayerHeader() : revealContext.getComputerHeader(),
+                                sender.getCharacter().getName()
+                        )
+                );
+                upcomingAlerts.addAll(alertsData.get(character).get(revealContext));
+                upcomingAlerts.add("\n");
+                i.remove();
+            }
+        }
+
+        if (game.getNumMoves() > 1 || upcomingAlerts.size() == 0)
+            return;
+
         InfoDialogue guessDialogue = new InfoDialogue("Clue");
 
-        for (Iterator<RevealContext> i = revealCardMap.keySet().iterator(); i.hasNext();) {
-            RevealContext revealContext = i.next();
-            if (revealContext.getDisplayTurn() !=  sender.getTurn())
-                continue;
-            StringBuilder infoSB = new StringBuilder();
-            for (String s : revealCardMap.get(revealContext))
-                infoSB.append(s);
-            guessDialogue.getController().getInfoPane().getInfos().add(new Info(infoSB.toString()));
-            i.remove();
-            shouldDisplay = true;
-        }
-
-        if (sender.getTurn() == GUESS_TURN && guess != null) {
-            guessDialogue.getController().getInfoPane().getInfos().add(new Info(guess));
-            guess = null;
-            shouldDisplay = true;
-        }
+        upcomingAlerts.stream()
+                .filter(Objects::nonNull)
+                .forEach(alert -> guessDialogue.getController().getInfoPane().getInfos().add(new Info(alert)));
+        upcomingAlerts.clear();
 
         guessDialogue.setSize();
-
-        if (shouldDisplay) {
-            guessDialogue.show();
-            guessDialogue.toBack();
-            game.getStage().toBack();
-        }
+        guessDialogue.show();
+        guessDialogue.toBack();
+        game.getStage().toBack();
     }
 
     @GuessHandle(type = InsertHandler.class)
@@ -86,33 +95,72 @@ public class GuessHandles {
 
     @RevealHandle(
             type = InsertHandler.class,
-            id = RevealContext.PROVIDED
+            id = RevealContext.ANY
     )
-    public void receiveFromStart(Character sender, Card card) {
-        if(!(sender instanceof Player))
+    public void crossOutPlayerCards(Character receiver, Card card) {
+        if(!(receiver instanceof Player))
             return;
 
-        List<String> cards = revealCardMap.get(RevealContext.PROVIDED)
-        if()
+        if(card instanceof Room)
+            game.getController().getRoomsSheet().crossOut(card.getId());
+        if(card instanceof Weapon)
+            game.getController().getWeaponsSheet().crossOut(card.getId());
+        if(card instanceof Suspect)
+            game.getController().getSuspectsSheet().crossOut(card.getId());
+    }
 
+    @RevealHandle(
+            type = InsertHandler.class,
+            id = RevealContext.PROVIDED
+    )
+    public void receiveFromStart(Character receiver, Card card) {
+        if(!(receiver instanceof Player))
+            return;
+
+        storeAlert(
+                receiver,
+                RevealContext.PROVIDED,
+                String.format(RevealContext.PROVIDED.getPlayerBody(), card.getName())
+        );
     }
 
     @RevealHandle(
             type = InsertHandler.class,
             id = RevealContext.ON_GUESS
     )
-    public void receiveFromGuess(Character sender, Character receiver, Card card) {
-
+    public void receiveFromGuess(Character receiver, Character sender, Card card) {
+        String alert = (receiver instanceof Player) ?
+                String.format(
+                        RevealContext.ON_GUESS.getPlayerBody(),
+                        sender.getCharacter().getName(),
+                        card.getName()) :
+                String.format(
+                        RevealContext.ON_GUESS.getComputerBody(),
+                        sender.getCharacter().getName(),
+                        receiver.getCharacter().getName());
+        storeAlert(receiver, RevealContext.ON_GUESS, alert);
     }
 
     @RevealHandle(
             type = InsertHandler.class,
             id = RevealContext.LOST_GAME
     )
-    public void receiveFromLoss(Character sender, Character receiver, Card card) {
+    public void receiveFromLoss(Character receiver, Character sender, Card card) {
+        if(!(receiver instanceof Player))
+            return;
 
+        storeAlert(
+                receiver,
+                RevealContext.PROVIDED,
+                String.format(RevealContext.PROVIDED.getPlayerBody(), card.getName())
+        );
     }
 
-
+    private void storeAlert(Character receiver, RevealContext context, String... alerts) {
+        List<String> data = alertsData.get(receiver).get(context);
+        if(data == null)
+            data = new ArrayList<>();
+        data.addAll(Arrays.asList(alerts));
+    }
 
 }

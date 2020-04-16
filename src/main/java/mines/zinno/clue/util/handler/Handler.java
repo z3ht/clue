@@ -28,11 +28,12 @@ public class Handler {
     private final boolean inheritHandles;
 
     public Handler() {
-        this(true);
+        this.inheritHandles = true;
     }
 
     public Handler(Object... handles) {
-        this(false, handles);
+        this.inheritHandles = false;
+        this.getHandles().addAll(Arrays.asList(handles));
     }
 
     public Handler(boolean inheritHandles, Object... handles) {
@@ -46,28 +47,27 @@ public class Handler {
     }
 
     @NotNull
-    public final <X extends Handler> X get() {
-        return this.get(null);
+    public final <X extends Handler> X get(final Class<X> handlerClass) {
+        return this.get(handlerClass, null);
     }
 
     @SuppressWarnings("unchecked")
     @NotNull
-    public final <X extends Handler> X get(final Class<? extends Annotation> annotationClass) {
+    public final <X extends Handler> X get(final Class<X> handlerClass,
+                                           final Class<? extends Annotation> annotationClass) {
         final ThrowableFunction<NoSuchMethodException, Handler, X> getXInstHandler = (handler) -> {
             if(handler == null)
                 return null;
 
-            final boolean curHandlerIsXInst =
-                    Handler.this.getClass().getMethod("get").getReturnType() == handler.getClass();
-
-            if(!curHandlerIsXInst) {
+            if(!(handlerClass == handler.getClass())) {
                 return null;
             }
 
             if(handler.inheritHandles())
                 handler.getHandles().addAll(Handler.this.getHandles());
 
-            handler.withContext(context);
+            if(Handler.this.context != null)
+                handler.withContext(context);
 
             Handler.this.identifyingAnnotations.putAll(handler.identifyingAnnotations);
             handler.identifyingAnnotations.clear();
@@ -89,7 +89,7 @@ public class Handler {
                 if(returnVal != null)
                     return returnVal;
             }
-            throw new HandlerNotInstalled(this.getClass().getMethod("get").getReturnType());
+            throw new HandlerNotInstalled(handlerClass);
         } catch (NoSuchMethodException e) {
             // Never reached (no recovery if reached)
             e.printStackTrace();
@@ -124,12 +124,48 @@ public class Handler {
         return qualifyingMethods;
     }
 
-    protected void call(Method method, Object... args) throws InvocationTargetException, IllegalAccessException {
-        final List<Object> makeVarArgsDankAgain = new ArrayList<>();
-        if(args != null)
-            makeVarArgsDankAgain.add(Arrays.asList(args));
+    protected void call(Method method, Object... args) throws IllegalAccessException, InvocationTargetException {
+        boolean isCalled = false;
+        for(Object[] argCombo : getCombos(args)) {
+            try {
+                final List<Object> makeVarArgsDankAgain = new ArrayList<>();
+                addContextToCall(makeVarArgsDankAgain);
+                if(argCombo != null)
+                    makeVarArgsDankAgain.add(Arrays.asList(argCombo));
 
-        method.invoke(this, makeVarArgsDankAgain.toArray());
+                method.invoke(this, makeVarArgsDankAgain.toArray());
+                isCalled = true;
+                break;
+            } catch (InvocationTargetException e) {
+                if (e.getCause() instanceof IllegalArgumentException) {
+                    continue;
+                }
+                throw e;
+            }
+        }
+        if(!isCalled)
+            throw new IllegalArgumentException();
+    }
+
+    private Set<Object[]> getCombos(Object[] args) {
+        Set<Object[]> argCombos = new HashSet<>();
+        if(args == null || args.length == 0)
+            return argCombos;
+
+        argCombos.add(args);
+        for(int i = 0; i < args.length; i++) {
+
+            Object lastArg = args[args.length - 1];
+            for (int j = 1; j < args.length; j++)
+                args[j] = args[j-1];
+            args[0] = lastArg;
+
+            for(int j = args.length - 1; j > 0; j--) {
+                argCombos.add(Arrays.copyOfRange(args, 0, j));
+            }
+        }
+
+        return argCombos;
     }
 
     protected void addContextToCall(List<Object> curArgs) {

@@ -6,6 +6,7 @@ import mines.zinno.clue.layout.board.validator.NoBadDoorsValidator;
 import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Computer;
+import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.place.Place;
 import org.junit.Assert;
 import org.junit.Before;
@@ -42,7 +43,7 @@ public class CharacterTest {
         board.initialize();
         
         // Create a character
-        this.character = new Computer(null, Suspect.COL_MUSTARD, null);
+        this.character = new Computer(null, new GuessHandler(), Suspect.COL_MUSTARD, null);
     }
     
     @Test

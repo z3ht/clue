@@ -119,7 +119,7 @@ public abstract class Character extends Circle {
         if(distance == 0)
             return new HashSet<>();
         
-        Predicate<Place> placeReqs = (place) -> place != null && !place.isOccupied();
+        final Predicate<Place> placeReqs = (place) -> place != null && !place.isOccupied();
         
         Tree<Place> tree = new Tree<>(startLoc);
         tree.populate(
@@ -218,7 +218,7 @@ public abstract class Character extends Circle {
         this.turn = Turn.POST_GUESS;
 
         guessHandler
-                .<InsertHandler>get(GuessHandle.class)
+                .get(InsertHandler.class, GuessHandle.class)
                 .insert(Handler.ALL, this, suspect, room, weapon);
 
         boolean isFound = false;
@@ -232,7 +232,7 @@ public abstract class Character extends Circle {
                     continue;
 
                 guessHandler
-                        .<InsertHandler>get(RevealHandle.class)
+                        .get(InsertHandler.class, RevealHandle.class)
                         .insert(RevealContext.ON_GUESS, character, card);
                 isFound = true;
                 break;
@@ -261,7 +261,7 @@ public abstract class Character extends Circle {
         for(Character c : game.getCharacters()) {
             for(Card card : getCards())
                 guessHandler
-                        .<InsertHandler>get()
+                        .get(InsertHandler.class, GuessHandle.class)
                         .insert(RevealContext.LOST_GAME, c, card);
         }
         game.getCharacters().remove(this);
@@ -354,8 +354,17 @@ public abstract class Character extends Circle {
     public void addProvidedCard(Card card) {
         this.providedCards.add(card);
         guessHandler
-                .<InsertHandler>get(RevealHandle.class)
+                .get(InsertHandler.class, RevealHandle.class)
                 .insert(RevealContext.PROVIDED, card);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(!(obj instanceof Character))
+            return false;
+        Character other = (Character) obj;
+
+        return this.getCharacter().getName().equals(other.getCharacter().getName());
     }
 
     /**

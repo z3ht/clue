@@ -99,20 +99,6 @@ public class Player extends Character {
         
         super.guess(suspect, room, weapon);
     }
-
-
-    @Override
-    public String receiveCard(Character sender, Card card, RevealContext revealContext) {
-
-        //TODO move to handle
-        if(card instanceof Room)
-            game.getController().getRoomsSheet().crossOut(card.getId());
-        if(card instanceof Weapon)
-            game.getController().getWeaponsSheet().crossOut(card.getId());
-        if(card instanceof Suspect)
-            game.getController().getSuspectsSheet().crossOut(card.getId());
-
-    }
     
     @Override
     public void onWin() {

@@ -22,7 +22,6 @@ public class GuessHandler extends BasicHandler implements OnTurnListener<Charact
         super(inheritHandles, handles);
     }
 
-    // I can't think of a better way to prevent developers from presenting unsupported context than this
     @Override
     public Handler withContext(Object... context) {
         throw new ContextNotSupported();
@@ -37,6 +36,6 @@ public class GuessHandler extends BasicHandler implements OnTurnListener<Charact
 
     @Override
     public void update(Character character) {
-        this.<ExecuteHandler>get().execute(Handler.ALL, character);
+        this.get(ExecuteHandler.class).execute(Handler.ALL, character);
     }
 }
