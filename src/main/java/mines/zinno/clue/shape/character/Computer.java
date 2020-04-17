@@ -3,7 +3,6 @@ package mines.zinno.clue.shape.character;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.shape.character.constant.Result;
-import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.character.vo.GuessVO;
@@ -12,15 +11,11 @@ import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
-import mines.zinno.clue.util.handler.Handler;
 import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Computer extends Character {
@@ -86,7 +81,7 @@ public class Computer extends Character {
 
     public Place calcBestMove() {
 
-        Tree<Place> curLocTree = generateTree(curPlace);
+        Tree<Place> curLocTree = generateFinderTree(curPlace);
 
         // Determine the closest door that hasn't been ruled out yet
         int minDoorDistance = Integer.MAX_VALUE;
@@ -120,7 +115,7 @@ public class Computer extends Character {
             }
         }
 
-        Tree<Place> targetTree = generateTree(closestGoodEntrance);
+        Tree<Place> targetTree = generateFinderTree(closestGoodEntrance);
 
         // Do the move that puts the computer closest to the best door
         Place bestMove = null;
@@ -138,11 +133,28 @@ public class Computer extends Character {
             bestMove = place;
         }
 
-        return bestMove;
+        return randomizeLoc(bestMove);
     }
 
     @SuppressWarnings("unchecked")
-    private Tree<Place> generateTree(Place startLoc) {
+    protected Place randomizeLoc(Place loc) {
+        Tree<Place> randRoomLoc = new Tree<>(loc);
+        randRoomLoc.populate((curNode) ->
+                        // This casts correctly. Java doesn't like Parameterized arrays
+                        Arrays.stream(curNode.getValue().getAdjacent())
+                                .filter((place) -> place != null && !place.isOccupied())
+                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= 0))
+                                .map((adj) -> new Node<>(adj, curNode))
+                                .toArray(Node[]::new),
+                25);
+        Set<Place> posLocs = randRoomLoc.retrieveAllValues().stream()
+                .filter((place) -> place != null && !place.isOccupied())
+                .collect(Collectors.toSet());
+        return (Place) posLocs.toArray()[(int) (posLocs.size()*Math.random())];
+    }
+
+    @SuppressWarnings("unchecked")
+    private Tree<Place> generateFinderTree(Place startLoc) {
         Tree<Place> tree = new Tree<>(startLoc);
         tree.populate((curNode) ->
                         // This casts correctly. Java doesn't like Parameterized arrays
@@ -150,7 +162,7 @@ public class Computer extends Character {
                                 .filter(Objects::nonNull)
                                 .map((adj) -> new Node<>(adj, curNode))
                                 .toArray(Node[]::new),
-                75);
+                150);
         return tree;
     }
 

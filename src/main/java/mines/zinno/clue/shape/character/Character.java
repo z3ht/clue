@@ -118,7 +118,7 @@ public abstract class Character extends Circle {
         this.moveTree = tree;
     }
 
-    private int calcDistance(Tree<Place> placeNode) {
+    protected int calcDistance(Tree<Place> placeNode) {
         int distance = 0;
         while(placeNode instanceof Node && ((Node<Place>) placeNode).getParent() != null) {
             distance += placeNode.getValue().getMoveCost();
