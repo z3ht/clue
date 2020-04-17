@@ -114,6 +114,7 @@ public class Place extends Rectangle {
      * @param maxSpread Maximum radius searched for this place
      * @return the travel distance between the places (max {@value MAX_SPREAD})
      */
+    @SuppressWarnings("unchecked")
     public int getDistance(Place startLoc, int maxSpread) {
         if(startLoc == null)
             return -1;
@@ -131,14 +132,11 @@ public class Place extends Rectangle {
                                 .filter((place) -> place != null && !place.isOccupied())
                                 .map((place) -> new Node<>(place, curNode))
                                 .toArray(Node[]::new),
-                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other),
+                Comparator.comparingInt(this::calcDistance),
                 maxSpread
         );
-        
-        return calcDistance(tree.findBestPath(
-                this, 
-                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other)
-        ));
+
+        return calcDistance(tree.findPath(this));
     }
 
     private int calcDistance(Tree<Place> placeNode) {

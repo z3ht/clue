@@ -1,5 +1,6 @@
 package mines.zinno.clue.listener;
 
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.constant.Alert;
@@ -20,14 +21,16 @@ public class OnClickContinue implements EventHandler<MouseEvent> {
 
     @Override
     public void handle(MouseEvent event) {
-        
-        Character curCharacter = clue.getCharacters().get(0);
-        
-        if(curCharacter.getTurn() == Turn.PRE_ROLL || curCharacter.getTurn() == Turn.POST_ROLL) {
-            new BasicInfoDialogue(Alert.OUT_OF_TURN.getName(), Alert.OUT_OF_TURN.getText()).show();
-            return;
-        }
-        
-        action.run();
+
+        Platform.runLater(() -> {
+            Character curCharacter = clue.getCharacters().get(0);
+
+            if(curCharacter.getTurn() == Turn.PRE_ROLL || curCharacter.getTurn() == Turn.POST_ROLL) {
+                new BasicInfoDialogue(Alert.OUT_OF_TURN.getName(), Alert.OUT_OF_TURN.getText()).show();
+                return;
+            }
+
+            action.run();
+        });
     }
 }

@@ -1,20 +1,20 @@
 package mines.zinno.clue.util.tree;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 
 public class Tree<T> {
-    
+
     private T value;
-    private Tree<T>[] children;
+    private Node<T>[] children;
 
     public Tree(T value) {
         this(value, null);
     }
 
-    public Tree(T value, Tree<T>[] children) {
+    public Tree(T value, Node<T>[] children) {
         this.value = value;
         this.children = children;
     }
@@ -22,12 +22,12 @@ public class Tree<T> {
     public void populate(Function<Tree<T>, Node<T>[]> populator, int maxSpread) {
         this.populate(populator, null, maxSpread);
     }
-    
-    public void populate(Function<Tree<T>, Node<T>[]> populator, BiPredicate<Tree<T>, Tree<T>> copyRemover, int maxSpread) {
+
+    public void populate(Function<Tree<T>, Node<T>[]> populator, Comparator<Tree<T>> copyRemover, int maxSpread) {
         this.populate(this, populator, copyRemover, maxSpread);
     }
     
-    private void populate(Tree<T> top, Function<Tree<T>, Node<T>[]> populator, BiPredicate<Tree<T>, Tree<T>> copyRemover, int spread) {
+    private void populate(Tree<T> top, Function<Tree<T>, Node<T>[]> populator, Comparator<Tree<T>> copyRemover, int spread) {
         if(spread <= 0 || populator == null)
             return;
 
@@ -40,7 +40,23 @@ public class Tree<T> {
             for(int i = 0; i < this.getChildren().length; i++) {
                 if(this.getChildren()[i] == null)
                     continue;
-                this.getChildren()[i] = top.findBestPath(this.getChildren()[i].getValue(), copyRemover);
+
+                Tree<T> posPath = top.findPath(this.getChildren()[i]);
+
+                if(posPath == null)
+                    continue;
+
+                int comparison = copyRemover.compare(this.getChildren()[i], posPath);
+                if(comparison == 0)
+                    comparison = (this.getChildren()[i].getDepth() > posPath.getDepth()) ? 1 : -1;
+                if(comparison > 0) {
+                    this.getChildren()[i] = null;
+                } else {
+                    if(posPath instanceof Node)
+                        ((Node<T>) posPath).setParent(this);
+                    this.getChildren()[i].setChildren(posPath.getChildren());
+                    posPath.setChildren(null);
+                }
             }
         }
         
@@ -52,43 +68,44 @@ public class Tree<T> {
         }
     }
 
-    public Tree<T> findBestPath(T target) {
-        return this.findBestPath(target, null);
+    public Tree<T> findPath(T value) {
+        return this.findPath(new Tree<T>(value));
+    }
+
+    protected Tree<T> findPath(Tree<T> curTree) {
+        return this.findPath(curTree, new HashSet<>());
     }
     
-    public Tree<T> findBestPath(T target,  BiPredicate<Tree<T>, Tree<T>> copyRemover) {
-        return this.findBestPath(target, new HashSet<>(), null, copyRemover);
-    }
-    
-    private Tree<T> findBestPath(T target, Set<Tree<T>> curPath, Tree<T> curClosest, BiPredicate<Tree<T>, Tree<T>> copyRemover) {
-        if(this.getChildren() == null || target == null)
-            return curClosest;
+    private Tree<T> findPath(Tree<T> curTree, Set<Tree<T>> curPath) {
+        if(this.getChildren() == null || curTree == null || curTree.getValue() == null)
+            return null;
         
         if(curPath.contains(this))
-            return curClosest;
+            return null;
         curPath.add(this);
-        
+
+        if(this != curTree && curTree.getValue().equals(this.getValue()))
+            return this;
+
         for(Tree<T> child : this.getChildren()) {
 
-            if(child == null || curClosest == child)
+            if(child == null)
                 continue;
 
-            if(target.equals(child.getValue())) {
-
-                // If current closest > other
-                // Remove current closest
-                if (curClosest == null || copyRemover.test(curClosest, child)) {
-                    curClosest = child;
-                }
-                continue;
-            }
-            
             if(child.getChildren() == null || child.getChildren().length == 0)
                 continue;
-            
-            curClosest = child.findBestPath(target, curPath, curClosest, copyRemover);
+
+            Tree<T> posReturnVal = child.findPath(curTree, curPath);
+            if(posReturnVal != null)
+                return posReturnVal;
         }
-        return curClosest;
+        return null;
+    }
+
+    public int getDepth() {
+        if(!(this instanceof Node))
+            return 0;
+        return 1 + ((Node<T>) this).getParent().getDepth();
     }
 
     public Set<T> retrieveAllValues() {
@@ -122,11 +139,11 @@ public class Tree<T> {
         return value;
     }
 
-    public Tree<T>[] getChildren() {
+    public Node<T>[] getChildren() {
         return children;
     }
 
-    public void setChildren(Tree<T>[] children) {
+    public void setChildren(Node<T>[] children) {
         this.children = children;
     }
 }

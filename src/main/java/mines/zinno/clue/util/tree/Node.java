@@ -8,9 +8,13 @@ public class Node<T> extends Tree<T> {
         this(value, parent, null);
     }
 
-    public Node(T value, Tree<T> parent, Tree<T>[] children) {
+    public Node(T value, Tree<T> parent, Node<T>[] children) {
         super(value, children);
         
+        this.parent = parent;
+    }
+
+    public void setParent(Tree<T> parent) {
         this.parent = parent;
     }
 

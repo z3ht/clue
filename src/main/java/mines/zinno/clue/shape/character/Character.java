@@ -130,7 +130,7 @@ public abstract class Character extends Circle {
                                 .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= distance))
                                 .map((adj) -> new Node<>(adj, curNode))
                                 .toArray(Node[]::new),
-                (curClosest, other) -> calcDistance(curClosest) > calcDistance(other),
+                Comparator.comparingInt(this::calcDistance),
                 maxSpread
         );
 
