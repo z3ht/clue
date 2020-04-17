@@ -20,7 +20,6 @@ import mines.zinno.clue.shape.character.handler.handles.GuessHandles;
 import mines.zinno.clue.shape.character.handler.identifier.GuessHandle;
 import mines.zinno.clue.shape.character.handler.identifier.RevealHandle;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
-import mines.zinno.clue.shape.character.listener.PromptGuess;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
@@ -110,7 +109,7 @@ public class Clue extends BoardGame<ClueController> {
         createWelcomeStatus();
         beginGameThread();
         
-        player.moveTo(this.getController().getBoard().getItemFromCoordinate(10, 7), true);
+        getCharacters().get(1).moveTo(this.getController().getBoard().getItemFromCoordinate(5, 19), true);
     }
 
     /**
@@ -192,7 +191,7 @@ public class Clue extends BoardGame<ClueController> {
         );
         player.addTurnListener(new UpdateRoomGuess(this));
         player.addTurnListener(new OnExitEnter());
-        player.addTurnListener(new PromptGuess(this));
+//        player.addTurnListener(new PromptGuess(this));
 
         this.characters.add(this.player);
 

@@ -12,7 +12,7 @@ import mines.zinno.clue.util.Location;
  * {@link mines.zinno.clue.layout.board.ClueBoard}. It implements the {@link Teleportable} interface to send characters
  * to the middle of a room after entering.
  */
-public class DoorPlace extends RoomPlace implements Teleportable, Entrance {
+public class DoorPlace extends Entrance implements Teleportable {
 
     public DoorPlace(DirectionKey direction, Room room) {
         this(direction, room, true, 1);

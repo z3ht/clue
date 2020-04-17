@@ -13,10 +13,14 @@ import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 import mines.zinno.clue.util.handler.Handler;
+import mines.zinno.clue.util.tree.Node;
+import mines.zinno.clue.util.tree.Tree;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 
 public class Computer extends Character {
@@ -29,14 +33,14 @@ public class Computer extends Character {
     public void beginTurn() {
         super.beginTurn();
         this.roll();
-        
+
         this.moveTo(calcBestMove());
         if(this.curPlace instanceof RoomPlace) {
             GuessVO guess = calcBestGuess();
-            
+
             if(guess == null)
                 return;
-            
+
             this.guess(guess);
             this.setTurn(Turn.POST_GUESS);
         }
@@ -47,9 +51,9 @@ public class Computer extends Character {
 
         if(!(this.curPlace instanceof RoomPlace))
             return null;
-        
+
         RoomPlace curRoomPlace = (RoomPlace) this.curPlace;
-        
+
         if(curRoomPlace.getRoom() == Room.EXIT) {
             List<Room> rooms = new ArrayList<>(Arrays.asList(Room.values()));
             for(Card card : this.getCards()) {
@@ -68,34 +72,37 @@ public class Computer extends Character {
             weapon.remove(card);
         }
         bestGuess.weapon = weapon.get(0);
-        
+
         List<Suspect> suspect = new ArrayList<>(Arrays.asList(Suspect.values()));
         for(Card card : this.getCards()) {
             if(!(card instanceof Suspect))
                 continue;
             suspect.remove(card);
-        } 
+        }
         bestGuess.suspect = suspect.get(0);
-        
+
         return bestGuess;
     }
 
     public Place calcBestMove() {
+
+        Tree<Place> curLocTree = generateTree(curPlace);
+
         // Determine the closest door that hasn't been ruled out yet
-        double minDoorDistance = Double.MAX_VALUE;
-        RoomPlace closestGoodEntrance = null;
+        int minDoorDistance = Integer.MAX_VALUE;
+        Entrance closestGoodEntrance = null;
         for (Place[] places : game.getController().getBoard().getGrid()) {
             for(Place place : places) {
-                if(!(place instanceof RoomPlace && place instanceof Entrance))
+                if(!(place instanceof Entrance))
                     continue;
-                RoomPlace entrance = (RoomPlace) place;
+                Entrance entrance = (Entrance) place;
 
                 boolean shouldContinue = false;
                 for(Card c : getCards()) {
                     if(!(c instanceof DoorPlace))
                         continue;
                     DoorPlace doorCard = (DoorPlace) c;
-                    
+
                     if(doorCard.equals(entrance)) {
                         shouldContinue = true;
                         break;
@@ -103,22 +110,27 @@ public class Computer extends Character {
                 }
                 if(shouldContinue)
                     continue;
-                
-                double curDistance = this.getManhattanDistance(this.curPlace, entrance);
+
+                int curDistance = curLocTree.findPath(entrance).getCost();
                 if(curDistance == -1 || curDistance > minDoorDistance)
                     continue;
-                
+
                 minDoorDistance = curDistance;
                 closestGoodEntrance = entrance;
             }
         }
-        
+
+        Tree<Place> targetTree = generateTree(closestGoodEntrance);
+
         // Do the move that puts the computer closest to the best door
         Place bestMove = null;
-        double minDistance = Double.MAX_VALUE;
-        for(Place place : this.getPosMoves()) {
-            int curDistance = place.getDistance(closestGoodEntrance, 10);
-            
+        int minDistance = Integer.MAX_VALUE;
+        for(Place place : this.moveTree.retrieveAllValues()) {
+            if(place.isOccupied())
+                continue;
+
+            int curDistance = targetTree.findPath(place).getCost();
+
             if(curDistance > minDistance)
                 continue;
 
@@ -127,6 +139,19 @@ public class Computer extends Character {
         }
 
         return bestMove;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Tree<Place> generateTree(Place startLoc) {
+        Tree<Place> tree = new Tree<>(startLoc);
+        tree.populate((curNode) ->
+                        // This casts correctly. Java doesn't like Parameterized arrays
+                        Arrays.stream(curNode.getValue().getAdjacent())
+                                .filter(Objects::nonNull)
+                                .map((adj) -> new Node<>(adj, curNode))
+                                .toArray(Node[]::new),
+                75);
+        return tree;
     }
 
     @Override
@@ -138,7 +163,7 @@ public class Computer extends Character {
     public void onLose() {
         new BasicInfoDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show();
     }
-    
+
     private int getManhattanDistance(Place p1, Place p2) {
         return (int) (Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getX() - p2.getX()));
     }

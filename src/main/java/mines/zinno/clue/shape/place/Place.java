@@ -9,6 +9,7 @@ import javafx.scene.shape.Rectangle;
 import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.util.Location;
+import mines.zinno.clue.util.tree.Costable;
 import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
@@ -20,7 +21,7 @@ import java.util.*;
  * 
  * Satisfies {@link mines.zinno.clue.Assignments#C12A2} requirements
  */
-public class Place extends Rectangle {
+public class Place extends Rectangle implements Costable {
 
     private static final int MAX_SPREAD = 14;
     
@@ -96,57 +97,6 @@ public class Place extends Rectangle {
     public void delHighlight() {
         this.highlight.opacityProperty().set(0);
     }
-
-    /**
-     * Get the Manhattan distance from another place to this one (max. {@value MAX_SPREAD})
-     * 
-     * @param place Start place
-     * @return the Manhattan distance between the places (max. {@value MAX_SPREAD})
-     */
-    public int getDistance(Place place) {
-        return this.getDistance(place, MAX_SPREAD);
-    }
-
-    /**
-     * Search spanning all adjacent places in search of this {@link Place}
-     *
-     * @param startLoc Start place
-     * @param maxSpread Maximum radius searched for this place
-     * @return the travel distance between the places (max {@value MAX_SPREAD})
-     */
-    @SuppressWarnings("unchecked")
-    public int getDistance(Place startLoc, int maxSpread) {
-        if(startLoc == null)
-            return -1;
-
-        if(startLoc instanceof RoomPlace &&
-                this instanceof RoomPlace &&
-                ((RoomPlace) startLoc).getRoom() == ((RoomPlace) this).getRoom())
-            return 2;
-        
-        Tree<Place> tree = new Tree<>(startLoc);
-        tree.populate(
-                (curNode) -> 
-                        // This casts correctly. Java doesn't like Parameterized arrays
-                        Arrays.stream(curNode.getValue().getAdjacent())
-                                .filter((place) -> place != null && !place.isOccupied())
-                                .map((place) -> new Node<>(place, curNode))
-                                .toArray(Node[]::new),
-                Comparator.comparingInt(this::calcDistance),
-                maxSpread
-        );
-
-        return calcDistance(tree.findPath(this));
-    }
-
-    private int calcDistance(Tree<Place> placeNode) {
-        int distance = 0;
-        while(placeNode instanceof Node && ((Node<Place>) placeNode).getParent() != null) {
-            distance += placeNode.getValue().getMoveCost();
-            placeNode = ((Node<Place>) placeNode).getParent();
-        }
-        return distance;
-    }
     
     /**
      * Set place occupied
@@ -212,5 +162,10 @@ public class Place extends Rectangle {
      */
     public Place[] getAdjacent() {
         return adjacent;
+    }
+
+    @Override
+    public int getCost() {
+        return this.getMoveCost();
     }
 }
