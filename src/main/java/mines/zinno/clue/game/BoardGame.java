@@ -1,5 +1,6 @@
 package mines.zinno.clue.game;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import mines.zinno.clue.controller.ClueController;
@@ -42,7 +43,7 @@ public abstract class BoardGame<T extends GameController> extends Application {
         LogMessage.STAGE_POPULATED.log();
         
         addListeners(stage);
-        stage.setOnShown((event) -> startGame());
+        stage.setOnShown((event) -> Platform.runLater(this::startGame));
         
         LogMessage.LISTENERS_ADDED.log();
 

@@ -24,7 +24,6 @@ import mines.zinno.clue.util.tree.Tree;
 
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * The {@link Character} class extends JavaFX's {@link Circle} class. It holds information and logic pertaining to
@@ -42,7 +41,7 @@ public abstract class Character extends Circle {
     protected Turn turn;
     protected int rollNum;
     protected Place curPlace;
-    protected Set<Place> posMoves = new HashSet<>();
+    protected Tree<Place> moveTree;
 
     private final GuessHandler guessHandler;
     private final List<OnTurnListener<Character>> turnListeners = new ArrayList<>();
@@ -86,9 +85,10 @@ public abstract class Character extends Circle {
         int rollNum = 0;
         for(int i = 0; i < NUM_DICE; i++)
             rollNum += Math.random() * 6 + 1;
+        rollNum = 6;
         this.rollNum = rollNum;
 
-        this.posMoves = calcPosMoves();
+        this.updateMoveTree();
 
         this.turn = Turn.POST_ROLL;
         updateTurnListeners();
@@ -99,44 +99,23 @@ public abstract class Character extends Circle {
     /**
      * Calculate possible moves from {@link Character#getCurPlace()} and {@link Character#getRollNum()}
      */
-    public Set<Place> calcPosMoves() {
-        return this.calcPosMoves(this.getCurPlace(), this.getRollNum());
-    }
-
-    /**
-     * Calculate possible moves from a given place and distance
-     */
-    public Set<Place> calcPosMoves(Place loc, int distance) {
-        return this.calcPosMoves(loc, distance, distance+8);
-    }
-
-    /**
-     * Calculate possible moves from a given place and distance
-     */
     @SuppressWarnings("unchecked")
-    public Set<Place> calcPosMoves(Place startLoc, int distance, int maxSpread) {
-        
-        if(distance == 0)
-            return new HashSet<>();
-        
+    public void updateMoveTree() {
         final Predicate<Place> placeReqs = (place) -> place != null && !place.isOccupied();
         
-        Tree<Place> tree = new Tree<>(startLoc);
+        Tree<Place> tree = new Tree<>(this.getCurPlace());
         tree.populate(
                 (curNode) -> 
                         // This casts correctly. Java doesn't like Parameterized arrays
                         Arrays.stream(curNode.getValue().getAdjacent())
                                 .filter(placeReqs)
-                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= distance))
+                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= this.getRollNum()))
                                 .map((adj) -> new Node<>(adj, curNode))
                                 .toArray(Node[]::new),
-                Comparator.comparingInt(this::calcDistance),
-                maxSpread
+                100
         );
 
-        return tree.retrieveAllValues().stream()
-                .filter(placeReqs)
-                .collect(Collectors.toSet());
+        this.moveTree = tree;
     }
 
     private int calcDistance(Tree<Place> placeNode) {
@@ -174,10 +153,9 @@ public abstract class Character extends Circle {
             // Mark previous place as unoccupied
             curPlace.setOccupied(false);
 
-            if(!forceMove) {
+            if(moveTree != null && !forceMove) {
                 // Decrement roll number
-                int cost = place.getDistance(curPlace);
-                this.rollNum -= (cost == -1) ? this.rollNum : cost;
+                this.rollNum -= moveTree.findPath(place).getCost();
             }
         }
         
@@ -200,9 +178,8 @@ public abstract class Character extends Circle {
             this.toFront();
         });
 
-        if(!forceMove)
-            // Calc new possible moves
-            this.posMoves = calcPosMoves();
+        if(curPlace != null)
+            updateMoveTree();
 
         updateTurnListeners();
     }
@@ -328,17 +305,6 @@ public abstract class Character extends Circle {
      */
     public Place getCurPlace() {
         return curPlace;
-    }
-
-    /**
-     * Get the character's possible moves
-     * 
-     * @return {@link Set}<{@link Place}>
-     */
-    public Set<Place> getPosMoves() {
-        if(posMoves == null)
-            this.posMoves = calcPosMoves();
-        return posMoves;
     }
 
     /**

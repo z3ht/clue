@@ -4,7 +4,6 @@ import javafx.scene.paint.Color;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.shape.character.constant.Result;
-import mines.zinno.clue.shape.character.constant.RevealContext;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.place.Place;
@@ -20,7 +19,7 @@ public class Player extends Character {
     public Player(Clue game, GuessHandler guessHandler, Suspect suspect, Place startPlace) {
         super(game, guessHandler, suspect, startPlace);
     }
-    
+
     @Override
     public void endTurn() {
         super.endTurn();
@@ -37,7 +36,7 @@ public class Player extends Character {
         highlightPosMoves();
         return returnVal;
     }
-    
+
     @Override
     public void moveTo(Place place) {
         // If move is out of turn, throw out of turn exception
@@ -47,15 +46,15 @@ public class Player extends Character {
         }
 
         // If move is impossible, send impossible move message
-        if(!posMoves.contains(place)) {
+        if(!moveTree.retrieveAllValues().contains(place)) {
             new BasicInfoDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You do not have enough moves")).show();
             return;
         }
-        
+
         delHighlightPosMoves();
-        
+
         super.moveTo(place);
-        
+
         displayMovesLeft();
         highlightPosMoves();
     }
@@ -63,9 +62,9 @@ public class Player extends Character {
     /**
      * Make a guess as a player
      */
-    public void guess() {        
+    public void guess() {
         // Ensure player has moved if moves are available
-        if(!(getTurn() == Turn.POST_MOVE || (getTurn() == Turn.POST_ROLL && calcPosMoves().isEmpty()))) {
+        if(!(getTurn() == Turn.POST_MOVE || (getTurn() == Turn.POST_ROLL && moveTree.retrieveAllValues().isEmpty()))) {
             new BasicInfoDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must move before making a guess if possible")).show();
             return;
         }
@@ -92,14 +91,13 @@ public class Player extends Character {
             new BasicInfoDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("weapon")).show();
             return;
         }
-        
-        delHighlightPosMoves();
+
         this.rollNum = 0;
-        this.posMoves = null;
-        
+        updateMoveTree();
+
         super.guess(suspect, room, weapon);
     }
-    
+
     @Override
     public void onWin() {
         new BasicInfoDialogue(Result.PLAYER_WIN.getName(), Result.PLAYER_WIN.getText(game.getMurderer())).show();
@@ -109,15 +107,19 @@ public class Player extends Character {
     public void onLose() {
         new BasicInfoDialogue(Result.PLAYER_LOSE.getName(), Result.PLAYER_LOSE.getText(game.getMurderer())).show();
     }
-    
+
     private void highlightPosMoves() {
-        for(Place place : posMoves) {
+        for(Place place : moveTree.retrieveAllValues()) {
+            if(place.isOccupied())
+                continue;
             place.addHighlight(Color.GREEN);
         }
     }
-    
+
     private void delHighlightPosMoves() {
-        for(Place posMove : posMoves) {
+        for(Place posMove : moveTree.retrieveAllValues()) {
+            if(posMove.isOccupied())
+                continue;
             posMove.delHighlight();
         }
     }

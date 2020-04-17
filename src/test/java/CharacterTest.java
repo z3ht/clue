@@ -46,36 +46,36 @@ public class CharacterTest {
         this.character = new Computer(null, new GuessHandler(), Suspect.COL_MUSTARD, null);
     }
     
-    @Test
-    public void testPossibleMove_Basic() {
-        // Test most basic possible move for character
-        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(0, 5), 1);
-        
-        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(1, 5)));
-    }
-
-    @Test
-    public void testPossibleMove_LongDistance() {
-        // Test long distance possible move for character
-        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(0, 5), 6);
-
-        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(6, 5)));
-    }
-
-    @Test
-    public void testPossibleMove_AcrossRoom() {
-        // Test a move that goes through a room to get to a place
-        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(11, 7), 2);
-
-        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(8, 4)));
-    }
-    
-    @Test
-    public void testPossibleMove_AcrossTeleporter() {
-        // Test a move that goes through a room and into a teleporter to another room
-        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(6, 4), 2);
-
-        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(22, 22)));
-    }
+//    @Test
+//    public void testPossibleMove_Basic() {
+//        // Test most basic possible move for character
+//        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(0, 5), 1);
+//
+//        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(1, 5)));
+//    }
+//
+//    @Test
+//    public void testPossibleMove_LongDistance() {
+//        // Test long distance possible move for character
+//        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(0, 5), 6);
+//
+//        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(6, 5)));
+//    }
+//
+//    @Test
+//    public void testPossibleMove_AcrossRoom() {
+//        // Test a move that goes through a room to get to a place
+//        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(11, 7), 2);
+//
+//        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(8, 4)));
+//    }
+//
+//    @Test
+//    public void testPossibleMove_AcrossTeleporter() {
+//        // Test a move that goes through a room and into a teleporter to another room
+//        Set<Place> posMoves = character.calcPosMoves(board.getItemFromCoordinate(6, 4), 2);
+//
+//        Assert.assertTrue(posMoves.contains(board.getItemFromCoordinate(22, 22)));
+//    }
     
 }

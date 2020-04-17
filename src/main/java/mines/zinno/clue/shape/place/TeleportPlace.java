@@ -12,7 +12,7 @@ import mines.zinno.clue.util.Location;
  * on the {@link mines.zinno.clue.layout.board.ClueBoard}. It implements the {@link Teleportable} interface to send
  * characters to the {@link Room} a secret passage leads to.
  */
-public class TeleportPlace extends RoomPlace implements Teleportable, Entrance {
+public class TeleportPlace extends Entrance implements Teleportable {
 
     public TeleportPlace(DirectionKey direction, Room room) {
         this(direction, room, true, 1);

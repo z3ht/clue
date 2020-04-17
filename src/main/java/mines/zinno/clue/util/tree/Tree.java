@@ -1,14 +1,16 @@
 package mines.zinno.clue.util.tree;
 
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
+import mines.zinno.clue.shape.place.Place;
+
+import java.util.*;
 import java.util.function.Function;
 
 public class Tree<T> {
 
-    private T value;
+    private final T value;
+
     private Node<T>[] children;
+
 
     public Tree(T value) {
         this(value, null);
@@ -20,82 +22,105 @@ public class Tree<T> {
     }
 
     public void populate(Function<Tree<T>, Node<T>[]> populator, int maxSpread) {
-        this.populate(populator, null, maxSpread);
-    }
-
-    public void populate(Function<Tree<T>, Node<T>[]> populator, Comparator<Tree<T>> copyRemover, int maxSpread) {
-        this.populate(this, populator, copyRemover, maxSpread);
+        LinkedHashMap<Tree<T>, Integer> queue = new LinkedHashMap<>();
+        queue.put(this, maxSpread);
+        this.populate(this, queue, populator);
     }
     
-    private void populate(Tree<T> top, Function<Tree<T>, Node<T>[]> populator, Comparator<Tree<T>> copyRemover, int spread) {
-        if(spread <= 0 || populator == null)
-            return;
+    private void populate(Tree<T> top, LinkedHashMap<Tree<T>, Integer> queue, Function<Tree<T>, Node<T>[]> populator) {
+        while(queue.entrySet().iterator().hasNext() && queue.size() != 0) {
 
-        if(this.getChildren() == null || this.getChildren().length == 0) {
-            this.setChildren(populator.apply(this));
+            Map.Entry<Tree<T>, Integer> current = queue.entrySet().iterator().next();
 
-            if(this.getChildren() == null)
+            if(current.getKey() == null || current.getValue() <= 0 || populator == null)
                 return;
 
-            for(int i = 0; i < this.getChildren().length; i++) {
-                if(this.getChildren()[i] == null)
+            if(current.getKey().getTop() == null) {
+                queue.remove(current.getKey());
+                continue;
+            }
+
+            current.getKey().setChildren(populator.apply(current.getKey()));
+
+            if(current.getKey().getChildren() == null)
+                return;
+
+            for(int i = 0; i < current.getKey().getChildren().length; i++) {
+                if(current.getKey().getChildren()[i] == null)
                     continue;
 
-                Tree<T> posPath = top.findPath(this.getChildren()[i]);
+                Tree<T> existingPath = top.findPath(current.getKey().getChildren()[i]);
 
-                if(posPath == null)
+                if(existingPath == null)
                     continue;
 
-                int comparison = copyRemover.compare(this.getChildren()[i], posPath);
+                int comparison = 0;
+                if(current.getKey().value instanceof Costable)
+                    comparison = current.getKey().getChildren()[i].getCost() - existingPath.getCost();
+
                 if(comparison == 0)
-                    comparison = (this.getChildren()[i].getDepth() > posPath.getDepth()) ? 1 : -1;
-                if(comparison > 0) {
-                    this.getChildren()[i] = null;
-                } else {
-                    if(posPath instanceof Node)
-                        ((Node<T>) posPath).setParent(this);
-                    this.getChildren()[i].setChildren(posPath.getChildren());
-                    posPath.setChildren(null);
+                    comparison = current.getKey().getChildren()[i].getDepth() - existingPath.getDepth();
+
+                if(comparison >= 0) {
+                    current.getKey().getChildren()[i] = null;
+                    continue;
+                }
+
+                if(existingPath.getChildren() != null) {
+                    for(Node<T> child : existingPath.getChildren()) {
+                        if(child == null)
+                            continue;
+
+                        child.setParent(null);
+                    }
+                }
+
+                if(existingPath instanceof Node) {
+                    Node<T>[] family = ((Node<T>) existingPath).getParent().getChildren();
+                    for(int j = 0; j < family.length; j++) {
+                        if(existingPath != family[j])
+                            continue;
+
+                        family[j] = null;
+                    }
                 }
             }
+
+            for(Tree<T> child : current.getKey().getChildren()) {
+                if(child == null)
+                    continue;
+
+                queue.put(child, current.getValue() - 1);
+            }
+            queue.remove(current.getKey());
         }
-        
-        for(Tree<T> child : this.getChildren()) {
-            if(child == null)
-                continue;
-            
-            child.populate(top, populator, copyRemover, spread-1);
-        }
+    }
+
+    public int getCost() {
+        if(!(this instanceof Node) || ((Node<Place>) this).getParent() == null)
+            return 0;
+
+        return ((value instanceof Costable) ? ((Costable) value).getCost() : 1)
+                + ((Node<T>) this).getParent().getCost();
     }
 
     public Tree<T> findPath(T value) {
-        return this.findPath(new Tree<T>(value));
+        return this.findPath(new Tree<>(value));
     }
 
-    protected Tree<T> findPath(Tree<T> curTree) {
-        return this.findPath(curTree, new HashSet<>());
-    }
-    
-    private Tree<T> findPath(Tree<T> curTree, Set<Tree<T>> curPath) {
-        if(this.getChildren() == null || curTree == null || curTree.getValue() == null)
+    protected Tree<T> findPath(Tree<T> target) {
+        if(target == null || target.getValue() == null)
             return null;
-        
-        if(curPath.contains(this))
-            return null;
-        curPath.add(this);
 
-        if(this != curTree && curTree.getValue().equals(this.getValue()))
+        if(this != target && target.getValue().equals(this.getValue()))
             return this;
 
+        if(this.getChildren() == null)
+            return null;
         for(Tree<T> child : this.getChildren()) {
-
             if(child == null)
                 continue;
-
-            if(child.getChildren() == null || child.getChildren().length == 0)
-                continue;
-
-            Tree<T> posReturnVal = child.findPath(curTree, curPath);
+            Tree<T> posReturnVal = child.findPath(target);
             if(posReturnVal != null)
                 return posReturnVal;
         }
@@ -108,11 +133,18 @@ public class Tree<T> {
         return 1 + ((Node<T>) this).getParent().getDepth();
     }
 
+    public Tree<T> getTop() {
+        if(!(this instanceof Node))
+            return this;
+        Tree<T> val = ((Node<T>) this).getParent();
+        return (val == null) ? null : val.getTop();
+    }
+
     public Set<T> retrieveAllValues() {
         return this.retrieveAllValues(new HashSet<>());
     }
-    
-    private Set<T> retrieveAllValues(Set<Tree<T>> curPath) {        
+
+    private Set<T> retrieveAllValues(Set<Tree<T>> curPath) {
         Set<T> vals = new HashSet<>();
         if(this.getValue() != null)
             vals.add(this.getValue());
