@@ -10,10 +10,6 @@ import mines.zinno.clue.constant.io.ImgURL;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.util.Location;
 import mines.zinno.clue.util.tree.Costable;
-import mines.zinno.clue.util.tree.Node;
-import mines.zinno.clue.util.tree.Tree;
-
-import java.util.*;
 
 /**
  * The {@link Place} class is the most generic cell type used by the {@link mines.zinno.clue.layout.board.ClueBoard}.
@@ -22,8 +18,6 @@ import java.util.*;
  * Satisfies {@link mines.zinno.clue.Assignments#C12A2} requirements
  */
 public class Place extends Rectangle implements Costable {
-
-    private static final int MAX_SPREAD = 14;
     
     private Place[] adjacent;
 

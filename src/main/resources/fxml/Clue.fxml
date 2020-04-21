@@ -284,7 +284,7 @@
                   <children>
                     <GridPane id="info-text-pane" GridPane.columnIndex="0" GridPane.rowIndex="0">
                       <children>
-                        <Label fx:id="infoLabel" id="info-text" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" prefHeight="100000.0" prefWidth="100000.0" text="I am testing this feature it is a test here I am testing it" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                        <Label fx:id="infoLabel" id="info-text" alignment="CENTER" contentDisplay="CENTER" ellipsisString="" prefHeight="100000.0" prefWidth="100000.0" text="ERROR: Failed to initialize" textAlignment="CENTER" wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
                           <font>
                             <Font name="System Bold" size="13.0" />
                           </font>

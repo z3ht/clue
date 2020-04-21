@@ -22,15 +22,12 @@ public class PromptGuess implements OnTurnListener<Character> {
 
     @Override
     public void update(Character character) {
-        if(!(character instanceof Player))
-            return;
-        Player p = (Player) character;
 
-        if(p.getTurn() != Turn.POST_MOVE)
+        if(character.getTurn() != Turn.POST_MOVE)
             return;
 
         // Return if player is not in a room
-        if(!(p.getCurPlace() instanceof RoomPlace)) {
+        if(!(character.getCurPlace() instanceof RoomPlace)) {
             return;
         }
 

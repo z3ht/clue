@@ -10,8 +10,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiPredicate;
+import java.util.function.Consumer;
 
-@SuppressWarnings("unused")
 public class Handler {
 
     public static UUID ALL = UUID.randomUUID();
@@ -24,20 +24,24 @@ public class Handler {
     private final Map<Class<? extends Annotation>, BiPredicate<SenderData, Annotation>>
             identifyingAnnotations = new HashMap<>();
 
-    private Class<? extends Annotation> requiredAnnotationClass;
-    private final boolean inheritHandles;
+    private final boolean inheritData;
+
+    private Consumer<List<Object>> callContext = (curArgs) -> {
+        if (context != null)
+            curArgs.add(context);
+    };
 
     public Handler() {
-        this.inheritHandles = true;
+        this.inheritData = true;
     }
 
     public Handler(Object... handles) {
-        this.inheritHandles = false;
+        this.inheritData = false;
         this.getHandles().addAll(Arrays.asList(handles));
     }
 
-    public Handler(boolean inheritHandles, Object... handles) {
-        this.inheritHandles = inheritHandles;
+    public Handler(boolean inheritData, Object... handles) {
+        this.inheritData = inheritData;
         this.getHandles().addAll(Arrays.asList(handles));
     }
 
@@ -63,8 +67,11 @@ public class Handler {
                 return null;
             }
 
-            if(handler.inheritHandles())
+            if(handler.inheritData()) {
                 handler.getHandles().addAll(Handler.this.getHandles());
+                handler.setCallContext(Handler.this::addContextToCall);
+            }
+
 
             if(Handler.this.context != null)
                 handler.withContext(context);
@@ -109,7 +116,7 @@ public class Handler {
                     if(isQualifying)
                         break;
                     for(Class<? extends Annotation> identifyingAnnotation : identifyingAnnotations.keySet()) {
-                        if(annotation == null || annotation.getClass() != identifyingAnnotation)
+                        if(annotation == null || annotation.annotationType() != identifyingAnnotation)
                             continue;
                         if(!identifyingAnnotations.get(identifyingAnnotation).test(senderData, annotation))
                             continue;
@@ -127,40 +134,37 @@ public class Handler {
     protected void call(Method method, Object... args) throws IllegalAccessException, InvocationTargetException {
         boolean isCalled = false;
         for(Object[] argCombo : getCombos(args)) {
-            try {
-                final List<Object> makeVarArgsDankAgain = new ArrayList<>();
-                addContextToCall(makeVarArgsDankAgain);
-                if(argCombo != null)
-                    makeVarArgsDankAgain.add(Arrays.asList(argCombo));
+            final List<Object> makeVarArgsDankAgain = new ArrayList<>();
+            addContextToCall(makeVarArgsDankAgain);
+            if(argCombo != null)
+                makeVarArgsDankAgain.addAll(Arrays.asList(argCombo));
 
-                method.invoke(this, makeVarArgsDankAgain.toArray());
-                isCalled = true;
-                break;
-            } catch (InvocationTargetException e) {
-                if (e.getCause() instanceof IllegalArgumentException) {
-                    continue;
-                }
-                throw e;
-            }
+            for(Object handle : this.getHandles())
+                try {
+                    method.invoke(handle, makeVarArgsDankAgain.toArray());
+                    isCalled = true;
+                    break;
+                } catch (IllegalArgumentException ignored) {}
         }
         if(!isCalled)
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(String.format("Failed to call %s method with provided args", method.getName()));
     }
 
     private Set<Object[]> getCombos(Object[] args) {
-        Set<Object[]> argCombos = new HashSet<>();
+        Set<Object[]> argCombos = new LinkedHashSet<>();
         if(args == null || args.length == 0)
             return argCombos;
 
+        argCombos.add(new Object[0]);
         argCombos.add(args);
         for(int i = 0; i < args.length; i++) {
 
             Object lastArg = args[args.length - 1];
-            for (int j = 1; j < args.length; j++)
+            for (int j = args.length - 1; j > 0; j--)
                 args[j] = args[j-1];
             args[0] = lastArg;
 
-            for(int j = args.length - 1; j > 0; j--) {
+            for(int j = args.length - 1; j >= 1; j--) {
                 argCombos.add(Arrays.copyOfRange(args, 0, j));
             }
         }
@@ -169,7 +173,11 @@ public class Handler {
     }
 
     protected void addContextToCall(List<Object> curArgs) {
-        curArgs.add((context == null) ? new Object[0] : context);
+        callContext.accept(curArgs);
+    }
+
+    protected void setCallContext(Consumer<List<Object>> callContext) {
+        this.callContext = callContext;
     }
 
     public Handler install(Handler handler) {
@@ -198,8 +206,8 @@ public class Handler {
         return this.handles;
     }
 
-    public boolean inheritHandles() {
-        return inheritHandles;
+    public boolean inheritData() {
+        return inheritData;
     }
 
 }

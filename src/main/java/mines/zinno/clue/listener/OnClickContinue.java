@@ -7,7 +7,7 @@ import mines.zinno.clue.constant.Alert;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.constant.Turn;
-import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+import mines.zinno.clue.stage.dialogue.ShortDialogue;
 
 public class OnClickContinue implements EventHandler<MouseEvent> {
 
@@ -26,7 +26,7 @@ public class OnClickContinue implements EventHandler<MouseEvent> {
             Character curCharacter = clue.getCharacters().get(0);
 
             if(curCharacter.getTurn() == Turn.PRE_ROLL || curCharacter.getTurn() == Turn.POST_ROLL) {
-                new BasicInfoDialogue(Alert.OUT_OF_TURN.getName(), Alert.OUT_OF_TURN.getText()).show();
+                new ShortDialogue(Alert.OUT_OF_TURN.getName(), Alert.OUT_OF_TURN.getText()).show();
                 return;
             }
 

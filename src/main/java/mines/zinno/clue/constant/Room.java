@@ -17,19 +17,25 @@ public enum Room implements Card {
     BILLIARD_ROOM("Billiard Room", 6, 'b', new Location(2, 14)),
     LIBRARY("Library", 7, 'i', new Location(3, 8)),
     STUDY("Study", 8, 's', new Location(3, 1)),
-    EXIT("Exit", 9, 'e', new Location(11, 10))
+    EXIT("Exit", 9, 'e', new Location(11, 10), true)
     ;
 
     private int id;
     private String name;
     private char key;
     private Location center;
+    private boolean isExcluded;
 
     Room(String name, int id, char key, Location center) {
+        this(name, id, key, center, false);
+    }
+
+    Room(String name, int id, char key, Location center, boolean isExcluded) {
         this.id = id;
         this.name = name;
         this.key = key;
         this.center = center;
+        this.isExcluded = isExcluded;
     }
 
     /**
@@ -82,4 +88,7 @@ public enum Room implements Card {
         return null;
     }
 
+    public boolean isExcluded() {
+        return isExcluded;
+    }
 }

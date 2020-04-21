@@ -66,8 +66,11 @@ public class GuessController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         for(Suspect suspect : Suspect.values())
             this.suspectMenu.getItems().add(suspect.getMenuItem());
-        for(Room room : Room.values())
+        for(Room room : Room.values()) {
+            if(room.isExcluded())
+                continue;
             this.roomMenu.getItems().add(room.getMenuItem());
+        }
         for(Weapon weapon : Weapon.values())
             this.weaponMenu.getItems().add(weapon.getMenuItem());
     }

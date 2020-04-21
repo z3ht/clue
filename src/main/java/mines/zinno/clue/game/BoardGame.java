@@ -139,5 +139,6 @@ public abstract class BoardGame<T extends GameController> extends Application {
     public void addMoves(int addAmount) {
         this.numMoves += addAmount;
     }
-    
+
+    public abstract boolean hasStarted();
 }

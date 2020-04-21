@@ -25,11 +25,8 @@ public class UpdateRoomGuess implements OnTurnListener<Character> {
 
     @Override
     public void update(Character character) {
-        if(!(character instanceof Player))
-            return;
-        Player player = (Player) character;
 
-        if(player.getTurn() != Turn.POST_MOVE)
+        if(character.getTurn() != Turn.POST_MOVE)
             return;
 
         SelectableMenu<Room> roomMenu = boardGame.getController().getGuessDialogue().getController().getRoomMenu();
@@ -39,10 +36,10 @@ public class UpdateRoomGuess implements OnTurnListener<Character> {
         roomMenu.setSelectedItem((ValueMenuItem<Room>) null);
 
         // Return if player is not in a room
-        if(!(player.getCurPlace() instanceof RoomPlace)) {
+        if(!(character.getCurPlace() instanceof RoomPlace)) {
             return;
         }
-        RoomPlace roomPlace = (RoomPlace) player.getCurPlace();
+        RoomPlace roomPlace = (RoomPlace) character.getCurPlace();
 
         // Return if player is in the exit room
         if(roomPlace.getRoom().equals(Room.EXIT)) {

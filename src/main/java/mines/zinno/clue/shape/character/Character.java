@@ -85,7 +85,6 @@ public abstract class Character extends Circle {
         int rollNum = 0;
         for(int i = 0; i < NUM_DICE; i++)
             rollNum += Math.random() * 6 + 1;
-        rollNum = 6;
         this.rollNum = rollNum;
 
         this.updateMoveTree();
@@ -161,9 +160,8 @@ public abstract class Character extends Circle {
         
         // Move to the void
         if(place == null) {
+            this.curPlace = null;
             this.setVisible(false);
-            this.setCenterX(Integer.MAX_VALUE);
-            this.setCenterY(Integer.MAX_VALUE);
             return;
         }
         
@@ -194,9 +192,12 @@ public abstract class Character extends Circle {
     public void guess(Suspect suspect, Room room, Weapon weapon) {
         this.turn = Turn.POST_GUESS;
 
-        guessHandler
-                .get(InsertHandler.class, GuessHandle.class)
-                .insert(Handler.ALL, this, suspect, room, weapon);
+        boolean isAccusation = ((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT);
+
+        if(!isAccusation)
+            guessHandler
+                    .get(InsertHandler.class, GuessHandle.class)
+                    .insert(Handler.ALL, this, suspect, room, weapon);
 
         boolean isFound = false;
         for(int i = 1; i < game.getCharacters().size(); i++) {
@@ -208,9 +209,11 @@ public abstract class Character extends Circle {
                         card.getName().equals(weapon.getName())))
                     continue;
 
-                guessHandler
-                        .get(InsertHandler.class, RevealHandle.class)
-                        .insert(RevealContext.ON_GUESS, character, card);
+                if(!isAccusation)
+                    guessHandler
+                            .get(InsertHandler.class, RevealHandle.class)
+                            .insert(RevealContext.ON_GUESS, character, this, card);
+
                 isFound = true;
                 break;
             }
@@ -219,10 +222,9 @@ public abstract class Character extends Circle {
                 break;
         }
 
-        this.updateTurnListeners();
-
         // Character is not in an exit
-        if (!(((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT))) {
+        if (!isAccusation) {
+            this.updateTurnListeners();
             return;
         }
 
@@ -235,15 +237,14 @@ public abstract class Character extends Circle {
 
         // Character has lost the game
         onLose();
+        game.getCharacters().remove(this);
         for(Character c : game.getCharacters()) {
             for(Card card : getCards())
                 guessHandler
-                        .get(InsertHandler.class, GuessHandle.class)
+                        .get(InsertHandler.class, RevealHandle.class)
                         .insert(RevealContext.LOST_GAME, c, card);
         }
-        game.getCharacters().remove(this);
         this.moveTo(null, true);
-        this.updateTurnListeners();
     }
 
     /**
@@ -321,7 +322,7 @@ public abstract class Character extends Circle {
         this.providedCards.add(card);
         guessHandler
                 .get(InsertHandler.class, RevealHandle.class)
-                .insert(RevealContext.PROVIDED, card);
+                .insert(RevealContext.PROVIDED, this, card);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package mines.zinno.clue.game;
 
+import javafx.application.Platform;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -20,16 +21,20 @@ import mines.zinno.clue.shape.character.handler.handles.GuessHandles;
 import mines.zinno.clue.shape.character.handler.identifier.GuessHandle;
 import mines.zinno.clue.shape.character.handler.identifier.RevealHandle;
 import mines.zinno.clue.shape.character.listener.OnExitEnter;
+import mines.zinno.clue.shape.character.listener.OnNewTurn;
+import mines.zinno.clue.shape.character.listener.PromptGuess;
 import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
-import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
 import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
+import mines.zinno.clue.stage.dialogue.ScrollableDialogue;
+import mines.zinno.clue.stage.dialogue.ShortDialogue;
 import mines.zinno.clue.util.handler.Handler;
 
 
 import java.awt.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -49,7 +54,9 @@ public class Clue extends BoardGame<ClueController> {
     private Suspect murderer;
     private Room location;
     private Weapon weapon;
-    
+
+    private ShortDialogue welcomeDialogue;
+
     @Override
     protected void populateStage(Stage stage) throws IOException {
         super.populateStage(stage);
@@ -57,14 +64,12 @@ public class Clue extends BoardGame<ClueController> {
         stage.setTitle(TITLE);
         stage.setResizable(IS_RESIZABLE);
     }
-    
+
     @Override
     protected void addListeners(Stage stage) {
         // Close all windows when the main window is closed and stop the game
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
-            this.getController().getSettingsDialogue().close();
-            this.getController().getHelpDialogue().close();
-            this.getController().getGuessDialogue().close();
+            Platform.exit();
             setPlaying(false);
         });
         
@@ -75,7 +80,7 @@ public class Clue extends BoardGame<ClueController> {
 
         // Skip to next player turn
         this.getController().getSkip().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                new OnClickContinue(() -> this.setNumMoves(this.getCharacters().indexOf(player)), this)
+                new OnClickContinue(() -> this.setNumMoves(this.getCharacters().size() - this.getCharacters().indexOf(player)), this)
         );
 
         // Continue to next character's turn
@@ -94,10 +99,12 @@ public class Clue extends BoardGame<ClueController> {
                 MouseEvent.MOUSE_CLICKED,
                 event -> {
                     this.setPlaying(false);
-                    this.getController().getSuspectsSheet().getChildren().clear();
-                    this.getController().getWeaponsSheet().getChildren().clear();
-                    this.getController().getRoomsSheet().getChildren().clear();
-                    this.startGame();
+                    Platform.runLater(() -> {
+                        this.getController().getSuspectsSheet().getChildren().clear();
+                        this.getController().getWeaponsSheet().getChildren().clear();
+                        this.getController().getRoomsSheet().getChildren().clear();
+                        this.startGame();
+                    });
                 }
         );
     }
@@ -108,8 +115,6 @@ public class Clue extends BoardGame<ClueController> {
         createCharacters();
         createWelcomeStatus();
         beginGameThread();
-        
-        getCharacters().get(1).moveTo(this.getController().getBoard().getItemFromCoordinate(5, 19), true);
     }
 
     /**
@@ -124,7 +129,9 @@ public class Clue extends BoardGame<ClueController> {
      * Create welcome status dialogue
      */
     private void createWelcomeStatus() {
-        new BasicInfoDialogue(Alert.WELCOME.getName(), Alert.WELCOME.getText()).show();
+        this.welcomeDialogue = new ShortDialogue(Alert.WELCOME.getName(), Alert.WELCOME.getText());
+        welcomeDialogue.show();
+
         this.getController().getInfoLabel().setText(Alert.WELCOME.getText());
     }
 
@@ -163,9 +170,9 @@ public class Clue extends BoardGame<ClueController> {
 
         // Get chosen suspect from settings menu
         Suspect chosenCharacter = (this.getController().getSettingsDialogue().getController().getCharacter() == null) ?
-                characters.get(0) :
+                characters.get((int) (characters.size() * Math.random())) :
                 getController().getSettingsDialogue().getController().getCharacter().getSelected().orElse(characters.get(0));
-        characters.remove(chosenCharacter);
+        int playerIndex = characters.indexOf(chosenCharacter);
 
         GuessHandler guessHandler = new GuessHandler(new GuessHandles(this));
         guessHandler.addIdentifyingAnnotation(
@@ -187,22 +194,25 @@ public class Clue extends BoardGame<ClueController> {
                 this,
                 guessHandler,
                 chosenCharacter,
-                startPlaces.get(0)
+                startPlaces.get(playerIndex)
         );
         player.addTurnListener(new UpdateRoomGuess(this));
         player.addTurnListener(new OnExitEnter());
-//        player.addTurnListener(new PromptGuess(this));
+        player.addTurnListener(new OnNewTurn(this));
+        player.addTurnListener(new PromptGuess(this));
 
         this.characters.add(this.player);
 
         // Create computer characters
-        for(int i = 0; i < numComputers; i++) {
+        for(int i = 0; i < numComputers + 1; i++) {
+            if(i == playerIndex)
+                continue;
             this.characters.add(
                     new Computer(
                             this,
                             guessHandler,
                             characters.get(i),
-                            startPlaces.get(i+1)
+                            startPlaces.get(i)
                     )
             );
         }
@@ -215,8 +225,7 @@ public class Clue extends BoardGame<ClueController> {
         // Assign characters with known suspects, weapons, and rooms
         int i = 0;
         while (suspects.size() > 0)
-            this.characters.get(i++%this.characters.size())
-                    .addProvidedCard(suspects.remove(0));
+            this.characters.get(i++%this.characters.size()).addProvidedCard(suspects.remove(0));
         while (weapons.size() > 0)
             this.characters.get(i++%this.characters.size()).addProvidedCard(weapons.remove(0));
         while (rooms.size() > 0)
@@ -237,7 +246,7 @@ public class Clue extends BoardGame<ClueController> {
         try {
             getController().getBoard().setMap(customBoardController.getMapLocation().getText(), customBoardController.getImgLocation().getText());
         } catch (BadMapFormatException e) {
-            new BasicInfoDialogue(BadMapFormatException.getName(), e.getMessage()).show();
+            new ShortDialogue(BadMapFormatException.getName(), e.getMessage()).show();
         }
         
         // Draw the board
@@ -249,6 +258,11 @@ public class Clue extends BoardGame<ClueController> {
                 place.addEventHandler(MouseEvent.MOUSE_CLICKED, (event) -> this.getPlayer().moveTo((Place) event.getTarget()));
             }
         }
+    }
+
+    @Override
+    public boolean hasStarted() {
+        return !this.welcomeDialogue.isShowing();
     }
 
     @Override
@@ -293,6 +307,7 @@ public class Clue extends BoardGame<ClueController> {
 
     public static void main(String[] args) {
         launch(args);
+
     }
 
 }

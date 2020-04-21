@@ -11,6 +11,7 @@ import mines.zinno.clue.shape.place.*;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * {@link ClueBoard} extends the {@link Board} class using {@link Place} as it's generic cell type. This class initializes

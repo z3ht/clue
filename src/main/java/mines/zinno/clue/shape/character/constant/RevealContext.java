@@ -6,7 +6,7 @@ package mines.zinno.clue.shape.character.constant;
 public enum RevealContext {
     PROVIDED(
             Turn.PRE_ROLL,
-            "You have been dealt the following cards:\n",
+            "You have been dealt the following cards:",
             "   - %s",
             null,
             null
@@ -16,7 +16,7 @@ public enum RevealContext {
             null,
             "%s showed you the %s card",
             null,
-            "%s showed %s the %s card"
+            "%s showed %s a card"
     ),
     LOST_GAME(
             Turn.POST_GUESS,

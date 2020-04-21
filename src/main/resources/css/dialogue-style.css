@@ -1,20 +1,8 @@
 #background {
     -fx-background-color: #ffdc91;
-    -fx-background-size: stretch;
-}
-
-#text-pane {
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
-    -fx-border-color: #4b4029;
-    -fx-border-style: dotted;
-}
-
-.text-field {
-    -fx-border-radius: 2 2 2 2;
-    -fx-background-radius: 2 2 2 2;
-    -fx-background-color: #fff0df;
-    -fx-effect: innershadow(three-pass-box, #deb153, 6, 0, 0, 0);
+    -fx-border-color: #deb153;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 0, 0);
 }
 
 .button {
@@ -26,16 +14,13 @@
     -fx-font-size: 20;
 }
 
-.guess-option {
-    -fx-alignment: center;
+.scroll-pane {
+    -fx-border-radius: 6 6 6 6;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #fff0cf;
+    -fx-effect: innershadow(three-pass-box, #deb153, 6, 0, 0, 0);
 }
 
-.alert {
-    -fx-text-alignment: center;
-    -fx-alignment: center;
-    -fx-font-size: 15;
-}
-
-.action {
-    -fx-font-size: 15;
+.scroll-pane > .viewport {
+    -fx-background-color: #fff0cf;
 }

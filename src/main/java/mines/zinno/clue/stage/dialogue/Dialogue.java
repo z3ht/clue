@@ -46,22 +46,23 @@ public class Dialogue<T> extends Stage {
      * Create a dialogue window
      *
      * @param name Name of the dialogue box
-     * @param dialogueURL FXML URL
+     * @param fxmlURL FXML URL
      * @param size Size of the dialogue window
      */
-    public Dialogue(String name, URL dialogueURL, Dimension size) {
-        FXMLLoader fxmlLoader = new FXMLLoader(dialogueURL);
+    public Dialogue(String name, URL fxmlURL, Dimension size) {
+        FXMLLoader fxmlLoader = new FXMLLoader(fxmlURL);
         try {
             this.root = fxmlLoader.load();
 
             this.controller = fxmlLoader.getController();
 
-            this.setScene(new Scene(root, size.width, size.getHeight()));
+            this.setScene(new Scene(root, size.getWidth(), size.getHeight()));
         } catch (IOException e) {
-            LogMessage.URL_NOT_FOUND.log(dialogueURL.toExternalForm());
+            LogMessage.URL_NOT_FOUND.log(fxmlURL.toExternalForm());
             e.printStackTrace();
         }
-        
+
+        this.setAlwaysOnTop(true);
         this.setResizable(false);
         this.setTitle(name);
         

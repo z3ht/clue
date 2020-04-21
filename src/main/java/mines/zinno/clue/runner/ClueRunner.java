@@ -1,12 +1,8 @@
 package mines.zinno.clue.runner;
 
-import javafx.application.Platform;
 import mines.zinno.clue.controller.ClueController;
-import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.game.BoardGame;
 import mines.zinno.clue.shape.character.Character;
-import mines.zinno.clue.shape.character.constant.Turn;
-import mines.zinno.clue.shape.place.Place;
 
 import java.util.Collections;
 import java.util.function.Supplier;
@@ -20,8 +16,8 @@ public class ClueRunner implements Runnable {
     private static final int REFRESH_RATE = 100;
     
     private BoardGame<ClueController> boardGame;
-    
-    public ClueRunner(Clue game) {
+
+    public ClueRunner(BoardGame<ClueController> game) {
         this.boardGame = game;
     }
 
@@ -31,6 +27,8 @@ public class ClueRunner implements Runnable {
      */
     @Override
     public void run() {
+        wait(() -> !boardGame.hasStarted());
+
         while(boardGame.isPlaying()) {
             Character curCharacter = boardGame.getCharacters().get(0);
             curCharacter.beginTurn();

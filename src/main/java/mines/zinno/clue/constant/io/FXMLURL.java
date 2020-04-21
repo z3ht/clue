@@ -8,7 +8,8 @@ import java.net.URL;
 public enum FXMLURL {
     
     CLUE("Clue", Object.class.getResource("/fxml/Clue.fxml")),
-    STATUS("Status", Object.class.getResource("/fxml/Status.fxml")),
+    SHORT_DIALOGUE("Info", Object.class.getResource("/fxml/ShortDialogue.fxml")),
+    SCROLLABLE_DIALOGUE("Info", Object.class.getResource("/fxml/ScrollableDialogue.fxml")),
     SETTINGS("Settings", Object.class.getResource("/fxml/Settings.fxml")),
     HELP("Help", Object.class.getResource("/fxml/Help.fxml")),
     GUESS("Guess", Object.class.getResource("/fxml/Guess.fxml")),

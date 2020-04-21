@@ -8,11 +8,11 @@ import mines.zinno.clue.control.menu.ValueMenuItem;
  */
 public enum Suspect implements Card {
 
-    COL_MUSTARD("Col. Mustard", 0, Color.ORANGE),
-    PROF_PLUM("Prof. Plum", 1, Color.PURPLE),
-    MR_GREEN("Mr. Green",2, Color.GREEN),
-    MRS_PEACOCK("Mrs. Peacock", 3, Color.BLUE),
     MISS_SCARLETT("Miss Scarlett", 4, Color.RED),
+    PROF_PLUM("Prof. Plum", 1, Color.PURPLE),
+    COL_MUSTARD("Col. Mustard", 0, Color.ORANGE),
+    MRS_PEACOCK("Mrs. Peacock", 3, Color.BLUE),
+    MR_GREEN("Mr. Green",2, Color.GREEN),
     MRS_WHITE("Mrs. White", 5, Color.WHITE)
     ;
 

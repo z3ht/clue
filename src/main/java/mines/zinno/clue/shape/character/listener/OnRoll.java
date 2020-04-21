@@ -20,13 +20,14 @@ public class OnRoll implements OnTurnListener<Character> {
         if(character.getTurn() != Turn.POST_ROLL)
             return;
 
-        Platform.runLater(() ->
-                game.getController().getInfoLabel().setText(
-                        Action.ROLL_NUM.getText((character instanceof Player) ? "You" : character.getCharacter().getName(),
-                                character.getRollNum()
-                        )
+        int rollNum = character.getRollNum();
+
+        Platform.runLater(() -> game.getController().getInfoLabel().setText(
+                Action.ROLL_NUM.getText((character instanceof Player) ? "You" : character.getCharacter().getName(),
+                        rollNum
                 )
-        );
+        ));
+
 
     }
 

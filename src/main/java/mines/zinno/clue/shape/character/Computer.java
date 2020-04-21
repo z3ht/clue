@@ -10,7 +10,7 @@ import mines.zinno.clue.shape.place.DoorPlace;
 import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
-import mines.zinno.clue.stage.dialogue.BasicInfoDialogue;
+import mines.zinno.clue.stage.dialogue.ShortDialogue;
 import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
@@ -20,8 +20,12 @@ import java.util.stream.Collectors;
 
 public class Computer extends Character {
 
+    private boolean gotoExit;
+
     public Computer(Clue game, GuessHandler guessHandler, Suspect suspect, Place startPlace) {
         super(game, guessHandler, suspect, startPlace);
+
+        gotoExit = false;
     }
 
     @Override
@@ -49,16 +53,18 @@ public class Computer extends Character {
 
         RoomPlace curRoomPlace = (RoomPlace) this.curPlace;
 
-        if(curRoomPlace.getRoom() == Room.EXIT) {
-            List<Room> rooms = new ArrayList<>(Arrays.asList(Room.values()));
-            for(Card card : this.getCards()) {
-                if(!(card instanceof Room))
-                    continue;
-                rooms.remove(card);
-            }
-            bestGuess.room = rooms.get(0);
-        } else
-            bestGuess.room = curRoomPlace.getRoom();
+        boolean isAccusation = curRoomPlace.getRoom() == Room.EXIT;
+
+        List<Room> room = new ArrayList<>(Arrays.asList(Room.values()));
+        room.removeIf(Room::isExcluded);
+        for(Card card : this.getCards()) {
+            if(!(card instanceof Room))
+                continue;
+
+            room.remove(card);
+        }
+
+        bestGuess.room = (isAccusation) ? room.get(0) : curRoomPlace.getRoom();
 
         List<Weapon> weapon = new ArrayList<>(Arrays.asList(Weapon.values()));
         for(Card card : this.getCards()) {
@@ -76,6 +82,8 @@ public class Computer extends Character {
         }
         bestGuess.suspect = suspect.get(0);
 
+        this.gotoExit = suspect.size() + weapon.size() + room.size() <= 4;
+
         return bestGuess;
     }
 
@@ -85,37 +93,42 @@ public class Computer extends Character {
 
         // Determine the closest door that hasn't been ruled out yet
         int minDoorDistance = Integer.MAX_VALUE;
-        Entrance closestGoodEntrance = null;
-        for (Place[] places : game.getController().getBoard().getGrid()) {
-            for(Place place : places) {
-                if(!(place instanceof Entrance))
+        Place closestGoodRoom = null;
+
+        if(gotoExit)
+            closestGoodRoom = this.game.getController().getBoard().getItemFromCoordinate(Room.EXIT.getCenter());
+        else {
+            for(Room room : Room.values()) {
+                if(room.isExcluded())
                     continue;
-                Entrance entrance = (Entrance) place;
 
                 boolean shouldContinue = false;
                 for(Card c : getCards()) {
-                    if(!(c instanceof DoorPlace))
+                    if(!(c instanceof Room))
                         continue;
-                    DoorPlace doorCard = (DoorPlace) c;
+                    Room knownRoom = (Room) c;
 
-                    if(doorCard.equals(entrance)) {
-                        shouldContinue = true;
-                        break;
-                    }
+                    if(knownRoom != room)
+                        continue;
+
+                    shouldContinue = true;
+                    break;
                 }
                 if(shouldContinue)
                     continue;
 
-                int curDistance = curLocTree.findPath(entrance).getCost();
-                if(curDistance == -1 || curDistance > minDoorDistance)
+                Place centerOfRoom = this.game.getController().getBoard().getItemFromCoordinate(room.getCenter());
+                int newRoomDistance = curLocTree.findPath(centerOfRoom).getCost();
+
+                if(newRoomDistance == -1 || newRoomDistance > minDoorDistance)
                     continue;
 
-                minDoorDistance = curDistance;
-                closestGoodEntrance = entrance;
+                minDoorDistance = newRoomDistance;
+                closestGoodRoom = centerOfRoom;
             }
         }
 
-        Tree<Place> targetTree = generateFinderTree(closestGoodEntrance);
+        Tree<Place> targetTree = generateFinderTree(closestGoodRoom);
 
         // Do the move that puts the computer closest to the best door
         Place bestMove = null;
@@ -168,15 +181,11 @@ public class Computer extends Character {
 
     @Override
     public void onWin() {
-        new BasicInfoDialogue(Result.COMPUTER_WIN.getName(), Result.COMPUTER_WIN.getText(this.getCharacter(), game.getMurderer())).show();
+        new ShortDialogue(Result.COMPUTER_WIN.getName(), Result.COMPUTER_WIN.getText(this.getCharacter(), game.getMurderer())).show();
     }
 
     @Override
     public void onLose() {
-        new BasicInfoDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show();
-    }
-
-    private int getManhattanDistance(Place p1, Place p2) {
-        return (int) (Math.abs(p1.getX() - p2.getX()) + Math.abs(p1.getX() - p2.getX()));
+        new ShortDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show();
     }
 }
