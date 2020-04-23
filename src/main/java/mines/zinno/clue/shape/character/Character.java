@@ -243,14 +243,12 @@ public abstract class Character extends Circle {
         for(int i = 1; i < game.getCharacters().size(); i++) {
             Character character = game.getCharacters().get(i);
 
-            if(character == this)
-                continue;
-
             for(Card card : character.getProvidedCards()) {
                 if(!(card == suspect || card == room || card == weapon))
                     continue;
 
-                guessHandler
+                if(character != this)
+                    guessHandler
                         .get(InsertHandler.class, RevealHandle.class)
                         .insert(RevealContext.ON_GUESS, character, this, card);
 
