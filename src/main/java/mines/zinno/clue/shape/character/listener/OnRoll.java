@@ -7,6 +7,9 @@ import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Player;
 import mines.zinno.clue.shape.character.constant.Turn;
 
+/**
+ * The {@link OnRoll} class is called when a character rolls
+ */
 public class OnRoll implements OnTurnListener<Character> {
 
     private Clue game;

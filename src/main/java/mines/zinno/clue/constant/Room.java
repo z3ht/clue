@@ -88,6 +88,11 @@ public enum Room implements Card {
         return null;
     }
 
+    /**
+     * Is room excluded from guessing
+     *
+     * @return {@link Boolean}
+     */
     public boolean isExcluded() {
         return isExcluded;
     }

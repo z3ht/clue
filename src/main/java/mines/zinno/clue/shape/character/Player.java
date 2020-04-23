@@ -1,5 +1,6 @@
 package mines.zinno.clue.shape.character;
 
+import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.constant.*;
@@ -41,13 +42,23 @@ public class Player extends Character {
     public void moveTo(Place place) {
         // If move is out of turn, throw out of turn exception
         if(this.turn != Turn.POST_ROLL && this.turn != Turn.POST_MOVE) {
-            new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must roll before moving")).show();
+            Platform.runLater(
+                    () -> new ShortDialogue(
+                            Alert.IMPOSSIBLE_MOVE.getName(),
+                            Alert.IMPOSSIBLE_MOVE.getText("You must roll before moving")
+                        ).show()
+            );
             return;
         }
 
         // If move is impossible, send impossible move message
-        if(!moveTree.retrieveAllValues().contains(place)) {
-            new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You do not have enough moves")).show();
+        if(!place.isHighlighted()) {
+            Platform.runLater(
+                    () -> new ShortDialogue(
+                            Alert.IMPOSSIBLE_MOVE.getName(),
+                            Alert.IMPOSSIBLE_MOVE.getText("You do not have enough moves")
+                        ).show()
+            );
             return;
         }
 
@@ -64,53 +75,64 @@ public class Player extends Character {
      */
     public void guess() {
         // Ensure player has moved if moves are available
-        if(!(getTurn() == Turn.POST_MOVE || (getTurn() == Turn.POST_ROLL && moveTree.retrieveAllValues().isEmpty()))) {
-            new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must move before making a guess if possible")).show();
+        if(getTurn() != Turn.POST_MOVE) {
+            Platform.runLater(() -> new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must move before making a guess if possible")).show());
             return;
         }
 
         // Ensure player is inside a room
         if(!(this.getCurPlace() instanceof RoomPlace)) {
-            new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must be inside a room to make a guess")).show();
+            Platform.runLater(() -> new ShortDialogue(Alert.IMPOSSIBLE_MOVE.getName(), Alert.IMPOSSIBLE_MOVE.getText("You must be inside a room to make a guess")).show());
             return;
         }
 
         // Send missing value alerts or store selected value
         Suspect suspect = game.getController().getGuessDialogue().getController().getSuspectMenu().getSelected().orElse(null);
         if(suspect == null) {
-            new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("suspect")).show();
+            Platform.runLater(() -> new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("suspect")).show());
             return;
         }
         Room room = game.getController().getGuessDialogue().getController().getRoomMenu().getSelected().orElse(null);
         if(room == null) {
-            new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("room")).show();
+            Platform.runLater(() -> new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("room")).show());
             return;
         }
         Weapon weapon = game.getController().getGuessDialogue().getController().getWeaponMenu().getSelected().orElse(null);
         if(weapon == null) {
-            new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("weapon")).show();
+            Platform.runLater(() -> new ShortDialogue(Action.GUESS_TITLE, Alert.INCOMPLETE_GUESS.getText("weapon")).show());
             return;
         }
 
         delHighlightPosMoves();
 
         super.guess(suspect, room, weapon);
+
+        this.turn = Turn.POST_GUESS;
     }
 
     @Override
     public void onWin() {
-        new ShortDialogue(Result.PLAYER_WIN.getName(), Result.PLAYER_WIN.getText(game.getMurderer())).show();
+        Platform.runLater(() -> new ShortDialogue(
+                Result.PLAYER_WIN.getName(),
+                Result.PLAYER_WIN.getText(game.getMurderer(), game.getLocation(), game.getWeapon())
+        ).show());
     }
 
     @Override
     public void onLose() {
-        new ShortDialogue(Result.PLAYER_LOSE.getName(), Result.PLAYER_LOSE.getText(game.getMurderer())).show();
+        Platform.runLater(() -> new ShortDialogue(
+                Result.PLAYER_LOSE.getName(),
+                Result.PLAYER_LOSE.getText(game.getMurderer(), game.getLocation(), game.getWeapon())
+        ).show());
     }
 
     private void highlightPosMoves() {
         for(Place place : moveTree.retrieveAllValues()) {
             if(place.isOccupied())
                 continue;
+            if(place instanceof RoomPlace && ((RoomPlace) place).getRoom() == this.prevRoom)
+                continue;
+
             place.addHighlight(Color.GREEN);
         }
     }

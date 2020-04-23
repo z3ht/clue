@@ -18,7 +18,7 @@ public class ShortDialogue extends Dialogue<DialogueController> {
      */
     public ShortDialogue(String name, String text) {
         super(name, FXMLURL.SHORT_DIALOGUE.getUrl(), new Dimension(450, 150));
-        this.toFront();
+        this.setAlwaysOnTop(true);
 
         this.getController().getInfoLabel().setText(text);
     }

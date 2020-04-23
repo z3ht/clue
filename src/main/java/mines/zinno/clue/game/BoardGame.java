@@ -1,6 +1,5 @@
 package mines.zinno.clue.game;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import mines.zinno.clue.controller.ClueController;
@@ -10,7 +9,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import mines.zinno.clue.controller.GameController;
 import mines.zinno.clue.constant.io.FXMLURL;
-import mines.zinno.clue.constant.io.LogMessage;
 import mines.zinno.clue.shape.character.Character;
 
 import java.awt.*;
@@ -20,47 +18,17 @@ import java.util.List;
 /**
  * The {@link BoardGame} extends JavaFX's {@link Application} class and holds all essential BoardGame information.
  */
-public abstract class BoardGame<T extends GameController> extends Application {
+public abstract class BoardGame<T extends GameController> {
 
-    private Stage stage;
     private T controller;
 
     private boolean isPlaying;
     private int numMoves;
 
     /**
-     * Called by JavaFX when the {@link Application} is ready to start
-     * 
-     * @param primaryStage Default stage
-     */
-    public final void start(Stage primaryStage) throws IOException {
-        LogMessage.START.log();
-
-        this.stage = primaryStage;
-
-        populateStage(this.stage);
-
-        LogMessage.STAGE_POPULATED.log();
-        
-        addListeners(stage);
-        stage.setOnShown((event) -> Platform.runLater(this::startGame));
-        
-        LogMessage.LISTENERS_ADDED.log();
-
-        stage.show();
-
-        LogMessage.STAGE_SHOWN.log();
-    }
-
-    /**
-     * Called when the stage is shown. Begins the game.
-     */
-    protected abstract void startGame();
-
-    /**
      * Populate clue stage
      */
-    protected void populateStage(Stage stage) throws IOException {
+    public void populateStage(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(FXMLURL.CLUE.getUrl());
 
         Parent root = fxmlLoader.load();
@@ -73,9 +41,14 @@ public abstract class BoardGame<T extends GameController> extends Application {
     }
 
     /**
+     * Called when the stage is shown. Begins the game.
+     */
+    public abstract void startGame();
+
+    /**
      * Add clue listeners
      */
-    protected abstract void addListeners(Stage stage);
+    public abstract void addListeners(Stage stage);
     
     /**
      * Get the game controller
@@ -84,15 +57,6 @@ public abstract class BoardGame<T extends GameController> extends Application {
      */
     public T getController() {
         return controller;
-    }
-
-    /**
-     * Get the stage
-     *
-     * @return {@link Stage}
-     */
-    public Stage getStage() {
-        return stage;
     }
 
     /**

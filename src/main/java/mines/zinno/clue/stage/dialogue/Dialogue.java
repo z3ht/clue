@@ -62,7 +62,7 @@ public class Dialogue<T> extends Stage {
             e.printStackTrace();
         }
 
-        this.setAlwaysOnTop(true);
+        this.toFront();
         this.setResizable(false);
         this.setTitle(name);
         
@@ -107,13 +107,16 @@ public class Dialogue<T> extends Stage {
 
             SelectableMenu menuButton = (SelectableMenu) node;
             
-            if(menuButton.isLocked()) 
-                return;
-            
             for(MenuItem menuItem : menuButton.getItems()) {
                 if(!(menuItem instanceof ValueMenuItem))
                     continue;
-                menuItem.setOnAction((event -> menuButton.setSelectedItem((ValueMenuItem) menuItem)));
+
+                menuItem.setOnAction((event) -> {
+                    if(!menuButton.isLocked())
+                        menuButton.setSelectedItem((ValueMenuItem) menuItem);
+                    else
+                        menuButton.displayLockMessage();
+                });
             }
         });
     }

@@ -140,9 +140,9 @@ public class BoardStructureTest {
         
         Assert.assertEquals(adj[0], board.getItemFromCoordinate(6, 2));
         Assert.assertNull(adj[1]);
-        Assert.assertEquals(adj[2], board.getItemFromCoordinate(6, 4));
+        Assert.assertNull(adj[2]);
         Assert.assertNull(adj[3]);
-        Assert.assertNotNull(adj[4]);
+        Assert.assertEquals(adj[4], board.getItemFromCoordinate(Room.STUDY.getCenter()));
     }
     
     @Test
@@ -156,7 +156,6 @@ public class BoardStructureTest {
         Assert.assertEquals(adj[1], board.getItemFromCoordinate(2, 4));
         Assert.assertEquals(adj[2], board.getItemFromCoordinate(1, 5));
         Assert.assertNull(adj[3]);
-        Assert.assertNull(adj[4]);
     }
     
     @Test

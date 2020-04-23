@@ -25,6 +25,7 @@ public class ClueBoard extends Board<Place> {
     private final static Character[][][] DEFAULT_MAP;
     
     static {
+        // Create the default map
         String[] defRawMap = FileStream.PARSE.apply(FileStream.BOARD.getInputStream());
         
         DEFAULT_MAP = new Character[defRawMap.length][defRawMap[0].length()/2][2];
@@ -53,7 +54,10 @@ public class ClueBoard extends Board<Place> {
         else
             drawCustom();
     }
-    
+
+    /**
+     * Draw the default board image
+     */
     private void drawImage() {
         String image = ImgURL.BOARD.getUrl().toExternalForm();
         
@@ -63,7 +67,10 @@ public class ClueBoard extends Board<Place> {
         
         this.getParent().setStyle(String.format("-fx-background-image: url(%s);", image));
     }
-    
+
+    /**
+     * Draw a custom board image
+     */
     private void drawCustom() {
         this.getParent().setStyle("");
         for(Place[] places : grid) {
@@ -73,6 +80,9 @@ public class ClueBoard extends Board<Place> {
         }
     }
 
+    /**
+     * Initialize the board's grid
+     */
     protected void initializeGrid() {        
         if(rawMap == null)
             rawMap = DEFAULT_MAP;
@@ -121,6 +131,9 @@ public class ClueBoard extends Board<Place> {
         }
     }
 
+    /**
+     * Calculate adjacent places
+     */
     protected void calcAdjacent() {
         for(int y = 0; y < super.grid.length; y++) {
             for(int x = 0; x < super.grid[y].length; x++) {
@@ -158,7 +171,7 @@ public class ClueBoard extends Board<Place> {
 
                         if(!adj.isReachable())
                             continue;
-                        
+
                         // Continue if RoomPlace does not connect with RoomPlace
                         if(grid[y][x] instanceof RoomPlace && !(adj instanceof RoomPlace))
                             continue;

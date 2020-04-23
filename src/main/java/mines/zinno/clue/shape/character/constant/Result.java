@@ -2,12 +2,15 @@ package mines.zinno.clue.shape.character.constant;
 
 import mines.zinno.clue.constant.Alert;
 
+/**
+ * The types of results from a character making an accusation
+ */
 public enum Result {
 
-    COMPUTER_WIN("%s has found the murderer!\nThe murderer was %s"),
+    COMPUTER_WIN("%s has found the murderer!\nThe murderer was %s in the %s using the %s"),
     COMPUTER_LOSE("%s has been murdered!"),
-    PLAYER_WIN("You have found the murderer!\nThe murderer was %s"),
-    PLAYER_LOSE("You have been murdered!\nThe murderer was %s");
+    PLAYER_WIN("You have found the murderer!\nThe murderer was %s in the %s using the %s"),
+    PLAYER_LOSE("You have been murdered!\nThe murderer was %s in the %s using the %s");
 
     private String name;
     private String text;

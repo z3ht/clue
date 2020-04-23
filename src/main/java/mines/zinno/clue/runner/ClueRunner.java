@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  */
 public class ClueRunner implements Runnable {
 
-    private static final int REFRESH_RATE = 100;
+    public static final int REFRESH_RATE = 100;
     
     private BoardGame<ClueController> boardGame;
 

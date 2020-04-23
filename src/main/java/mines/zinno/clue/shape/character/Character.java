@@ -18,16 +18,20 @@ import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.shape.place.Teleportable;
 import mines.zinno.clue.util.handler.Handler;
+import mines.zinno.clue.util.handler.basic.BasicHandle;
 import mines.zinno.clue.util.handler.basic.InsertHandler;
 import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * The {@link Character} class extends JavaFX's {@link Circle} class. It holds information and logic pertaining to
  * a character's position and status.
+ *
+ * Satisfies {@link mines.zinno.clue.Assignments#C23A} and {@link mines.zinno.clue.Assignments#C24A} requirements (also
+ * check subclasses)
  */
 public abstract class Character extends Circle {
     
@@ -37,10 +41,13 @@ public abstract class Character extends Circle {
     protected final Suspect character;
     
     protected List<Card> providedCards = new ArrayList<>();
+    protected List<Card> cards = new ArrayList<>();
 
     protected Turn turn;
     protected int rollNum;
     protected Place curPlace;
+    protected Room prevRoom;
+
     protected Tree<Place> moveTree;
 
     private final GuessHandler guessHandler;
@@ -75,6 +82,11 @@ public abstract class Character extends Circle {
      */
     public void endTurn() {
         this.turn = Turn.OTHER;
+
+        this.prevRoom = null;
+        if(this.curPlace instanceof RoomPlace)
+            this.prevRoom = ((RoomPlace) this.curPlace).getRoom();
+
         updateTurnListeners();
     }
 
@@ -91,39 +103,44 @@ public abstract class Character extends Circle {
 
         this.turn = Turn.POST_ROLL;
         updateTurnListeners();
-        
+
+        // Allow player to skip moving if no moves are available
+        Place[] posMoves = this.moveTree.retrieveAllValues().stream()
+                .filter((p) -> p != null && !p.isOccupied())
+                .toArray(Place[]::new);
+        if(posMoves.length == 0)
+            this.turn = Turn.POST_GUESS;
+        updateTurnListeners();
+
         return rollNum;
     }
 
     /**
      * Calculate possible moves from {@link Character#getCurPlace()} and {@link Character#getRollNum()}
      */
-    @SuppressWarnings("unchecked")
     public void updateMoveTree() {
-        final Predicate<Place> placeReqs = (place) -> place != null && !place.isOccupied();
-        
-        Tree<Place> tree = new Tree<>(this.getCurPlace());
+        this.updateMoveTree(this.getCurPlace(), this.getRollNum());
+    }
+
+    /**
+     * Calculate possible moves from {@link Character#getCurPlace()} and provided number
+     */
+    @SuppressWarnings("unchecked")
+    public void updateMoveTree(Place place, int number) {
+
+        Tree<Place> tree = new Tree<>(place);
         tree.populate(
-                (curNode) -> 
+                (curNode) ->
                         // This casts correctly. Java doesn't like Parameterized arrays
                         Arrays.stream(curNode.getValue().getAdjacent())
-                                .filter(placeReqs)
-                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= this.getRollNum()))
+                                .filter((p) -> p != null && (!p.isOccupied() || p instanceof RoomPlace))
+                                .filter((adj) -> (curNode.getCost() + adj.getMoveCost() <= number))
                                 .map((adj) -> new Node<>(adj, curNode))
                                 .toArray(Node[]::new),
                 100
         );
 
         this.moveTree = tree;
-    }
-
-    protected int calcDistance(Tree<Place> placeNode) {
-        int distance = 0;
-        while(placeNode instanceof Node && ((Node<Place>) placeNode).getParent() != null) {
-            distance += placeNode.getValue().getMoveCost();
-            placeNode = ((Node<Place>) placeNode).getParent();
-        }
-        return distance;
     }
 
     /**
@@ -144,10 +161,10 @@ public abstract class Character extends Circle {
         }
         
         this.setVisible(true);
-        
+
         // Set turn to post move
         this.turn = Turn.POST_MOVE;
-        
+
         if(curPlace != null) {
             // Mark previous place as unoccupied
             curPlace.setOccupied(false);
@@ -164,12 +181,15 @@ public abstract class Character extends Circle {
             this.setVisible(false);
             return;
         }
+
+        if(place.isOccupied())
+            place = randomizeLoc(place);
         
         // Move to new place
         this.curPlace = place;
-        Location location = curPlace.getCenter();
-        place.setOccupied(true);
+        this.curPlace.setOccupied(true);
 
+        Location location = curPlace.getCenter();
         Platform.runLater(() -> {
             this.setCenterX(location.getX());
             this.setCenterY(location.getY());
@@ -179,9 +199,30 @@ public abstract class Character extends Circle {
         if(curPlace != null)
             updateMoveTree();
 
-        updateTurnListeners();
+        if(!forceMove)
+            updateTurnListeners();
     }
 
+    @SuppressWarnings("unchecked")
+    protected final Place randomizeLoc(Place loc) {
+        Tree<Place> randRoomLoc = new Tree<>(loc);
+        randRoomLoc.populate((curNode) ->
+                    // This casts correctly. Java doesn't like Parameterized arrays
+                    Arrays.stream(curNode.getValue().getAdjacent())
+                            .filter((place) -> place != null && !place.isOccupied())
+                            .filter((adj) -> (curNode.getCost() + adj.getMoveCost() <= 0))
+                            .map((adj) -> new Node<>(adj, curNode))
+                            .toArray(Node[]::new),
+                25);
+        Set<Place> posLocs = randRoomLoc.retrieveAllValues().stream()
+                .filter((place) -> place != null && !place.isOccupied())
+                .collect(Collectors.toSet());
+        return (posLocs.size() == 0) ? loc : (Place) posLocs.toArray()[(int) (posLocs.size()*Math.random())];
+    }
+
+    /**
+     * Make a guess
+     */
     public void guess(GuessVO guessVO) {
         this.guess(guessVO.suspect, guessVO.room, guessVO.weapon);
     }
@@ -194,25 +235,24 @@ public abstract class Character extends Circle {
 
         boolean isAccusation = ((RoomPlace) this.getCurPlace()).getRoom().equals(Room.EXIT);
 
-        if(!isAccusation)
-            guessHandler
-                    .get(InsertHandler.class, GuessHandle.class)
-                    .insert(Handler.ALL, this, suspect, room, weapon);
+        guessHandler
+                .get(InsertHandler.class, GuessHandle.class)
+                .insert(Handler.ALL, this, suspect, isAccusation, room, weapon);
 
         boolean isFound = false;
         for(int i = 1; i < game.getCharacters().size(); i++) {
             Character character = game.getCharacters().get(i);
 
-            for(Card card : character.getCards()) {
-                if(!(card.getName().equals(suspect.getName()) ||
-                        card.getName().equals(room.getName()) ||
-                        card.getName().equals(weapon.getName())))
+            if(character == this)
+                continue;
+
+            for(Card card : character.getProvidedCards()) {
+                if(!(card == suspect || card == room || card == weapon))
                     continue;
 
-                if(!isAccusation)
-                    guessHandler
-                            .get(InsertHandler.class, RevealHandle.class)
-                            .insert(RevealContext.ON_GUESS, character, this, card);
+                guessHandler
+                        .get(InsertHandler.class, RevealHandle.class)
+                        .insert(RevealContext.ON_GUESS, character, this, card);
 
                 isFound = true;
                 break;
@@ -224,6 +264,11 @@ public abstract class Character extends Circle {
 
         // Character is not in an exit
         if (!isAccusation) {
+            if(!isFound)
+                guessHandler
+                        .get(InsertHandler.class, BasicHandle.class)
+                        .insert("nothing", this);
+
             this.updateTurnListeners();
             return;
         }
@@ -239,7 +284,7 @@ public abstract class Character extends Circle {
         onLose();
         game.getCharacters().remove(this);
         for(Character c : game.getCharacters()) {
-            for(Card card : getCards())
+            for(Card card : getProvidedCards())
                 guessHandler
                         .get(InsertHandler.class, RevealHandle.class)
                         .insert(RevealContext.LOST_GAME, c, card);
@@ -309,10 +354,21 @@ public abstract class Character extends Circle {
     }
 
     /**
+     * Get the move tree
+     */
+    public Tree<Place> getMoveTree() {
+        return this.moveTree;
+    }
+
+    /**
      * Get the character's provided cards
      */
-    public List<Card> getCards() {
+    public List<Card> getProvidedCards() {
         return this.providedCards;
+    }
+
+    public List<Card> getCards() {
+        return this.cards;
     }
 
     /**

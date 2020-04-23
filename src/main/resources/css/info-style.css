@@ -37,6 +37,6 @@
     -fx-background-size: stretch;
 }
 
-#info-text {
+#info-label {
     -fx-font-size: 16;
 }

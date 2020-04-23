@@ -6,7 +6,6 @@ import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.shape.character.Character;
-import mines.zinno.clue.shape.character.Player;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.place.RoomPlace;
 

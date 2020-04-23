@@ -9,6 +9,10 @@ import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.stage.dialogue.ShortDialogue;
 
+/**
+ * The {@link OnClickContinue} class is responsible for envoking {@link Runnable} actions when a continue
+ * button is clicked
+ */
 public class OnClickContinue implements EventHandler<MouseEvent> {
 
     private Runnable action;
@@ -19,6 +23,11 @@ public class OnClickContinue implements EventHandler<MouseEvent> {
         this.clue = clue;
     }
 
+    /**
+     * Called when a continue button is clicked and performs the class's provided action
+     *
+     * @param event {@link MouseEvent}
+     */
     @Override
     public void handle(MouseEvent event) {
 

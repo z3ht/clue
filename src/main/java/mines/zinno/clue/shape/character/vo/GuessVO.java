@@ -4,6 +4,9 @@ import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.constant.Suspect;
 import mines.zinno.clue.constant.Weapon;
 
+/**
+ * The {@link GuessVO} value object holds necessary guess information
+ */
 public class GuessVO {
     
     public Suspect suspect;

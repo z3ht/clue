@@ -1,6 +1,7 @@
 package mines.zinno.clue.game;
 
 import javafx.application.Platform;
+import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -27,14 +28,12 @@ import mines.zinno.clue.shape.character.listener.UpdateRoomGuess;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.StartPlace;
 import mines.zinno.clue.layout.board.validator.SubMaxSizeMapValidator;
-import mines.zinno.clue.stage.dialogue.ScrollableDialogue;
 import mines.zinno.clue.stage.dialogue.ShortDialogue;
 import mines.zinno.clue.util.handler.Handler;
 
 
 import java.awt.*;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 
@@ -44,7 +43,8 @@ import java.util.List;
  */
 public class Clue extends BoardGame<ClueController> {
 
-    private static final String TITLE = "Clue";
+    public static final String TITLE = "Clue";
+
     private static final Dimension SIZE = new Dimension(1400, 900);
     private static final boolean IS_RESIZABLE = false;
 
@@ -58,7 +58,7 @@ public class Clue extends BoardGame<ClueController> {
     private ShortDialogue welcomeDialogue;
 
     @Override
-    protected void populateStage(Stage stage) throws IOException {
+    public void populateStage(Stage stage) throws IOException {
         super.populateStage(stage);
 
         stage.setTitle(TITLE);
@@ -66,11 +66,12 @@ public class Clue extends BoardGame<ClueController> {
     }
 
     @Override
-    protected void addListeners(Stage stage) {
+    public void addListeners(Stage stage) {
         // Close all windows when the main window is closed and stop the game
         stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
             Platform.exit();
             setPlaying(false);
+            System.exit(0);
         });
         
         // Roll the dice
@@ -80,7 +81,9 @@ public class Clue extends BoardGame<ClueController> {
 
         // Skip to next player turn
         this.getController().getSkip().addEventHandler(MouseEvent.MOUSE_CLICKED,
-                new OnClickContinue(() -> this.setNumMoves(this.getCharacters().size() - this.getCharacters().indexOf(player)), this)
+                new OnClickContinue(() ->  this.setNumMoves( (!this.getCharacters().contains(player)) ?
+                        this.getCharacters().size() : this.getCharacters().size() - this.getCharacters().indexOf(player)),
+                        this)
         );
 
         // Continue to next character's turn
@@ -110,7 +113,7 @@ public class Clue extends BoardGame<ClueController> {
     }
 
     @Override
-    protected void startGame() {
+    public void startGame() {
         drawBoard();
         createCharacters();
         createWelcomeStatus();
@@ -156,7 +159,7 @@ public class Clue extends BoardGame<ClueController> {
         }
 
         List<Room> rooms = new LinkedList<>(Arrays.asList(Room.values()));
-        rooms.remove(Room.EXIT);
+        rooms.removeIf(Room::isExcluded);
         List<Weapon> weapons = new LinkedList<>(Arrays.asList(Weapon.values()));
         List<Suspect> suspects = new LinkedList<>(Arrays.asList(Suspect.values()));
 
@@ -174,6 +177,7 @@ public class Clue extends BoardGame<ClueController> {
                 getController().getSettingsDialogue().getController().getCharacter().getSelected().orElse(characters.get(0));
         int playerIndex = characters.indexOf(chosenCharacter);
 
+        // Create guess handler
         GuessHandler guessHandler = new GuessHandler(new GuessHandles(this));
         guessHandler.addIdentifyingAnnotation(
                 RevealHandle.class,
@@ -199,7 +203,7 @@ public class Clue extends BoardGame<ClueController> {
         player.addTurnListener(new UpdateRoomGuess(this));
         player.addTurnListener(new OnExitEnter());
         player.addTurnListener(new OnNewTurn(this));
-        player.addTurnListener(new PromptGuess(this));
+        player.addTurnListener(new PromptGuess(this));    // Comment this to prevent guess dialogue from automatically opening
 
         this.characters.add(this.player);
 
@@ -305,9 +309,7 @@ public class Clue extends BoardGame<ClueController> {
         return weapon;
     }
 
-    public static void main(String[] args) {
-        launch(args);
-
+    public ShortDialogue getWelcomeDialogue() {
+        return welcomeDialogue;
     }
-
 }

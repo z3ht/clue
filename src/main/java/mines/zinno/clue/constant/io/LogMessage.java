@@ -17,9 +17,13 @@ public enum LogMessage {
     ;
 
     private static final Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    
-    private Level level;
-    private String message;
+
+    public static void log(Level level, String message) {
+        LOGGER.log(level, message);
+    }
+
+    private final Level level;
+    private final String message;
 
     LogMessage(Level level, String message) {
         this.level = level;
@@ -48,7 +52,7 @@ public enum LogMessage {
      * @param args Wildcard character values
      */
     public void log(Object... args) {
-        LOGGER.log(this.getLevel(), String.format(this.getMessage(), args));
+        LogMessage.log(this.getLevel(), String.format(this.getMessage(), args));
     }
     
 }

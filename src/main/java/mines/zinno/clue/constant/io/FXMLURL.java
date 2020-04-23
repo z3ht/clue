@@ -16,8 +16,8 @@ public enum FXMLURL {
     CUSTOM_BOARD("Custom Board", Object.class.getResource("/fxml/CustomBoard.fxml"))
     ;
 
-    private String name;
-    private URL url;
+    private final String name;
+    private final URL url;
     
     FXMLURL(String name, URL url) {
         this.name = name;

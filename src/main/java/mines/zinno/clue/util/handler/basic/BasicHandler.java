@@ -2,6 +2,10 @@ package mines.zinno.clue.util.handler.basic;
 
 import mines.zinno.clue.util.handler.Handler;
 
+/**
+ * The {@link BasicHandler} class extends the {@link Handler} class. It is a very basic handler that supports
+ * the {@link BasicHandle} annotation by default.
+ */
 public class BasicHandler extends Handler {
 
     public BasicHandler() {

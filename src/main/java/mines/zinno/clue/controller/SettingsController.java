@@ -88,14 +88,17 @@ public class SettingsController implements Initializable {
         for (Digit digit : Digit.values())
             this.computers.getItems().add(digit.getMenuItem());
         this.computers.setSelectedItem(Digit.FIVE);
+        this.computers.setLockMessage("This feature has not been implemented yet");
 
         for (Difficulty difficulty : Difficulty.values())
             this.difficulty.getItems().add(difficulty.getMenuItem());
         this.difficulty.setSelectedItem(Difficulty.REGULAR);
+        this.difficulty.setLockMessage("This feature has not been implemented yet");
         this.difficulty.setLocked(true);
 
         for (Suspect character : Suspect.values())
             this.character.getItems().add(character.getMenuItem());
+        this.character.setLockMessage("This feature has not been implemented yet");
         
         this.boardVersionDialogue = new Dialogue<>(FXMLURL.CUSTOM_BOARD.getName(), FXMLURL.CUSTOM_BOARD.getUrl(), new Dimension(450, 250));
         this.boardVersion.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> boardVersionDialogue.show());

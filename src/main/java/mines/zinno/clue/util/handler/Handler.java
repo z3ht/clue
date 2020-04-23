@@ -12,6 +12,11 @@ import java.util.*;
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 
+/**
+ * The {@link Handler} utility allows for reflective calls to handles identified by their annotations. It provides
+ * supreme organization and allows for simple storage of persistent data received by handles. WARNING: This utility
+ * is not thread-safe.
+ */
 public class Handler {
 
     public static UUID ALL = UUID.randomUUID();
@@ -21,11 +26,11 @@ public class Handler {
     private final Set<Handler> installedHandlers = new HashSet<>();
     private final Set<Object> handles = new HashSet<>();
 
-    private final Map<Class<? extends Annotation>, BiPredicate<SenderData, Annotation>>
-            identifyingAnnotations = new HashMap<>();
+    private final Map<Class<? extends Annotation>, BiPredicate<SenderData, Annotation>> identifyingAnnotations = new HashMap<>();
 
     private final boolean inheritData;
 
+    // Default call context
     private Consumer<List<Object>> callContext = (curArgs) -> {
         if (context != null)
             curArgs.add(context);
@@ -50,15 +55,31 @@ public class Handler {
         return this;
     }
 
+    /**
+     * Get an installed handler
+     *
+     * @param handlerClass Handler class
+     * @param <X> Handler class type (inferred)
+     * @return Handler class
+     */
     @NotNull
     public final <X extends Handler> X get(final Class<X> handlerClass) {
         return this.get(handlerClass, null);
     }
 
+    /**
+     * Get an installed handler and send only the provided annotation class
+     *
+     * @param annotationClass Annotation class
+     * @param handlerClass Handler class
+     * @param <X> Handler class type (inferred)
+     * @return Handler class
+     */
     @SuppressWarnings("unchecked")
     @NotNull
     public final <X extends Handler> X get(final Class<X> handlerClass,
                                            final Class<? extends Annotation> annotationClass) {
+        // Returns the handler with proper values set if it is of the provided handler class type
         final ThrowableFunction<NoSuchMethodException, Handler, X> getXInstHandler = (handler) -> {
             if(handler == null)
                 return null;
@@ -87,6 +108,7 @@ public class Handler {
             return (X) handler;
         };
 
+        // Return the handler if it exists, or throw HandlerNotInstalled exception
         try {
             X returnVal = getXInstHandler.apply(this);
             if(returnVal != null)
@@ -99,11 +121,13 @@ public class Handler {
             throw new HandlerNotInstalled(handlerClass);
         } catch (NoSuchMethodException e) {
             // Never reached (no recovery if reached)
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Get handles (methods) that match the provided sender data
+     */
     protected final Set<Method> getMethodHandles(SenderData senderData) {
         Set<Method> qualifyingMethods = new HashSet<>();
         for(Object handle : handles) {
@@ -131,6 +155,9 @@ public class Handler {
         return qualifyingMethods;
     }
 
+    /**
+     * Call the provided method with the given args
+     */
     protected void call(Method method, Object... args) throws IllegalAccessException, InvocationTargetException {
         boolean isCalled = false;
         for(Object[] argCombo : getCombos(args)) {
@@ -147,10 +174,14 @@ public class Handler {
                 } catch (IllegalArgumentException ignored) {}
         }
         if(!isCalled)
-            throw new IllegalArgumentException(String.format("Failed to call %s method with provided args", method.getName()));
+            throw new IllegalArgumentException(String.format("Failed to call %s method with provided context+args", method.getName()));
+
     }
 
-    private Set<Object[]> getCombos(Object[] args) {
+    /**
+     * Get possible arg combinations
+     */
+    protected final Set<Object[]> getCombos(Object[] args) {
         Set<Object[]> argCombos = new LinkedHashSet<>();
         if(args == null || args.length == 0)
             return argCombos;
@@ -172,24 +203,44 @@ public class Handler {
         return argCombos;
     }
 
+    /**
+     * Add context to the args of the upcoming call
+     */
     protected void addContextToCall(List<Object> curArgs) {
         callContext.accept(curArgs);
     }
 
+    /**
+     * Set the context of the upcoming call
+     */
     protected void setCallContext(Consumer<List<Object>> callContext) {
         this.callContext = callContext;
     }
 
+    /**
+     * Install a handler
+     */
     public Handler install(Handler handler) {
         this.installedHandlers.add(handler);
         return this;
     }
 
+    /**
+     * Uninstall a handler
+     */
     public Handler uninstall(Handler handler) {
         this.installedHandlers.remove(handler);
         return this;
     }
 
+    /**
+     * Install an identifying annotation
+     *
+     * @param annotationClass Identifying annotation class
+     * @param identifier {@link BiPredicate} providing the {@link SenderData} and identifying annotation
+     *                   expecting a {@link Boolean} denoting whether or not the annotation is the target
+     * @param <X> Identifying annotation type (inferred)
+     */
     @SuppressWarnings("unchecked")
     public <X extends Annotation> void addIdentifyingAnnotation(Class<X> annotationClass,
             BiPredicate<SenderData, X> identifier) {
@@ -198,14 +249,24 @@ public class Handler {
         );
     }
 
+    /**
+     * Delete an identifying annotation
+     */
     public void delIdentifyingAnnotation(Class<? extends Annotation> annotationClass) {
         this.identifyingAnnotations.remove(annotationClass);
     }
 
+    /**
+     * Get handles
+     * @return {@link Set}<{@link Object}>
+     */
     public Set<Object> getHandles() {
         return this.handles;
     }
 
+    /**
+     * Get whether or not this handler should inherit data from it's parent handler
+     */
     public boolean inheritData() {
         return inheritData;
     }

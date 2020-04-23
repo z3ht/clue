@@ -4,7 +4,9 @@ import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import mines.zinno.clue.constant.io.ImgURL;
+import mines.zinno.clue.stage.dialogue.ShortDialogue;
 
 import java.util.Optional;
 
@@ -19,7 +21,9 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
     
     private boolean isLocked = false;
     private ValueMenuItem<T> selectedItem;
-    
+
+    private String lockMessage = "This menu is locked";
+
     public SelectableMenu () {
         super();
     }
@@ -30,7 +34,7 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
 
     public SelectableMenu (String text, Node graphic, boolean isLocked, ValueMenuItem<T>... items) {
         super(text, graphic, items);
-        
+
         this.isLocked = isLocked;
     }
 
@@ -83,18 +87,44 @@ public class SelectableMenu<T extends Enum<T>> extends MenuButton {
     }
 
     /**
-     * Returns a {@link Boolean} denoting whether or not this menu is locked
+     * Returns a {@link Boolean} denoting whether or not this menu is isLocked
      */
     public boolean isLocked() {
         return isLocked;
     }
 
     /**
-     * Set a menu lock
-     * 
-     * @param locked isLocked
+     * Display the lock message when a isLocked menu is selected
      */
-    public void setLocked(boolean locked) {
-        isLocked = locked;
+    public void displayLockMessage() {
+        new ShortDialogue("Locked", this.getLockMessage()).show();
+    }
+
+
+    /**
+     * Get the lock message
+     *
+     * @return {@link String}
+     */
+    public String getLockMessage() {
+        return lockMessage;
+    }
+
+    /**
+     * Set the lock message
+     *
+     * @param lockMessage {@link String}
+     */
+    public void setLockMessage(String lockMessage) {
+        this.lockMessage = lockMessage;
+    }
+
+    /**
+     * Set menu lock
+     * 
+     * @param isLocked {@link Boolean}
+     */
+    public void setLocked(boolean isLocked) {
+        this.isLocked = isLocked;
     }
 }

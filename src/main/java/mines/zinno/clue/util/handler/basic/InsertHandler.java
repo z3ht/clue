@@ -6,6 +6,9 @@ import mines.zinno.clue.util.handler.data.SenderData;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * The {@link InsertHandler} is a simple {@link Handler} that can be installed to perform insertion tasks
+ */
 public class InsertHandler extends Handler {
 
     public void insert(Object id, Object... args) {

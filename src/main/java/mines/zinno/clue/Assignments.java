@@ -85,7 +85,6 @@ public enum Assignments {
 
     /**
      * Add game functionality
-     * Ensure the player starts first
      */
     C23A,
 

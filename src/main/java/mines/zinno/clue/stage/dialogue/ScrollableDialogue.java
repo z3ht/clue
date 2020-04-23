@@ -1,11 +1,14 @@
 package mines.zinno.clue.stage.dialogue;
 
 import mines.zinno.clue.constant.io.FXMLURL;
-import mines.zinno.clue.controller.ScrollableDialogueController;
+import mines.zinno.clue.controller.DialogueController;
 
 import java.awt.*;
 
-public class ScrollableDialogue extends Dialogue<ScrollableDialogueController> {
+/**
+ * The {@link ScrollableDialogue} class holds scrollable information
+ */
+public class ScrollableDialogue extends Dialogue<DialogueController> {
 
     public ScrollableDialogue(String name) {
         this(name, new Dimension(450, 225));
@@ -15,6 +18,7 @@ public class ScrollableDialogue extends Dialogue<ScrollableDialogueController> {
         super(name, FXMLURL.SCROLLABLE_DIALOGUE.getUrl(), size);
 
         this.getController().getInfoLabel().setText("");
+        this.setAlwaysOnTop(true);
 
         this.toFront();
     }

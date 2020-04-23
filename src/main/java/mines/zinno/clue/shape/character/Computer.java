@@ -1,13 +1,12 @@
 package mines.zinno.clue.shape.character;
 
+import javafx.application.Platform;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.game.Clue;
 import mines.zinno.clue.shape.character.constant.Result;
 import mines.zinno.clue.shape.character.constant.Turn;
 import mines.zinno.clue.shape.character.handler.GuessHandler;
 import mines.zinno.clue.shape.character.vo.GuessVO;
-import mines.zinno.clue.shape.place.DoorPlace;
-import mines.zinno.clue.shape.place.Entrance;
 import mines.zinno.clue.shape.place.Place;
 import mines.zinno.clue.shape.place.RoomPlace;
 import mines.zinno.clue.stage.dialogue.ShortDialogue;
@@ -15,7 +14,6 @@ import mines.zinno.clue.util.tree.Node;
 import mines.zinno.clue.util.tree.Tree;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class Computer extends Character {
@@ -45,7 +43,7 @@ public class Computer extends Character {
         }
     }
 
-    private GuessVO calcBestGuess() {
+    protected GuessVO calcBestGuess() {
         GuessVO bestGuess = new GuessVO();
 
         if(!(this.curPlace instanceof RoomPlace))
@@ -63,8 +61,7 @@ public class Computer extends Character {
 
             room.remove(card);
         }
-
-        bestGuess.room = (isAccusation) ? room.get(0) : curRoomPlace.getRoom();
+        bestGuess.room = (isAccusation) ? room.get((int) (Math.random() * room.size())) : curRoomPlace.getRoom();
 
         List<Weapon> weapon = new ArrayList<>(Arrays.asList(Weapon.values()));
         for(Card card : this.getCards()) {
@@ -72,7 +69,7 @@ public class Computer extends Character {
                 continue;
             weapon.remove(card);
         }
-        bestGuess.weapon = weapon.get(0);
+        bestGuess.weapon = weapon.get((int) (Math.random() * weapon.size()));
 
         List<Suspect> suspect = new ArrayList<>(Arrays.asList(Suspect.values()));
         for(Card card : this.getCards()) {
@@ -80,14 +77,14 @@ public class Computer extends Character {
                 continue;
             suspect.remove(card);
         }
-        bestGuess.suspect = suspect.get(0);
+        bestGuess.suspect = suspect.get((int) (Math.random() * suspect.size()));
 
         this.gotoExit = suspect.size() + weapon.size() + room.size() <= 4;
 
         return bestGuess;
     }
 
-    public Place calcBestMove() {
+    protected Place calcBestMove() {
 
         Tree<Place> curLocTree = generateFinderTree(curPlace);
 
@@ -100,6 +97,9 @@ public class Computer extends Character {
         else {
             for(Room room : Room.values()) {
                 if(room.isExcluded())
+                    continue;
+
+                if(room == this.prevRoom)
                     continue;
 
                 boolean shouldContinue = false;
@@ -150,24 +150,7 @@ public class Computer extends Character {
     }
 
     @SuppressWarnings("unchecked")
-    protected Place randomizeLoc(Place loc) {
-        Tree<Place> randRoomLoc = new Tree<>(loc);
-        randRoomLoc.populate((curNode) ->
-                        // This casts correctly. Java doesn't like Parameterized arrays
-                        Arrays.stream(curNode.getValue().getAdjacent())
-                                .filter((place) -> place != null && !place.isOccupied())
-                                .filter((adj) -> (calcDistance(curNode) + adj.getMoveCost() <= 0))
-                                .map((adj) -> new Node<>(adj, curNode))
-                                .toArray(Node[]::new),
-                25);
-        Set<Place> posLocs = randRoomLoc.retrieveAllValues().stream()
-                .filter((place) -> place != null && !place.isOccupied())
-                .collect(Collectors.toSet());
-        return (Place) posLocs.toArray()[(int) (posLocs.size()*Math.random())];
-    }
-
-    @SuppressWarnings("unchecked")
-    private Tree<Place> generateFinderTree(Place startLoc) {
+    protected Tree<Place> generateFinderTree(Place startLoc) {
         Tree<Place> tree = new Tree<>(startLoc);
         tree.populate((curNode) ->
                         // This casts correctly. Java doesn't like Parameterized arrays
@@ -181,11 +164,11 @@ public class Computer extends Character {
 
     @Override
     public void onWin() {
-        new ShortDialogue(Result.COMPUTER_WIN.getName(), Result.COMPUTER_WIN.getText(this.getCharacter(), game.getMurderer())).show();
+        Platform.runLater(() -> new ShortDialogue(Result.COMPUTER_WIN.getName(), Result.COMPUTER_WIN.getText(this.getCharacter(), game.getMurderer(), game.getLocation(), game.getWeapon())).show());
     }
 
     @Override
     public void onLose() {
-        new ShortDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show();
+        Platform.runLater(() -> new ShortDialogue(Result.COMPUTER_LOSE.getName(), Result.COMPUTER_LOSE.getText(this.getCharacter())).show());
     }
 }

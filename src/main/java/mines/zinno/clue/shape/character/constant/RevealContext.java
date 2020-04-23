@@ -41,22 +41,47 @@ public enum RevealContext {
         this.computerBody = computerBody;
     }
 
+    /**
+     * Get the turn the reveal context should be displayed on
+     *
+     * @return {@link Turn}
+     */
     public Turn getDisplayTurn() {
         return displayTurn;
     }
 
+    /**
+     * Get the header for when a player is shown a card
+     *
+     * @return {@link String}
+     */
     public String getPlayerHeader() {
         return playerHeader;
     }
 
+    /**
+     * Get the body for when a player is shown a card
+     *
+     * @return {@link String}
+     */
     public String getPlayerBody() {
         return playerBody;
     }
 
+    /**
+     * Get the header for when a computer is shown a card
+     *
+     * @return {@link String}
+     */
     public String getComputerHeader() {
         return computerHeader;
     }
 
+    /**
+     * Get the body for when a computer is shown a card
+     *
+     * @return {@link String}
+     */
     public String getComputerBody() {
         return computerBody;
     }

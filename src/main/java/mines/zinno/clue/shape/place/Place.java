@@ -26,6 +26,7 @@ public class Place extends Rectangle implements Costable {
     private final int moveCost;
 
     private boolean isOccupied;
+    boolean isHighlighted;
     
     private final Rectangle highlight;
 
@@ -70,6 +71,8 @@ public class Place extends Rectangle implements Costable {
             createHighlight();
         this.highlight.opacityProperty().set(opacity);
         this.highlight.setFill(fill);
+
+        this.isHighlighted = true;
     }
 
     private void createHighlight() {
@@ -89,6 +92,7 @@ public class Place extends Rectangle implements Costable {
      * Remove a highlight
      */
     public void delHighlight() {
+        this.isHighlighted = false;
         this.highlight.opacityProperty().set(0);
     }
     
@@ -97,7 +101,7 @@ public class Place extends Rectangle implements Costable {
      * 
      * @param occupied isOccupied
      */
-    public void setOccupied(boolean occupied) {
+    public synchronized void setOccupied(boolean occupied) {
         isOccupied = occupied;
     }
 
@@ -161,5 +165,9 @@ public class Place extends Rectangle implements Costable {
     @Override
     public int getCost() {
         return this.getMoveCost();
+    }
+
+    public boolean isHighlighted() {
+        return isHighlighted;
     }
 }

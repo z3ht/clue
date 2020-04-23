@@ -23,7 +23,7 @@ public enum FileStream {
         return rawMap.split("\\r?\\n");
     };
     
-    private InputStream inputStream;
+    private final InputStream inputStream;
 
     FileStream(InputStream inputStream) {
         this.inputStream = inputStream;
