@@ -26,20 +26,10 @@ public abstract class ClueApplicationTest extends ApplicationTest {
      */
     @Override
     public final void start(Stage stage) throws IOException {
-        LogMessage.START.log();
-
         clue.populateStage(stage);
-
-        LogMessage.STAGE_POPULATED.log();
-
         clue.addListeners(stage);
         stage.setOnShown((event) -> Platform.runLater(clue::startGame));
-
-        LogMessage.LISTENERS_ADDED.log();
-
         stage.show();
-
-        LogMessage.STAGE_SHOWN.log();
     }
 
 

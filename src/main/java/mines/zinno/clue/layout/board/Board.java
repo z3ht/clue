@@ -110,22 +110,22 @@ public abstract class Board<T extends Rectangle> extends Pane {
     /**
      * Set the board's map. Satisfies {@link mines.zinno.clue.Assignments#C12A1} requirement
      * 
-     * @param mapLoc Map file location (Supports .txt and .csv files)
+     * @param mapPath Map file location (Supports .txt and .csv files)
      * @throws BadMapFormatException Thrown when a map is not correctly formatted
      */
-    public void setMap(String mapLoc) throws BadMapFormatException {
-        setMap(mapLoc, null);
+    public void setMap(String mapPath) throws BadMapFormatException {
+        setMap(mapPath, null);
     }
 
     /**
      * Set the board's map. Satisfies {@link mines.zinno.clue.Assignments#C12A1} requirement
      *
-     * @param mapLoc Map file location (Supports .txt and .csv files)
+     * @param mapPath Map file location (Supports .txt and .csv files)
      * @param bgImg Background image file location
      * @throws BadMapFormatException Thrown when a map is not correctly formatted
      */
-    public void setMap(String mapLoc, String bgImg) throws BadMapFormatException {
-        Character[][][] map = createMap(mapLoc);
+    public void setMap(String mapPath, String bgImg) throws BadMapFormatException {
+        Character[][][] map = createMap(mapPath);
         
         // Validate map
         if(map != null) {
@@ -159,12 +159,12 @@ public abstract class Board<T extends Rectangle> extends Pane {
     /**
      * Create a map given the map's file location
      * 
-     * @param mapLoc Map file location
+     * @param mapPath Map file location
      *               
      * @return {@link Character[][][]} map
      * @throws BadMapFormatException Thrown when a map is not formatted correctly
      */
-    protected abstract Character[][][] createMap(String mapLoc) throws BadMapFormatException;
+    protected abstract Character[][][] createMap(String mapPath) throws BadMapFormatException;
 
     public void addMapValidator(MapValidator mapValidator) {
         this.mapValidators.add(mapValidator);

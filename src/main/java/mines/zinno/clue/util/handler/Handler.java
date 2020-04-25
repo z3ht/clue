@@ -1,6 +1,5 @@
 package mines.zinno.clue.util.handler;
 
-import com.sun.istack.internal.NotNull;
 import mines.zinno.clue.util.ThrowableFunction;
 import mines.zinno.clue.util.handler.data.SenderData;
 import mines.zinno.clue.util.handler.exception.HandlerNotInstalled;
@@ -62,7 +61,6 @@ public class Handler {
      * @param <X> Handler class type (inferred)
      * @return Handler class
      */
-    @NotNull
     public final <X extends Handler> X get(final Class<X> handlerClass) {
         return this.get(handlerClass, null);
     }
@@ -76,7 +74,6 @@ public class Handler {
      * @return Handler class
      */
     @SuppressWarnings("unchecked")
-    @NotNull
     public final <X extends Handler> X get(final Class<X> handlerClass,
                                            final Class<? extends Annotation> annotationClass) {
         // Returns the handler with proper values set if it is of the provided handler class type

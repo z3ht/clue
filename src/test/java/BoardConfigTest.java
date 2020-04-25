@@ -1,3 +1,4 @@
+import mines.zinno.clue.Main;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.ClueBoard;
 import mines.zinno.clue.layout.board.validator.IsRectangleValidator;
@@ -33,7 +34,7 @@ public class BoardConfigTest {
         
         try {
             // Set the map. The validators validate the map here
-            board.setMap(Object.class.getResource("/board.csv").getPath());
+            board.setMap(Main.class.getResource("/board.csv").toString());
             
             // Initialize
             board.initialize();
@@ -55,7 +56,7 @@ public class BoardConfigTest {
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
-            board.setMap(Object.class.getResource("/badmaps/tootall.csv").getPath());
+            board.setMap(Main.class.getResource("/badmaps/tootall.csv").toString());
 
             // Fail if validator did not catch this map's error
             Assert.fail();
@@ -68,7 +69,7 @@ public class BoardConfigTest {
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
-            board.setMap(Object.class.getResource("/badmaps/toolong.csv").getPath());
+            board.setMap(Main.class.getResource("/badmaps/toolong.csv").toString());
 
             // Fail if validator did not catch this map's error
             Assert.fail();
@@ -81,7 +82,7 @@ public class BoardConfigTest {
         board.addMapValidator(new NoBadDoorsValidator());
 
         try {
-            board.setMap(Object.class.getResource("/badmaps/remotedoor.csv").getPath());
+            board.setMap(Main.class.getResource("/badmaps/remotedoor.csv").toString());
 
             // Fail if validator did not catch this map's error
             Assert.fail();
@@ -94,7 +95,7 @@ public class BoardConfigTest {
         board.addMapValidator(new NoBadDoorsValidator());
 
         try {
-            board.setMap(Object.class.getResource("/badmaps/insidedoor.csv").getPath());
+            board.setMap(Main.class.getResource("/badmaps/insidedoor.csv").toString());
 
             // Fail if validator did not catch this map's error
             Assert.fail();
@@ -107,7 +108,7 @@ public class BoardConfigTest {
         board.addMapValidator(new IsRectangleValidator());
 
         try {
-            board.setMap(Object.class.getResource("/badmaps/nonrectangular.csv").getPath());
+            board.setMap(Main.class.getResource("/badmaps/nonrectangular.csv").toString());
 
             // Fail if validator did not catch this map's error
             Assert.fail();

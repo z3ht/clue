@@ -20,6 +20,8 @@ public class ScrollableDialogue extends Dialogue<DialogueController> {
         this.getController().getInfoLabel().setText("");
         this.setAlwaysOnTop(true);
 
+        setResizable(false);
+
         this.toFront();
     }
 

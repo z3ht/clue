@@ -1,4 +1,5 @@
 import mines.zinno.clue.constant.Suspect;
+import mines.zinno.clue.constant.io.FXMLURL;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.ClueBoard;
 import mines.zinno.clue.layout.board.validator.IsRectangleValidator;
@@ -32,7 +33,7 @@ public class CharacterTest {
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
-            board.setMap(Object.class.getResource("/board.csv").getPath());
+            board.setMap(FXMLURL.BOARD.getUrl().toString());
         } catch (BadMapFormatException e) {
             e.printStackTrace();
 

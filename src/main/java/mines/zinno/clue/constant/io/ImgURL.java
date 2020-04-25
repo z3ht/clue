@@ -1,5 +1,7 @@
 package mines.zinno.clue.constant.io;
 
+import mines.zinno.clue.Main;
+
 import java.net.URL;
 
 /**
@@ -7,14 +9,14 @@ import java.net.URL;
  */
 public enum ImgURL {
     
-    CROSS(Object.class.getResource("/imgs/cross.png")),
-    CHECK(Object.class.getResource("/imgs/check.png")),
-    BOARD(Object.class.getResource("/imgs/board.jpeg")),
-    BASIC_PLACE(Object.class.getResource("/imgs/basicplace.png")),
-    PLACE(Object.class.getResource("/imgs/place.png")),
-    ROOM_PLACE(Object.class.getResource("/imgs/roomplace.png")),
-    DOOR_PLACE(Object.class.getResource("/imgs/door.png")),
-    TELEPORT_PLACE(Object.class.getResource("/imgs/teleportplace.png"))
+    CROSS(Main.class.getResource("/imgs/cross.png")),
+    CHECK(Main.class.getResource("/imgs/check.png")),
+    BOARD(Main.class.getResource("/imgs/board.jpeg")),
+    BASIC_PLACE(Main.class.getResource("/imgs/basicplace.png")),
+    PLACE(Main.class.getResource("/imgs/place.png")),
+    ROOM_PLACE(Main.class.getResource("/imgs/roomplace.png")),
+    DOOR_PLACE(Main.class.getResource("/imgs/door.png")),
+    TELEPORT_PLACE(Main.class.getResource("/imgs/teleportplace.png"))
     ;
     
     private URL url;

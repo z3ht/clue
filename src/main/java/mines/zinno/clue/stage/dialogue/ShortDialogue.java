@@ -20,6 +20,8 @@ public class ShortDialogue extends Dialogue<DialogueController> {
         super(name, FXMLURL.SHORT_DIALOGUE.getUrl(), new Dimension(450, 150));
         this.setAlwaysOnTop(true);
 
+        setResizable(false);
+
         this.getController().getInfoLabel().setText(text);
     }
     

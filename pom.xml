@@ -33,6 +33,18 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>14</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>14</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -47,7 +59,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>mines.zinno.clue.game.Clue</mainClass>
+                            <mainClass>mines.zinno.clue.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

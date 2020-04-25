@@ -8,7 +8,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.scene.Node;
-import mines.zinno.clue.constant.Alert;
 import mines.zinno.clue.control.menu.SelectableMenu;
 import mines.zinno.clue.control.menu.ValueMenuItem;
 import mines.zinno.clue.constant.io.LogMessage;
@@ -63,10 +62,9 @@ public class Dialogue<T> extends Stage {
         }
 
         this.toFront();
-        this.setResizable(false);
         this.setTitle(name);
-        
-        this.setOnShown(event -> addListeners());
+
+        this.addListeners();
     }
 
     /**

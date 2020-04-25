@@ -34,6 +34,8 @@ import mines.zinno.clue.util.handler.Handler;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -73,7 +75,7 @@ public class Clue extends BoardGame<ClueController> {
             setPlaying(false);
             System.exit(0);
         });
-        
+
         // Roll the dice
         this.getController().getRoll().addEventHandler(MouseEvent.MOUSE_CLICKED,
                 (mouseEvent) -> player.roll()
@@ -133,9 +135,10 @@ public class Clue extends BoardGame<ClueController> {
      */
     private void createWelcomeStatus() {
         this.welcomeDialogue = new ShortDialogue(Alert.WELCOME.getName(), Alert.WELCOME.getText());
-        welcomeDialogue.show();
 
         this.getController().getInfoLabel().setText(Alert.WELCOME.getText());
+
+        welcomeDialogue.show();
     }
 
     /**

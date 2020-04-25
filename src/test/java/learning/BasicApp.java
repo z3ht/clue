@@ -39,7 +39,7 @@ public class BasicApp extends Application {
         Scene primaryScene = new Scene(new Group(), 160*SCALE, 90*SCALE);
 
         GridPane primaryGrid = new GridPane();
-        primaryGrid.getStylesheets().add(Object.class.getResource("/css/ui-style.css").toExternalForm());
+        primaryGrid.getStylesheets().add(BasicApp.class.getResource("/css/ui-style.css").toExternalForm());
         primaryGrid.setId("background");
 
         primaryGrid.getColumnConstraints().add(new ColumnConstraints(110*SCALE));

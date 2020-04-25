@@ -30,13 +30,6 @@ public class BasicGuiTest extends ClueApplicationTest {
     }
 
     @Test
-    public void initialize_Success() {
-        Label infoLabel = GuiTest.find("#info-label");
-
-        Assert.assertEquals(Alert.WELCOME.getText(), infoLabel.getText());
-    }
-
-    @Test
     public void testCreateCards_Success() {
         // Ensure accusation cards have been created and pulled out from the deck
         Assert.assertNotNull(clue.getLocation());

@@ -1,17 +1,16 @@
 package mines.zinno.clue.layout.board;
 
 import mines.zinno.clue.constant.Room;
+import mines.zinno.clue.constant.io.FXMLURL;
 import mines.zinno.clue.constant.io.ImgURL;
-import mines.zinno.clue.constant.io.FileStream;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.constant.DirectionKey;
 import mines.zinno.clue.util.Location;
 import mines.zinno.clue.layout.board.constant.PlaceKey;
 import mines.zinno.clue.shape.place.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * {@link ClueBoard} extends the {@link Board} class using {@link Place} as it's generic cell type. This class initializes
@@ -26,8 +25,13 @@ public class ClueBoard extends Board<Place> {
     
     static {
         // Create the default map
-        String[] defRawMap = FileStream.PARSE.apply(FileStream.BOARD.getInputStream());
-        
+        String[] defRawMap = new String[0];
+        try {
+            defRawMap = FXMLURL.PARSE.apply(FXMLURL.BOARD.getUrl().openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         DEFAULT_MAP = new Character[defRawMap.length][defRawMap[0].length()/2][2];
         int y = -1;
         for(String line : defRawMap) {
@@ -203,14 +207,12 @@ public class ClueBoard extends Board<Place> {
     }
 
     @Override
-    protected Character[][][] createMap(String mapLoc) throws BadMapFormatException {
-        if(mapLoc == null || mapLoc.equals(""))
+    protected Character[][][] createMap(String mapPath) throws BadMapFormatException {
+        if(mapPath == null || mapPath.isEmpty())
             return null;
 
-        File locFile = new File(mapLoc);
-
         try {
-            String[] rawMap = FileStream.PARSE.apply(new FileInputStream(locFile));
+            String[] rawMap = FXMLURL.PARSE.apply(new URL(mapPath).openStream());
 
             Character[][][] map = new Character[rawMap.length][rawMap[0].length()/2][2];
 
@@ -235,9 +237,9 @@ public class ClueBoard extends Board<Place> {
             }
 
             return map;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            throw new BadMapFormatException(String.format("The map file could not be read\nIs '%s' the right location?", locFile.getAbsolutePath()));
+            throw new BadMapFormatException(String.format("The map file could not be read\nIs '%s' the right location?", mapPath));
         }
     }
 

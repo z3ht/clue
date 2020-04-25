@@ -69,20 +69,20 @@ public class GuessTest extends ClueApplicationTest {
 
     @Test
     public void testGuessSend_RefuteSuspect() throws InterruptedException {
-        testGuess_Refute((clue.getMurderer() == Suspect.COL_MUSTARD || player.getProvidedCards().contains(Suspect.COL_MUSTARD)) ? Suspect.MISS_SCARLETT : Suspect.COL_MUSTARD,
+        testGuess_Refute((Suspect) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Suspect).findAny().get(),
                 clue.getLocation(), clue.getWeapon());
     }
 
     @Test
     public void testGuessSend_RefuteRoom() throws InterruptedException {
         testGuess_Refute(clue.getMurderer(),
-                (clue.getLocation() == Room.STUDY || player.getProvidedCards().contains(Room.STUDY)) ? Room.BALL_ROOM : Room.STUDY, clue.getWeapon());
+                (Room) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Room).findAny().get(), clue.getWeapon());
     }
 
     @Test
     public void testGuessSend_RefuteWeapon() throws InterruptedException {
         testGuess_Refute(clue.getMurderer(), clue.getLocation(),
-                (clue.getWeapon() == Weapon.KNIFE || player.getProvidedCards().contains(Weapon.KNIFE)) ? Weapon.WRENCH : Weapon.KNIFE);
+                (Weapon) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Weapon).findAny().get());
     }
 
     @Test

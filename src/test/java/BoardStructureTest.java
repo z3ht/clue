@@ -1,3 +1,4 @@
+import mines.zinno.clue.Main;
 import mines.zinno.clue.constant.Room;
 import mines.zinno.clue.exception.BadMapFormatException;
 import mines.zinno.clue.layout.board.ClueBoard;
@@ -35,7 +36,7 @@ public class BoardStructureTest {
         board.addMapValidator(new SubMaxSizeMapValidator());
 
         try {
-            board.setMap(Object.class.getResource("/board.csv").getPath());
+            board.setMap(Main.class.getResource("/board.csv").toString());
         } catch (BadMapFormatException e) {
             e.printStackTrace();
 
