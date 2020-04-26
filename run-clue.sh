@@ -7,7 +7,16 @@ read -r fxPath
 
 fxPath="$fxPath/lib"
 
-until java -jar --module-path "$fxPath" --add-modules=javafx.base,javafx.controls,javafx.fxml target/clue-1.0-SNAPSHOT.jar; do
+if ! java -jar --module-path "$fxPath" --add-modules=javafx.base,javafx.controls,javafx.fxml target/clue-1.0-SNAPSHOT.jar; then
   mvn clean install
-  sleep 2
-done
+  mvnStatus=$?
+  sleep 3
+  if ! java -jar --module-path "$fxPath" --add-modules=javafx.base,javafx.controls,javafx.fxml target/clue-1.0-SNAPSHOT.jar; then
+    if [ $mvnStatus -eq 0 ]; then
+      echo The JavaFX path you entered was incorrect
+    else
+      echo The maven installation failed. Have you imported all Maven dependencies?
+    fi
+  fi
+fi
+
