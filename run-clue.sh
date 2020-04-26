@@ -22,9 +22,8 @@ if ! java -jar --module-path "$fxPath" --add-modules=javafx.base,javafx.controls
     exit
   fi
 
-
   if ! java -jar --module-path "$fxPath" --add-modules=javafx.base,javafx.controls,javafx.fxml target/clue-1.0-SNAPSHOT.jar; then
-    echo "$fxPath"
+    echo fxPath: "$fxPath"
     echo The JavaFX path you entered was incorrect
     exit
   fi
