@@ -2,6 +2,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import mines.zinno.clue.constant.*;
 import mines.zinno.clue.runner.ClueRunner;
+import mines.zinno.clue.shape.character.Character;
 import mines.zinno.clue.shape.character.Player;
 import org.junit.After;
 import org.junit.Assert;
@@ -69,20 +70,56 @@ public class GuessTest extends ClueApplicationTest {
 
     @Test
     public void testGuessSend_RefuteSuspect() throws InterruptedException {
-        testGuess_Refute((Suspect) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Suspect).findAny().get(),
-                clue.getLocation(), clue.getWeapon());
+        Suspect suspect = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Suspect))
+                    continue;
+                if (clue.getMurderer() == card)
+                    continue;
+                suspect = (Suspect) card;
+                break;
+            }
+        }
+        testGuess_Refute(suspect, clue.getLocation(), clue.getWeapon());
     }
 
     @Test
     public void testGuessSend_RefuteRoom() throws InterruptedException {
-        testGuess_Refute(clue.getMurderer(),
-                (Room) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Room).findAny().get(), clue.getWeapon());
+        Room room = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Room))
+                    continue;
+                if (clue.getLocation() == card)
+                    continue;
+                room = (Room) card;
+                break;
+            }
+        }
+        testGuess_Refute(clue.getMurderer(), room, clue.getWeapon());
     }
 
     @Test
     public void testGuessSend_RefuteWeapon() throws InterruptedException {
-        testGuess_Refute(clue.getMurderer(), clue.getLocation(),
-                (Weapon) clue.getCharacters().get(1).getProvidedCards().stream().filter(card -> card instanceof Weapon).findAny().get());
+        Weapon weapon = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Weapon))
+                    continue;
+                if (clue.getWeapon() == card)
+                    continue;
+                weapon = (Weapon) card;
+                break;
+            }
+        }
+        testGuess_Refute(clue.getMurderer(), clue.getLocation(), weapon);
     }
 
     @Test
@@ -117,20 +154,56 @@ public class GuessTest extends ClueApplicationTest {
 
     @Test
     public void testAccusationSend_RefuteSuspect() throws InterruptedException {
-        testAccusation_Refute((clue.getMurderer() == Suspect.COL_MUSTARD || player.getProvidedCards().contains(Suspect.COL_MUSTARD)) ? Suspect.MISS_SCARLETT : Suspect.COL_MUSTARD,
-                                clue.getLocation(), clue.getWeapon());
+        Suspect suspect = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Suspect))
+                    continue;
+                if (clue.getMurderer() == card)
+                    continue;
+                suspect = (Suspect) card;
+                break;
+            }
+        }
+        testAccusation_Refute(suspect, clue.getLocation(), clue.getWeapon());
     }
 
     @Test
     public void testAccusationSend_RefuteRoom() throws InterruptedException {
-        testAccusation_Refute(clue.getMurderer(), (clue.getLocation() == Room.STUDY || player.getProvidedCards().contains(Room.STUDY)) ? Room.BALL_ROOM : Room.STUDY,
-                clue.getWeapon());
+        Room room = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Room))
+                    continue;
+                if (clue.getLocation() == card)
+                    continue;
+                room = (Room) card;
+                break;
+            }
+        }
+        testAccusation_Refute(clue.getMurderer(), room, clue.getWeapon());
     }
 
     @Test
     public void testAccusationSend_RefuteWeapon() throws InterruptedException {
-        testAccusation_Refute(clue.getMurderer(), clue.getLocation(),
-                (clue.getWeapon() == Weapon.KNIFE || player.getProvidedCards().contains(Weapon.KNIFE)) ? Weapon.WRENCH : Weapon.KNIFE);
+        Weapon weapon = null;
+        for(Character c : clue.getCharacters()) {
+            if(c.equals(player))
+                continue;
+            for(Card card : c.getProvidedCards()) {
+                if (!(card instanceof Weapon))
+                    continue;
+                if (clue.getWeapon() == card)
+                    continue;
+                weapon = (Weapon) card;
+                break;
+            }
+        }
+        testAccusation_Refute(clue.getMurderer(), clue.getLocation(), weapon);
     }
 
     private void testGuess_Refute(Suspect suspect, Room room, Weapon weapon) throws InterruptedException {
